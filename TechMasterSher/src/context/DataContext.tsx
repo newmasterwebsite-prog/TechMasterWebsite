@@ -93,7 +93,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [isBackendConnected, setIsBackendConnected] = useState(false);
   const [dbData, setDbData] = useState<any>(null);
-  const DEFAULT_API_URL = "https://techmasterbackend12.onrender.com/api/v1";
+  const DEFAULT_API_URL = "https://techmasterbackend-4l9g.onrender.com/api/v1";
   const getApiBaseUrl = () => {
     if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
       return "http://localhost:5000/api/v1";

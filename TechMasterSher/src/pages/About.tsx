@@ -13,7 +13,7 @@ export const About: React.FC = () => {
   React.useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend12.onrender.com/api/v1";
+        const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
         const res = await fetch(`${baseUrl}/about`);
         if (res.ok) {
           const json = await res.json();

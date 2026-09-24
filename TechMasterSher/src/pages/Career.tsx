@@ -18,7 +18,7 @@ export const Career: React.FC = () => {
       return "http://localhost:5000/api/v1";
     }
     const envUrl = import.meta.env.VITE_API_URL?.trim();
-    return envUrl || "https://techmasterbackend12.onrender.com/api/v1";
+    return envUrl || "https://techmasterbackend-4l9g.onrender.com/api/v1";
   };
 
   const fetchLiveCareers = async () => {
@@ -294,7 +294,7 @@ export const Career: React.FC = () => {
       dataPayload.append("resume", formData.resumeFile);
       dataPayload.append("resumeBase64", resumeBase64);
 
-      const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend12.onrender.com/api/v1";
+      const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
       const endpoints = [
         `${baseUrl}/cms/public/resume`,
         `${baseUrl}/public/resume`,

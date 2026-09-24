@@ -72,7 +72,7 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
             .endsWith("/api/v1")
             ? envUrl.replace(/\/+$|\/api\/v1\/*$/i, "")
             : `${envUrl.replace(/\/+$|\/api\/v1\/*$/i, "")}/api/v1`
-          : "https://techmasterbackend12.onrender.com/api/v1";
+          : "https://techmasterbackend-4l9g.onrender.com/api/v1";
 
         const res = await fetch(`${base}/homepage?t=${Date.now()}`);
 
