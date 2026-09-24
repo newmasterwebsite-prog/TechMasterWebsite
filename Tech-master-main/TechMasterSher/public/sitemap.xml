@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 1. Home -->
+  <url>
+    <loc>https://www.techmasterco.com/</loc>
+  </url>
+
+  <!-- 2. About Founder -->
+  <url>
+    <loc>https://www.techmasterco.com/about</loc>
+  </url>
+
+  <!-- 3. Journey -->
+  <url>
+    <loc>https://www.techmasterco.com/journey</loc>
+  </url>
+
+  <!-- 4. Our Work -->
+  <url>
+    <loc>https://www.techmasterco.com/what-we-do</loc>
+  </url>
+
+  <!-- 5. Blog -->
+  <url>
+    <loc>https://www.techmasterco.com/blog</loc>
+  </url>
+
+  <!-- 6. Careers -->
+  <url>
+    <loc>https://www.techmasterco.com/career</loc>
+  </url>
+
+  <!-- 7. Contact -->
+  <url>
+    <loc>https://www.techmasterco.com/contact</loc>
+  </url>
+
+  <!-- 8. Privacy Policy -->
+  <url>
+    <loc>https://www.techmasterco.com/privacy-policy</loc>
+  </url>
+
+  <!-- 9. Terms of Service -->
+  <url>
+    <loc>https://www.techmasterco.com/terms-of-service</loc>
+  </url>
+</urlset>

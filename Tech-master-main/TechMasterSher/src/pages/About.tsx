@@ -1,0 +1,356 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Pause } from "lucide-react";
+import { useData } from "../context/DataContext";
+import { mediaUrl } from "../utils/media";
+import coverImg from "../assets/Cover.jpeg";
+import { extractYouTubeId, parseTimeToSeconds, getYouTubeThumbnail } from "../utils/youtube";
+
+export const About: React.FC = () => {
+  const { aboutData } = useData();
+  const [liveAbout, setLiveAbout] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend12.onrender.com/api/v1";
+        const res = await fetch(`${baseUrl}/about`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setLiveAbout(json.data);
+          }
+        }
+      } catch (e) {
+        console.warn("Direct About fetch error:", e);
+      }
+    };
+    fetchAbout();
+  }, []);
+
+  let localDb: any = {};
+  try {
+    const saved = localStorage.getItem('zenvora_db');
+    if (saved) localDb = JSON.parse(saved);
+  } catch (e) {}
+
+  const rawAbout = liveAbout?.value || liveAbout || aboutData || localDb?.about || {};
+  const aboutDataAny = (rawAbout as any) || {};
+
+  // Extract Section 1 (About Tech Master)
+  const aboutTechMaster = aboutDataAny?.aboutTechMaster || {
+    smallBadge: "ABOUT TECH MASTER",
+    mainHeading: "What Tech Master Is",
+    highlightedHeading: "Tech Master",
+    description: "It started in 2019 one person, one channel, and a belief that tech content in India could be smarter than it was. That belief became Tech Master, and by 2023, it had become a company. Today, Tech Master Digital Pvt Ltd is a 50+ person team running four established channels across tech, automobiles, and entertainment with a fifth already taking shape in 3D animation out of a full production studio in Jaipur, complete with an in-house editing suite, animation team, and gaming studio. Today our content generates 1B+ views every month.",
+    visibility: true,
+    order: 1
+  };
+
+  // Extract Section 2 (Company Culture)
+  const culture = aboutDataAny?.culture || {
+    smallBadge: "OUR CULTURE",
+    mainHeading: "Good People.",
+    highlightedText: "Good Work. Good Vibes",
+    description: "Ideas get clashed over here, not because we're trying to prove a point, but because everyone actually cares. We push each other, we push ourselves but nobody's burning out to do it. Somewhere between the deadlines and the chai breaks, this team just falls into a rhythm.",
+    visibility: true,
+    order: 2
+  };
+
+  // Extract Section 3 (Studio / Image Card)
+  const studioCard = aboutDataAny?.studioCard || {
+    imageUrl: culture.imageUrl || aboutDataAny?.story?.imageUrl || coverImg,
+    imageAlt: culture.imageAlt || "Tech Master Team",
+    imageSubtitle: culture.imageSubtitle || "Jaipur Studio",
+    imageDescription: culture.imageDescription || "50+ Person Production & Gaming Suite",
+    overlayCaption: culture.overlayCaption || "",
+    visibility: true,
+    order: 3
+  };
+
+  // Extract Section 4 (Founder Philosophy)
+  const philosophy = aboutDataAny?.philosophy || {
+    smallBadge: "FOUNDER PHILOSOPHY",
+    quote: aboutDataAny?.philosophy?.description || "Information is Wealth.",
+    description: "Information is Wealth.",
+    founderName: "Tech Master Founder",
+    founderDesignation: "Founder & CEO",
+    profileImageUrl: aboutDataAny?.philosophy?.profileImageUrl || aboutDataAny?.introduction?.profileImageUrl || coverImg,
+    showDivider: true,
+    visibility: true,
+    order: 4
+  };
+
+  // Video / YouTube details
+  const mediaType = culture.mediaType || studioCard.mediaType || ((culture.youtubeUrl || studioCard.youtubeUrl) ? "youtube" : "image");
+  const youtubeUrl = culture.youtubeUrl || studioCard.youtubeUrl || "";
+  const videoId = culture.videoId || studioCard.videoId || extractYouTubeId(youtubeUrl);
+  const startSec = parseTimeToSeconds(culture.startTime ?? studioCard.startTime);
+  const endSec = parseTimeToSeconds(culture.endTime ?? studioCard.endTime);
+
+  const fallbackThumb = videoId ? getYouTubeThumbnail(videoId) : "";
+  const studioImgUrl = mediaUrl(studioCard.imageUrl || culture.imageUrl || aboutDataAny?.story?.imageUrl) || fallbackThumb || coverImg;
+  const founderImgUrl = mediaUrl(philosophy.profileImageUrl || philosophy.imageUrl || philosophy.image || aboutDataAny?.introduction?.profileImageUrl) || coverImg;
+
+  const targetYtUrl = youtubeUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}&t=${startSec}s` : "");
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  // Infinite Seamless Loop Effect (Restarts at startSec when endSec is reached or video ends)
+  React.useEffect(() => {
+    if (!videoId || mediaType !== "youtube") return;
+
+    const restartVideo = () => {
+      if (iframeRef.current && iframeRef.current.contentWindow) {
+        try {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ event: "command", func: "seekTo", args: [startSec, true] }),
+            "*"
+          );
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ event: "command", func: "playVideo", args: "" }),
+            "*"
+          );
+        } catch (e) {}
+      }
+    };
+
+    // 1. Listen for YouTube ENDED (0) state from iframe postMessage
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        if (typeof event.data === "string") {
+          const data = JSON.parse(event.data);
+          if (data.event === "onStateChange" && (data.info === 0 || data.info === 2)) {
+            restartVideo();
+          }
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    // 2. Interval timer loop if start & end timestamps are specified
+    let intervalId: any = null;
+    if (endSec > startSec) {
+      const loopDurationMs = Math.max(1000, (endSec - startSec) * 1000);
+      intervalId = setInterval(() => {
+        restartVideo();
+      }, loopDurationMs);
+    }
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [videoId, mediaType, startSec, endSec]);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      try {
+        iframeRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: "command", func: "pauseVideo", args: "" }),
+          "*"
+        );
+      } catch (e) {}
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      try {
+        iframeRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: "command", func: "playVideo", args: "" }),
+          "*"
+        );
+      } catch (e) {}
+    }
+  };
+
+  const handleCardClick = () => {
+    if (targetYtUrl) {
+      window.open(targetYtUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <div className="relative text-white min-h-screen pt-28 pb-16 px-6 overflow-hidden bg-black">
+      {/* Ambient background glows */}
+      <div className="absolute top-1/4 left-1/2 w-[60vw] h-[60vw] aurora-glow-purple opacity-20 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] aurora-glow-gold opacity-15 pointer-events-none translate-x-1/2 translate-y-1/2" />
+
+      <div className="max-w-6xl mx-auto space-y-10 sm:space-y-24 relative z-10">
+
+        {/* 1. Founder Philosophy (FIRST SECTION: Image on Left, Content Card on Right) */}
+        {philosophy.visibility !== false && philosophy.status !== "Draft" && (
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            {/* Left Column: Clean Image Container WITHOUT Any Text Overlay */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="relative rounded-3xl overflow-hidden border border-gold/30 shadow-[0_0_40px_rgba(212,175,55,0.2)] h-[380px] sm:h-[480px] md:h-[520px] w-full"
+            >
+              <img
+                src={founderImgUrl}
+                alt={philosophy.founderName || "Tech Master Founder"}
+                className="w-full h-full object-cover object-top"
+              />
+            </motion.div>
+
+            {/* Right Column: Glass Card with Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="glass-panel p-8 sm:p-12 rounded-3xl border border-gold/30 bg-black/60 backdrop-blur-xl flex flex-col items-center justify-center text-center shadow-[0_0_40px_rgba(212,175,55,0.1)] h-full min-h-[380px] sm:min-h-[480px]"
+            >
+              <span className="text-gold font-mono text-xs sm:text-sm tracking-[4px] uppercase font-bold mb-4 block text-center">
+                {philosophy.smallBadge || "FOUNDER PHILOSOPHY"}
+              </span>
+
+              <blockquote className="font-serif text-3xl sm:text-4xl md:text-5xl text-white font-normal italic leading-tight mb-6 text-center max-w-xl">
+                "{philosophy.quote || philosophy.description || "Information is Wealth."}"
+              </blockquote>
+
+              {philosophy.showDivider !== false && (
+                <div className="w-16 h-1 bg-gold rounded-full shadow-[0_0_12px_rgba(212,175,55,0.8)] mb-6 mx-auto" />
+              )}
+
+              <p className="text-gold font-mono text-xs sm:text-sm tracking-[2px] uppercase font-bold text-center">
+                — {philosophy.founderName || "Tech Master Founder"} {philosophy.founderDesignation ? `(${philosophy.founderDesignation})` : ""}
+              </p>
+            </motion.div>
+          </section>
+        )}
+
+        {/* 2. Header & Company Story */}
+        {aboutTechMaster.visibility !== false && aboutTechMaster.status !== "Draft" && (
+          <section className="text-center max-w-4xl mx-auto">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="typo-badge mb-4 uppercase inline-block"
+            >
+              {aboutTechMaster.smallBadge || "ABOUT TECH MASTER"}
+            </motion.h1>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="glass-panel p-8 sm:p-12 rounded-3xl border border-gold/30 bg-black/50 backdrop-blur-xl text-left shadow-[0_0_40px_rgba(212,175,55,0.1)]"
+            >
+              <div 
+                className="text-gray-300 font-light text-base sm:text-lg leading-relaxed space-y-4"
+                dangerouslySetInnerHTML={{ __html: aboutTechMaster.description || "" }}
+              />
+            </motion.div>
+          </section>
+        )}
+
+        {/* 3. Team Culture & Studio Image/Video Card Section */}
+        {(culture.visibility !== false || studioCard.visibility !== false) && (
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {culture.visibility !== false && culture.status !== "Draft" && (
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 hover:border-gold/30 transition-all duration-300"
+              >
+                <span className="typo-badge mb-4 block uppercase">{culture.smallBadge || "OUR CULTURE"}</span>
+                <h2 className="font-serif text-2xl sm:text-3xl text-white font-bold mb-6">
+                  {culture.mainHeading || "Good People."} <span className="text-gold italic font-normal">{culture.highlightedText || "Good Work. Good Vibes"}</span>
+                </h2>
+                <div 
+                  className="text-gray-300 font-light text-base leading-relaxed space-y-4"
+                  dangerouslySetInnerHTML={{ __html: (culture.description || "").replace(/Good People\.\s*Good Work\.\s*Good Vibes/gi, "").trim() }}
+                />
+              </motion.div>
+            )}
+
+            {studioCard.visibility !== false && (
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                onClick={handleCardClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="relative rounded-3xl overflow-hidden border border-gold/20 hover:border-gold/60 shadow-2xl h-[380px] sm:h-[420px] bg-zinc-950 group cursor-pointer transition-all duration-300"
+              >
+                {/* Transparent Click-Capturing Overlay */}
+                <div 
+                  className="absolute inset-0 z-40 cursor-pointer"
+                  onClick={handleCardClick}
+                />
+
+                {/* Custom Sleek Pause Icon Overlay on Hover (Unblurred crisp video frame) */}
+                {mediaType === "youtube" && videoId && isHovered && (
+                  <div className="absolute inset-0 z-35 flex items-center justify-center pointer-events-none transition-all duration-300">
+                    <div className="w-16 h-16 rounded-full bg-black/80 border border-gold/60 flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.5)]">
+                      <Pause className="w-7 h-7 text-gold fill-gold" />
+                    </div>
+                  </div>
+                )}
+
+                {/* 1. Poster image underlay for zero black frame flicker */}
+                {studioImgUrl && (
+                  <img
+                    src={studioImgUrl}
+                    alt={culture.imageAlt || studioCard.imageAlt || "Tech Master Team"}
+                    className="w-full h-full object-cover absolute inset-0 z-0 opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  />
+                )}
+
+                {/* 2. YouTube Live Video Stream iFrame (Clean single video embed without playlist controls) */}
+                {mediaType === "youtube" && videoId ? (
+                  <div className="absolute inset-0 z-10 overflow-hidden flex items-center justify-center pointer-events-none">
+                    <iframe
+                      ref={iframeRef}
+                      src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&enablejsapi=1&start=${startSec}`}
+                      title={culture.imageAlt || studioCard.imageAlt || "Tech Master Company Culture Video"}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      style={{
+                        height: "135%",
+                        aspectRatio: "16/9",
+                        minWidth: "170%"
+                      }}
+                      className="object-cover border-0 pointer-events-none origin-center transform scale-110"
+                    />
+                  </div>
+                ) : null}
+
+                {/* Dark Vignette Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-20 pointer-events-none" />
+
+                {/* Bottom Overlay Text Details */}
+                <div className="absolute bottom-6 left-6 right-6 z-30 pointer-events-none">
+                  <span className="text-gold font-mono text-xs uppercase tracking-widest font-bold block mb-1">
+                    {culture.imageSubtitle || studioCard.imageSubtitle || "Jaipur Studio"}
+                  </span>
+                  <p className="text-white font-serif text-lg font-bold">
+                    {culture.imageDescription || studioCard.imageDescription || "50+ Person Production & Gaming Suite"}
+                  </p>
+                  {studioCard.overlayCaption && (
+                    <p className="text-gray-300 text-xs mt-1 italic">
+                      {studioCard.overlayCaption}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </section>
+        )}
+
+      </div>
+    </div>
+  );
+};

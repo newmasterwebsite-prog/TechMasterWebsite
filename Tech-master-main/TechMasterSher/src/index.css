@@ -1,0 +1,277 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,700..900&family=Cinzel:wght@600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Syne:wght@700;800&family=Unbounded:wght@700;800;900&family=Orbitron:wght@700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --font-brand: "Bodoni Moda", "Cinzel", serif;
+  --font-display: "Syne", "Unbounded", sans-serif;
+
+  --color-gold: #D4AF37;
+  --color-gold-light: #F3E5AB;
+  --color-dark-charcoal: #121212;
+  --color-graphite: #1C1C1C;
+  --color-deep-navy: #060b19;
+  --color-glow-purple: rgba(170, 59, 255, 0.18);
+  --color-glow-blue: rgba(0, 229, 255, 0.15);
+  --color-electric-blue: #00E5FF;
+  --color-royal-purple: #aa3bff;
+}
+
+:root {
+  color-scheme: dark;
+  background-color: #050505;
+  color: #e5e5e5;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #030303;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Cursor styles */
+.custom-cursor {
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 1.5px solid #D4AF37;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: normal;
+  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-cursor.hovered {
+  width: 56px;
+  height: 56px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid #D4AF37;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+  mix-blend-mode: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #D4AF37;
+}
+
+
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  content: "";
+  opacity: 0.04;
+  z-index: 9990;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(18, 18, 18, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Light Sweep effect */
+.light-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.light-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0.75s;
+}
+
+.light-sweep:hover::after {
+  left: 150%;
+}
+
+/* Animated gradient background */
+.aurora-glow-purple {
+  background: radial-gradient(circle, rgba(170, 59, 255, 0.15) 0%, rgba(3, 3, 3, 0) 70%);
+}
+
+.aurora-glow-blue {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(3, 3, 3, 0) 70%);
+}
+
+.aurora-glow-gold {
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(3, 3, 3, 0) 70%);
+}
+
+/* Text clipping reveal */
+.text-reveal {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Lenis Scroll Smoothness */
+html {
+  scroll-behavior: auto !important;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030303;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1c1c1c;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* Sidebar Specific Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 4px;
+}
+
+/* Hide default cursor on desktops */
+@media (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a, button, [role="button"], input, select, textarea {
+    cursor: none !important;
+  }
+}
+
+/* Global Typography Standardization */
+@layer utilities {
+  .typo-h1 {
+    @apply font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-tight tracking-tight text-white;
+  }
+  .typo-h2 {
+    @apply font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white;
+  }
+  .typo-h3 {
+    @apply font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-3;
+  }
+  .typo-h4 {
+    @apply font-serif text-xl sm:text-2xl md:text-3xl font-medium;
+  }
+  .typo-badge {
+    @apply text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] md:tracking-[6px] text-gold font-bold font-mono;
+  }
+  .typo-body {
+    @apply text-gray-400 text-xs sm:text-sm md:text-lg font-light leading-relaxed;
+  }
+  .typo-card-title {
+    @apply font-serif text-3xl sm:text-3xl md:text-4xl font-semibold text-white;
+  }
+  .typo-card-desc {
+    @apply text-xs sm:text-sm text-gray-400 font-light leading-relaxed;
+  }
+  .typo-list-text {
+    @apply text-xs md:text-sm text-gray-400;
+  }
+  .font-roboto {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  }
+  .typo-btn {
+    @apply text-xs uppercase tracking-[2px] font-bold;
+  }
+  .typo-stat {
+    @apply font-serif text-3xl sm:text-5xl md:text-6xl font-black text-gold block tracking-tight;
+  }
+  .typo-stat-desc {
+    @apply text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] text-gray-400 font-bold;
+  }
+  .typo-footer {
+    @apply text-gray-400 text-xs sm:text-sm font-light leading-relaxed;
+  }
+}
+
+/* Force Roboto Font on Career and Contact Form and All Child Controls */
+.career-form-container,
+.career-form-container *,
+.career-form-container input,
+.career-form-container select,
+.career-form-container textarea,
+.career-form-container label,
+.career-form-container button,
+.career-form-container option,
+.contact-form-container,
+.contact-form-container *,
+.contact-form-container input,
+.contact-form-container select,
+.contact-form-container textarea,
+.contact-form-container label,
+.contact-form-container button,
+.contact-form-container option {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}

@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TechMaster Platform - End-to-End Repository Audit Report</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    background-color: #f8fafc;
+    margin: 0;
+    padding: 40px 20px;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 48px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  .header {
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .badge {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 28px;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+  }
+  .subtitle {
+    font-size: 15px;
+    color: #64748b;
+    margin: 0;
+  }
+  h2 {
+    font-size: 20px;
+    color: #1e293b;
+    border-left: 4px solid #2563eb;
+    padding-left: 12px;
+    margin-top: 36px;
+    margin-bottom: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  th {
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+  .commit-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease;
+  }
+  .commit-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+  .commit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .commit-num {
+    font-weight: bold;
+    color: #2563eb;
+    font-size: 14px;
+  }
+  .commit-date {
+    font-size: 13px;
+    color: #64748b;
+  }
+  .commit-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+  .commit-bullets {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #334155;
+  }
+  .commit-bullets li {
+    margin-bottom: 4px;
+  }
+  .commit-meta {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .print-btn {
+    background: #2563eb;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 20px;
+    float: right;
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .container { box-shadow: none; padding: 0; }
+    .print-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <div class="header">
+    <div class="badge">Official Technical Deliverable</div>
+    <h1>Tech-master Platform: End-to-End Repository Audit Report</h1>
+    <p class="subtitle">Complete Granular Changelog, Churn Analysis & System Evolution (07 July 2026 – 15 August 2026)</p>
+  </div>
+
+  <h2>1. Executive Summary</h2>
+  <table>
+    <tr><th style="width: 35%;">Metric</th><th>Value</th></tr>
+    <tr><td><strong>Repository</strong></td><td>ZenvoraPvtLtd / Tech-master</td></tr>
+    <tr><td><strong>Project Start Date</strong></td><td>07 July 2026 at 11:32 AM IST (Commit <code>fa0d181</code>)</td></tr>
+    <tr><td><strong>Project End / Last Commit</strong></td><td>15 August 2026 at 10:12 AM IST (Commit <code>16eb891</code>)</td></tr>
+    <tr><td><strong>Development Duration</strong></td><td>39 Calendar Days (29 Active Dev Days)</td></tr>
+    <tr><td><strong>Total Commits</strong></td><td>141 Production Commits</td></tr>
+    <tr><td><strong>Git Remote Status</strong></td><td>Branch 'main' is 100% Up-to-date with 'origin/main'</td></tr>
+    <tr><td><strong>Deployments</strong></td><td>Backend: Render Cloud | Frontend: Vercel Production</td></tr>
+  </table>
+
+  <h2>2. Component Revisions & Churn Hotspots (Ek Hi Cheez Ko Kitni Baar Change Kiya)</h2>
+  <table>
+    <tr>
+      <th>Component / Page</th>
+      <th style="text-align: center;">Revisions</th>
+      <th>Code Delta</th>
+      <th>Key Changes & Technical Context</th>
+    </tr>
+    <tr>
+      <td><strong>Home.tsx</strong><br><small>Landing Page</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">70 Times</td>
+      <td>+3,008 / -1,822</td>
+      <td>Hero rebuilds, Three.js 3D canvas integration, GSAP scroll triggers, video reels mapping, safe array extraction guards, and Vercel build TS fixes.</td>
+    </tr>
+    <tr>
+      <td><strong>Header.tsx</strong><br><small>Global Nav</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">32 Times</td>
+      <td>+843 / -415</td>
+      <td>Sticky navbar blur, dynamic scroll percentage counter, full-screen GSAP mobile overlay menu, responsive hamburger transitions.</td>
+    </tr>
+    <tr>
+      <td><strong>About.tsx</strong><br><small>Company Story</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">26 Times</td>
+      <td>+1,027 / -818</td>
+      <td>Dynamic stats counters, team member cards, backend schema integration, responsive grid adjustments.</td>
+    </tr>
+    <tr>
+      <td><strong>Footer.tsx</strong><br><small>Global Footer</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">23 Times</td>
+      <td>+1,131 / -657</td>
+      <td>Column renaming, custom inline SVG social icons replacing broken Lucide icons, white logo integration, dynamic CMS data binding.</td>
+    </tr>
+    <tr>
+      <td><strong>DataContext.tsx</strong><br><small>Global State</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">22 Times</td>
+      <td>+1,140 / -825</td>
+      <td>Render backend API URL normalizer, offline fallback caching, graceful hydration on cold starts, null-safety guards.</td>
+    </tr>
+    <tr>
+      <td><strong>Portfolio.tsx</strong><br><small>Channels Showcase</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">19 Times</td>
+      <td>+1,121 / -755</td>
+      <td>Channel video cards, YouTube player embeds, category filter tags, metrics badges, CMS schema synchronization.</td>
+    </tr>
+    <tr>
+      <td><strong>Homepage.jsx</strong><br><small>Admin CMS</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">19 Times</td>
+      <td>+3,805 / -2,337</td>
+      <td>Admin CMS homepage editor, Cloudinary media upload integration, video reel list manager, live frontend preview sync.</td>
+    </tr>
+    <tr>
+      <td><strong>GlassSphere.tsx</strong><br><small>3D Model</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">18 Times</td>
+      <td>+198 / -62</td>
+      <td>Custom GLSL vertex & fragment shaders, brand logo texture mapping, mouse parallax tilt, scroll acceleration.</td>
+    </tr>
+    <tr>
+      <td><strong>Carousels</strong><br><small>LongVideos & Reels</small></td>
+      <td style="text-align: center; font-weight: bold; color: #2563eb;">34 Times (Combined)</td>
+      <td>+2,236 / -1,471</td>
+      <td>3D perspective scrolling, dynamic YouTube metadata extraction, Instagram Coverflow physics, mobile swipe touch support.</td>
+    </tr>
+  </table>
+
+  <h2>3. Chronological Commit-by-Commit Engineering Log (1 to 141)</h2>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #001 &bull; <code>fa0d181</code></span>
+      <span class="commit-date">07 Jul 2026, 11:32 AM</span>
+    </div>
+    <div class="commit-title">Initial commit</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Initial commit</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #002 &bull; <code>761f1a1</code></span>
+      <span class="commit-date">07 Jul 2026, 11:40 AM</span>
+    </div>
+    <div class="commit-title">fix: remove unused test helper utility and associated configuration files</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: remove unused test helper utility and associated configuration files</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 1 file changed, 1 insertion(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #003 &bull; <code>fde704d</code></span>
+      <span class="commit-date">07 Jul 2026, 11:43 AM</span>
+    </div>
+    <div class="commit-title">chore: remove unused file configurations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: chore: remove unused file configurations</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 1 file changed, 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #004 &bull; <code>a416405</code></span>
+      <span class="commit-date">07 Jul 2026, 11:46 AM</span>
+    </div>
+    <div class="commit-title">Add TechMasterSher folder</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Add TechMasterSher folder</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 1 file changed, 1 insertion(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #005 &bull; <code>4f84e5f</code></span>
+      <span class="commit-date">07 Jul 2026, 11:48 AM</span>
+    </div>
+    <div class="commit-title">Convert TechMasterSher to normal folder</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Convert TechMasterSher to normal folder</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 77 files changed, 8415 insertions(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #006 &bull; <code>f1d871c</code></span>
+      <span class="commit-date">07 Jul 2026, 02:20 PM</span>
+    </div>
+    <div class="commit-title">feat: scaffold application structure with core pages, layouts, and site navigation components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: scaffold application structure with core pages, layouts, and site navigation components</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 19 files changed, 1121 insertions(+), 59 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #007 &bull; <code>a5abbfe</code></span>
+      <span class="commit-date">07 Jul 2026, 03:07 PM</span>
+    </div>
+    <div class="commit-title">feat: implement multi-page architecture and structured data modules for the web application</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement multi-page architecture and structured data modules for the web application</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 26 files changed, 713 insertions(+), 186 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #008 &bull; <code>2b695cc</code></span>
+      <span class="commit-date">07 Jul 2026, 03:13 PM</span>
+    </div>
+    <div class="commit-title">feat: implement custom cursor component with contextual hover labels</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement custom cursor component with contextual hover labels</li>
+    </ul>
+    <div class="commit-meta">Author: Dev626432 | Impact: 1 file changed, 3 insertions(+), 24 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #009 &bull; <code>29b8a5a</code></span>
+      <span class="commit-date">07 Jul 2026, 03:19 PM</span>
+    </div>
+    <div class="commit-title">feat: add index1.txt to project root</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add index1.txt to project root</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 0 insertions(+), 0 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #010 &bull; <code>8a2d1d7</code></span>
+      <span class="commit-date">07 Jul 2026, 03:24 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with GSAP animations and data-driven content sections</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with GSAP animations and data-driven content sections</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #011 &bull; <code>800d9a2</code></span>
+      <span class="commit-date">07 Jul 2026, 06:04 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Collaborations page, update Home layout, add GlassSphere component, and include new video data and global header</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Collaborations page, update Home layout, add GlassSphere component, and include new video data and global header</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 374 insertions(+), 151 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #012 &bull; <code>a74075c</code></span>
+      <span class="commit-date">07 Jul 2026, 07:16 PM</span>
+    </div>
+    <div class="commit-title">feat: add global styles and homepage video gallery component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add global styles and homepage video gallery component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 7 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #013 &bull; <code>da47d1f</code></span>
+      <span class="commit-date">08 Jul 2026, 11:26 AM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive video gallery component with hover-based playback and GSAP reveal animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive video gallery component with hover-based playback and GSAP reveal animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 93 insertions(+), 17 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #014 &bull; <code>a334fb6</code></span>
+      <span class="commit-date">08 Jul 2026, 02:10 PM</span>
+    </div>
+    <div class="commit-title">feat: create Home page with 3D interactive video cards and scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: create Home page with 3D interactive video cards and scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 43 insertions(+), 25 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #015 &bull; <code>330dba8</code></span>
+      <span class="commit-date">08 Jul 2026, 02:16 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with interactive video gallery and GSAP scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with interactive video gallery and GSAP scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #016 &bull; <code>1abfda4</code></span>
+      <span class="commit-date">08 Jul 2026, 03:17 PM</span>
+    </div>
+    <div class="commit-title">feat: implement core site infrastructure with new pages, layout components, and structured data modules.</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement core site infrastructure with new pages, layout components, and structured data modules.</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 19 files changed, 38 insertions(+), 38 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #017 &bull; <code>dcd3732</code></span>
+      <span class="commit-date">08 Jul 2026, 05:24 PM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive navigation layout, home page shell, and glass sphere visual component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive navigation layout, home page shell, and glass sphere visual component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 155 insertions(+), 86 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #018 &bull; <code>e186e79</code></span>
+      <span class="commit-date">08 Jul 2026, 05:48 PM</span>
+    </div>
+    <div class="commit-title">feat: implement home page with video gallery and scroll-triggered animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement home page with video gallery and scroll-triggered animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 16 insertions(+), 27 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #019 &bull; <code>8519edd</code></span>
+      <span class="commit-date">09 Jul 2026, 01:45 PM</span>
+    </div>
+    <div class="commit-title">feat: initialize page structure with Home, Journey, Mission, Services, About, Campaigns, Career, and Events pages</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: initialize page structure with Home, Journey, Mission, Services, About, Campaigns, Career, and Events pages</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 8 files changed, 209 insertions(+), 64 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #020 &bull; <code>176c663</code></span>
+      <span class="commit-date">09 Jul 2026, 01:53 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home and About pages with GSAP-powered scroll animations and interactive video cards</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home and About pages with GSAP-powered scroll animations and interactive video cards</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 1 insertion(+), 7 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #021 &bull; <code>ccd8920</code></span>
+      <span class="commit-date">09 Jul 2026, 01:54 PM</span>
+    </div>
+    <div class="commit-title">feat: implement About and Home page components with luxury styling and dynamic data rendering</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement About and Home page components with luxury styling and dynamic data rendering</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 6 insertions(+), 4 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #022 &bull; <code>a86317a</code></span>
+      <span class="commit-date">09 Jul 2026, 02:01 PM</span>
+    </div>
+    <div class="commit-title">feat: add core pages including Services, Campaigns, Career, Events, and Journey</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add core pages including Services, Campaigns, Career, Events, and Journey</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 5 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #023 &bull; <code>22061e8</code></span>
+      <span class="commit-date">10 Jul 2026, 11:48 AM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive Header component with GSAP-animated fullscreen navigation menu</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive Header component with GSAP-animated fullscreen navigation menu</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 5 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #024 &bull; <code>388cc07</code></span>
+      <span class="commit-date">10 Jul 2026, 04:05 PM</span>
+    </div>
+    <div class="commit-title">Add zenvora3d folder</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Add zenvora3d folder</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 66 files changed, 22111 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #025 &bull; <code>a89202b</code></span>
+      <span class="commit-date">10 Jul 2026, 04:27 PM</span>
+    </div>
+    <div class="commit-title">Remove zenvora3d folder</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Remove zenvora3d folder</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 66 files changed, 22111 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #026 &bull; <code>7ec4e43</code></span>
+      <span class="commit-date">10 Jul 2026, 04:47 PM</span>
+    </div>
+    <div class="commit-title">Add zenvora3d and TechMasterBackend folders</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Add zenvora3d and TechMasterBackend folders</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 126 files changed, 34257 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #027 &bull; <code>94cfeac</code></span>
+      <span class="commit-date">10 Jul 2026, 04:51 PM</span>
+    </div>
+    <div class="commit-title">Flatten TechMasterBackend folder structure</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Flatten TechMasterBackend folder structure</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 60 files changed, 0 insertions(+), 0 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #028 &bull; <code>f2eb39d</code></span>
+      <span class="commit-date">10 Jul 2026, 05:05 PM</span>
+    </div>
+    <div class="commit-title">Integrate frontend zenvora3d with TechMasterBackend API</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Integrate frontend zenvora3d with TechMasterBackend API</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 9 files changed, 475 insertions(+), 321 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #029 &bull; <code>a33c793</code></span>
+      <span class="commit-date">10 Jul 2026, 05:30 PM</span>
+    </div>
+    <div class="commit-title">Await async credentials calls on forms</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Await async credentials calls on forms</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 30 insertions(+), 13 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #030 &bull; <code>e77c83b</code></span>
+      <span class="commit-date">13 Jul 2026, 10:17 AM</span>
+    </div>
+    <div class="commit-title">chore: suppress unknown at-rule warnings in CSS lint settings</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: chore: suppress unknown at-rule warnings in CSS lint settings</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 3 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #031 &bull; <code>7c9e1db</code></span>
+      <span class="commit-date">13 Jul 2026, 05:14 PM</span>
+    </div>
+    <div class="commit-title">backend</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: backend</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3332 files changed, 398976 insertions(+), 10961 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #032 &bull; <code>92524fc</code></span>
+      <span class="commit-date">14 Jul 2026, 10:34 AM</span>
+    </div>
+    <div class="commit-title">feat: implement frontend pages and refresh project dependencies</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement frontend pages and refresh project dependencies</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3252 files changed, 6 insertions(+), 399324 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #033 &bull; <code>eaa4927</code></span>
+      <span class="commit-date">14 Jul 2026, 10:43 AM</span>
+    </div>
+    <div class="commit-title">feat: implement DatabaseContext for centralized state management and authenticated API communication</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement DatabaseContext for centralized state management and authenticated API communication</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 2 insertions(+), 13 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #034 &bull; <code>c7fc3eb</code></span>
+      <span class="commit-date">14 Jul 2026, 10:45 AM</span>
+    </div>
+    <div class="commit-title">feat: create Mission page with dynamic mission, vision, and core values rendering</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: create Mission page with dynamic mission, vision, and core values rendering</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #035 &bull; <code>874775d</code></span>
+      <span class="commit-date">14 Jul 2026, 01:53 PM</span>
+    </div>
+    <div class="commit-title">feat: sync CMS admin dashboard forms and dynamic frontend bindings for all pages including about, roadmap, contact, FAQ, privacy and terms modal</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: sync CMS admin dashboard forms and dynamic frontend bindings for all pages including about, roadmap, contact, FAQ, privacy and terms modal</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 12 files changed, 299 insertions(+), 169 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #036 &bull; <code>fa28363</code></span>
+      <span class="commit-date">14 Jul 2026, 02:06 PM</span>
+    </div>
+    <div class="commit-title">feat: implement service controller, response utility, job routes, and date helper while initializing dependencies</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement service controller, response utility, job routes, and date helper while initializing dependencies</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 195 files changed, 28800 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #037 &bull; <code>627d267</code></span>
+      <span class="commit-date">14 Jul 2026, 02:08 PM</span>
+    </div>
+    <div class="commit-title">chore: remove untracked TechMasterBackend folder</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: chore: remove untracked TechMasterBackend folder</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 195 files changed, 28800 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #038 &bull; <code>cdcf06b</code></span>
+      <span class="commit-date">14 Jul 2026, 05:45 PM</span>
+    </div>
+    <div class="commit-title">Fix backend JSON parsing, add refresh logic, and stage all changes</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Fix backend JSON parsing, add refresh logic, and stage all changes</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1699 files changed, 283792 insertions(+), 16 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #039 &bull; <code>87132b4</code></span>
+      <span class="commit-date">14 Jul 2026, 05:50 PM</span>
+    </div>
+    <div class="commit-title">chore: remove unused legacy utility module</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: chore: remove unused legacy utility module</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 8 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #040 &bull; <code>cb47742</code></span>
+      <span class="commit-date">14 Jul 2026, 11:30 PM</span>
+    </div>
+    <div class="commit-title">feat(backend): complete MongoDB connection, Cloudinary integration, and upload APIs</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat(backend): complete MongoDB connection, Cloudinary integration, and upload APIs</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1765 files changed, 4826 insertions(+), 282763 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #041 &bull; <code>9e9510c</code></span>
+      <span class="commit-date">14 Jul 2026, 11:34 PM</span>
+    </div>
+    <div class="commit-title">feat(integration): fully integrate Admin Dashboard with MongoDB and Cloudinary backend</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat(integration): fully integrate Admin Dashboard with MongoDB and Cloudinary backend</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 14 files changed, 3000 insertions(+), 417 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #042 &bull; <code>0a24449</code></span>
+      <span class="commit-date">14 Jul 2026, 11:43 PM</span>
+    </div>
+    <div class="commit-title">fix(cors): allow adjacent localhost ports dynamically in development</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix(cors): allow adjacent localhost ports dynamically in development</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 5 insertions(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #043 &bull; <code>f7a5370</code></span>
+      <span class="commit-date">14 Jul 2026, 11:45 PM</span>
+    </div>
+    <div class="commit-title">debug(cors): add diagnostic logging for CORS origin validation</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: debug(cors): add diagnostic logging for CORS origin validation</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #044 &bull; <code>f6a5a4c</code></span>
+      <span class="commit-date">14 Jul 2026, 11:48 PM</span>
+    </div>
+    <div class="commit-title">fix(models): relax required field constraints on singleton schemas to support partial form updates</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix(models): relax required field constraints on singleton schemas to support partial form updates</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 18 insertions(+), 18 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #045 &bull; <code>07c0e83</code></span>
+      <span class="commit-date">14 Jul 2026, 11:58 PM</span>
+    </div>
+    <div class="commit-title">fix(sync): implement CMSData generic key-value store and disable rate limiting in development</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix(sync): implement CMSData generic key-value store and disable rate limiting in development</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 76 insertions(+), 103 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #046 &bull; <code>6fa23cf</code></span>
+      <span class="commit-date">15 Jul 2026, 12:21 AM</span>
+    </div>
+    <div class="commit-title">feat: completely remove frontend local JSON fallbacks and connect to MongoDB API</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: completely remove frontend local JSON fallbacks and connect to MongoDB API</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 30 files changed, 43 insertions(+), 925 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #047 &bull; <code>3698812</code></span>
+      <span class="commit-date">15 Jul 2026, 12:51 AM</span>
+    </div>
+    <div class="commit-title">refactor: map UI natively to exactly match backend API schema</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: refactor: map UI natively to exactly match backend API schema</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 73 insertions(+), 372 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #048 &bull; <code>65a735a</code></span>
+      <span class="commit-date">15 Jul 2026, 01:18 PM</span>
+    </div>
+    <div class="commit-title">feat: implement DataContext to manage application state with backend CMS synchronization and local JSON fallbacks</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement DataContext to manage application state with backend CMS synchronization and local JSON fallbacks</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 14 files changed, 171 insertions(+), 75 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #049 &bull; <code>8c4da9d</code></span>
+      <span class="commit-date">15 Jul 2026, 01:33 PM</span>
+    </div>
+    <div class="commit-title">feat: initialize backend project with package.json and core dependencies</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: initialize backend project with package.json and core dependencies</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #050 &bull; <code>c43e3b2</code></span>
+      <span class="commit-date">15 Jul 2026, 01:52 PM</span>
+    </div>
+    <div class="commit-title">feat: implement centralized CMS data provider and global media management system across projects</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement centralized CMS data provider and global media management system across projects</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 11 files changed, 19 insertions(+), 20 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #051 &bull; <code>173bc15</code></span>
+      <span class="commit-date">15 Jul 2026, 01:58 PM</span>
+    </div>
+    <div class="commit-title">feat: configure vite with react, tailwind, and manual chunk splitting for optimized vendor bundles</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: configure vite with react, tailwind, and manual chunk splitting for optimized vendor bundles</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 43 insertions(+), 3 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #052 &bull; <code>01c1a27</code></span>
+      <span class="commit-date">15 Jul 2026, 02:08 PM</span>
+    </div>
+    <div class="commit-title">feat: add DataContext provider to manage and sync global CMS application state</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add DataContext provider to manage and sync global CMS application state</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 20 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #053 &bull; <code>b693d22</code></span>
+      <span class="commit-date">15 Jul 2026, 03:26 PM</span>
+    </div>
+    <div class="commit-title">feat: implement CoreServices module with CRUD functionality for service cards and dynamic header configuration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement CoreServices module with CRUD functionality for service cards and dynamic header configuration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 307 insertions(+), 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #054 &bull; <code>19b88e5</code></span>
+      <span class="commit-date">15 Jul 2026, 03:33 PM</span>
+    </div>
+    <div class="commit-title">feat: create Home page with dynamic video grid and GSAP scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: create Home page with dynamic video grid and GSAP scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 7 insertions(+), 7 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #055 &bull; <code>0bee5f9</code></span>
+      <span class="commit-date">15 Jul 2026, 03:52 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with dynamic video grid and interactive GSAP animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with dynamic video grid and interactive GSAP animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+), 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #056 &bull; <code>f82796b</code></span>
+      <span class="commit-date">15 Jul 2026, 04:16 PM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic About page with CMS-driven content sections</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic About page with CMS-driven content sections</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 297 insertions(+), 203 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #057 &bull; <code>fd8804b</code></span>
+      <span class="commit-date">15 Jul 2026, 10:38 PM</span>
+    </div>
+    <div class="commit-title">feat: implement multi-page site structure, dynamic data context, and core contact inquiry functionality</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement multi-page site structure, dynamic data context, and core contact inquiry functionality</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 25 files changed, 394 insertions(+), 47 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #058 &bull; <code>bbb107b</code></span>
+      <span class="commit-date">15 Jul 2026, 11:40 PM</span>
+    </div>
+    <div class="commit-title">feat: Add Core Collaborators CMS module to About page</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: Add Core Collaborators CMS module to About page</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 159 insertions(+), 17 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #059 &bull; <code>04c34c2</code></span>
+      <span class="commit-date">15 Jul 2026, 11:46 PM</span>
+    </div>
+    <div class="commit-title">fix: replace missing lucide-react social icons with custom svgs</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: replace missing lucide-react social icons with custom svgs</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 13 insertions(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #060 &bull; <code>185f6a2</code></span>
+      <span class="commit-date">16 Jul 2026, 10:08 AM</span>
+    </div>
+    <div class="commit-title">chore: remove redundant documentation and guide files</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: chore: remove redundant documentation and guide files</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 7 files changed, 2395 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #061 &bull; <code>0df3f9c</code></span>
+      <span class="commit-date">16 Jul 2026, 01:11 PM</span>
+    </div>
+    <div class="commit-title">feat: remove video autoplay and configure hover-to-play across the website</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: remove video autoplay and configure hover-to-play across the website</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 44 insertions(+), 10 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #062 &bull; <code>926f8c7</code></span>
+      <span class="commit-date">16 Jul 2026, 04:54 PM</span>
+    </div>
+    <div class="commit-title">feat: global UI/UX standardization, typography, performance, and animated counters</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: global UI/UX standardization, typography, performance, and animated counters</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 19 files changed, 206 insertions(+), 144 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #063 &bull; <code>5a5ff29</code></span>
+      <span class="commit-date">16 Jul 2026, 05:45 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with interactive video cards and GSAP scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with interactive video cards and GSAP scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 93 insertions(+), 21 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #064 &bull; <code>30231ba</code></span>
+      <span class="commit-date">16 Jul 2026, 05:55 PM</span>
+    </div>
+    <div class="commit-title">feat: implement comprehensive set of site pages for content presentation and project display</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement comprehensive set of site pages for content presentation and project display</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 17 files changed, 41 insertions(+), 41 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #065 &bull; <code>025414b</code></span>
+      <span class="commit-date">16 Jul 2026, 06:21 PM</span>
+    </div>
+    <div class="commit-title">feat: add Home page component with interactive video portfolio and GSAP animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add Home page component with interactive video portfolio and GSAP animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 26 insertions(+), 27 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #066 &bull; <code>0f45903</code></span>
+      <span class="commit-date">16 Jul 2026, 09:46 PM</span>
+    </div>
+    <div class="commit-title">feat: implement core project pages and animate timeline component with GSAP</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement core project pages and animate timeline component with GSAP</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 19 files changed, 107 insertions(+), 77 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #067 &bull; <code>f1e41a7</code></span>
+      <span class="commit-date">18 Jul 2026, 02:38 AM</span>
+    </div>
+    <div class="commit-title">feat: implement CMS-driven content management system with backend models, routes, and dynamic frontend components for services, testimonials, and legal pages.</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement CMS-driven content management system with backend models, routes, and dynamic frontend components for services, testimonials, and legal pages.</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 45 files changed, 4892 insertions(+), 1229 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #068 &bull; <code>29c9ac0</code></span>
+      <span class="commit-date">18 Jul 2026, 02:41 AM</span>
+    </div>
+    <div class="commit-title">feat: add interactive footer layout with 3D components and create testimonial page structure</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add interactive footer layout with 3D components and create testimonial page structure</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 7 insertions(+), 9 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #069 &bull; <code>547b504</code></span>
+      <span class="commit-date">18 Jul 2026, 02:44 AM</span>
+    </div>
+    <div class="commit-title">feat: add Testimonials page with dynamic sections and video support</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add Testimonials page with dynamic sections and video support</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #070 &bull; <code>78a7921</code></span>
+      <span class="commit-date">18 Jul 2026, 11:24 AM</span>
+    </div>
+    <div class="commit-title">feat: add initial project layout including header, footer, home page, and custom cursor components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add initial project layout including header, footer, home page, and custom cursor components</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 68 insertions(+), 103 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #071 &bull; <code>33f1213</code></span>
+      <span class="commit-date">18 Jul 2026, 11:29 AM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive navigation header and initialize landing page layout</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive navigation header and initialize landing page layout</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 2 insertions(+), 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #072 &bull; <code>a1554ce</code></span>
+      <span class="commit-date">18 Jul 2026, 12:07 PM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive Home page component with dynamic video galleries and GSAP animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive Home page component with dynamic video galleries and GSAP animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 38 insertions(+), 44 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #073 &bull; <code>aa2273f</code></span>
+      <span class="commit-date">18 Jul 2026, 12:16 PM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive Home page with video showcase and custom layout Footer</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive Home page with video showcase and custom layout Footer</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 3 insertions(+), 62 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #074 &bull; <code>db3eb52</code></span>
+      <span class="commit-date">18 Jul 2026, 12:23 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with interactive video cards and GSAP scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with interactive video cards and GSAP scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+), 8 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #075 &bull; <code>53be29d</code></span>
+      <span class="commit-date">18 Jul 2026, 01:33 PM</span>
+    </div>
+    <div class="commit-title">feat: add new Footer, Header, and Home page layouts with 3D components and interactive UI elements</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add new Footer, Header, and Home page layouts with 3D components and interactive UI elements</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 24 insertions(+), 13 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #076 &bull; <code>bad46ec</code></span>
+      <span class="commit-date">20 Jul 2026, 04:08 PM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive Header navigation with scroll-based view counter and add base Home page layout</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive Header navigation with scroll-based view counter and add base Home page layout</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 32 insertions(+), 149 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #077 &bull; <code>ffaf179</code></span>
+      <span class="commit-date">20 Jul 2026, 04:11 PM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive Home page with GSAP-animated video portfolio cards</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive Home page with GSAP-animated video portfolio cards</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 6 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #078 &bull; <code>a8230de</code></span>
+      <span class="commit-date">20 Jul 2026, 04:13 PM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive Header component with animated navigation and scroll-based view counter</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive Header component with animated navigation and scroll-based view counter</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #079 &bull; <code>10447df</code></span>
+      <span class="commit-date">20 Jul 2026, 04:17 PM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive Header component with dynamic scroll counter and navigation overlay</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive Header component with dynamic scroll counter and navigation overlay</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #080 &bull; <code>c576e60</code></span>
+      <span class="commit-date">21 Jul 2026, 01:14 PM</span>
+    </div>
+    <div class="commit-title">feat: implement navigation system and add modular components for carousel and page structure</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement navigation system and add modular components for carousel and page structure</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 484 insertions(+), 86 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #081 &bull; <code>d4ebabc</code></span>
+      <span class="commit-date">21 Jul 2026, 01:22 PM</span>
+    </div>
+    <div class="commit-title">feat: implement interactive StripeReelsCarousel and LongVideosCarousel components for media showcase</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement interactive StripeReelsCarousel and LongVideosCarousel components for media showcase</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 5 insertions(+), 155 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #082 &bull; <code>fd0ef8c</code></span>
+      <span class="commit-date">21 Jul 2026, 05:38 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Stripe-inspired interactive reels carousel component with motion animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Stripe-inspired interactive reels carousel component with motion animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 4 insertions(+), 37 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #083 &bull; <code>efffb53</code></span>
+      <span class="commit-date">21 Jul 2026, 05:41 PM</span>
+    </div>
+    <div class="commit-title">feat: add Stripe-inspired interactive reels carousel component with drag and animation support</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add Stripe-inspired interactive reels carousel component with drag and animation support</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #084 &bull; <code>73bd934</code></span>
+      <span class="commit-date">22 Jul 2026, 09:25 AM</span>
+    </div>
+    <div class="commit-title">Update carousel animations long video layout and scroll views counter</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Update carousel animations long video layout and scroll views counter</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 259 insertions(+), 233 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #085 &bull; <code>3f12cdb</code></span>
+      <span class="commit-date">22 Jul 2026, 01:22 PM</span>
+    </div>
+    <div class="commit-title">feat: implement LongVideosCarousel and StripeReelsCarousel components for symmetrical video display</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement LongVideosCarousel and StripeReelsCarousel components for symmetrical video display</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 98 insertions(+), 57 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #086 &bull; <code>88e8c67</code></span>
+      <span class="commit-date">23 Jul 2026, 01:40 PM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic home page with animated carousels and GSAP scroll interactions</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic home page with animated carousels and GSAP scroll interactions</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 27 files changed, 493 insertions(+), 288 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #087 &bull; <code>9e636ef</code></span>
+      <span class="commit-date">23 Jul 2026, 04:57 PM</span>
+    </div>
+    <div class="commit-title">feat: implement homepage CMS model, YouTube utility helpers, and interactive media carousel components.</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement homepage CMS model, YouTube utility helpers, and interactive media carousel components.</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 8 files changed, 328 insertions(+), 169 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #088 &bull; <code>270e480</code></span>
+      <span class="commit-date">23 Jul 2026, 05:22 PM</span>
+    </div>
+    <div class="commit-title">feat: implement GlassSphere 3D component and integrate it into Home page layout</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement GlassSphere 3D component and integrate it into Home page layout</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 13 insertions(+), 12 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #089 &bull; <code>ee70510</code></span>
+      <span class="commit-date">23 Jul 2026, 09:08 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with GSAP-powered scroll animations and dynamic content rendering</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with GSAP-powered scroll animations and dynamic content rendering</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 17 insertions(+), 49 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #090 &bull; <code>e7d897b</code></span>
+      <span class="commit-date">24 Jul 2026, 11:05 AM</span>
+    </div>
+    <div class="commit-title">feat: add Collaborations and Home page templates with integrated GlassSphere component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add Collaborations and Home page templates with integrated GlassSphere component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 14 insertions(+), 13 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #091 &bull; <code>37f4bd4</code></span>
+      <span class="commit-date">24 Jul 2026, 01:27 PM</span>
+    </div>
+    <div class="commit-title">feat: implement LongVideosCarousel component with interactive 3D perspective and YouTube metadata integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement LongVideosCarousel component with interactive 3D perspective and YouTube metadata integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 150 insertions(+), 64 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #092 &bull; <code>6397e53</code></span>
+      <span class="commit-date">24 Jul 2026, 01:30 PM</span>
+    </div>
+    <div class="commit-title">feat: add 3D interactive LongVideosCarousel component with YouTube metadata support</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add 3D interactive LongVideosCarousel component with YouTube metadata support</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #093 &bull; <code>4865fbd</code></span>
+      <span class="commit-date">24 Jul 2026, 01:47 PM</span>
+    </div>
+    <div class="commit-title">feat: implement LongVideosCarousel component with 3D perspective animations and YouTube metadata integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement LongVideosCarousel component with 3D perspective animations and YouTube metadata integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 17 insertions(+), 17 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #094 &bull; <code>142ddaa</code></span>
+      <span class="commit-date">24 Jul 2026, 02:28 PM</span>
+    </div>
+    <div class="commit-title">feat: add LongVideosCarousel component with 3D perspective scroll and dynamic metadata support</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add LongVideosCarousel component with 3D perspective scroll and dynamic metadata support</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 18 insertions(+), 17 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #095 &bull; <code>fc25bab</code></span>
+      <span class="commit-date">24 Jul 2026, 02:59 PM</span>
+    </div>
+    <div class="commit-title">feat: add LongVideosCarousel component with 3D perspective scroll and dynamic YouTube metadata fetching</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add LongVideosCarousel component with 3D perspective scroll and dynamic YouTube metadata fetching</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 3 insertions(+), 3 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #096 &bull; <code>bc218c3</code></span>
+      <span class="commit-date">25 Jul 2026, 01:46 PM</span>
+    </div>
+    <div class="commit-title">Fix: transparent logo assets, remove logo grid, enlarge logos, and rename footer columns</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: Fix: transparent logo assets, remove logo grid, enlarge logos, and rename footer columns</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 27 files changed, 325 insertions(+), 311 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #097 &bull; <code>78c1cdd</code></span>
+      <span class="commit-date">26 Jul 2026, 02:29 PM</span>
+    </div>
+    <div class="commit-title">feat: implement 3D coverflow reels carousel and add script to query CMS database for specific strings</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement 3D coverflow reels carousel and add script to query CMS database for specific strings</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 156 insertions(+), 32 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #098 &bull; <code>9eb09f4</code></span>
+      <span class="commit-date">27 Jul 2026, 01:51 PM</span>
+    </div>
+    <div class="commit-title">feat: add About page, header scroll counter, and backend database inspection utilities with supporting media assets</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add About page, header scroll counter, and backend database inspection utilities with supporting media assets</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 22 files changed, 552 insertions(+), 527 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #099 &bull; <code>97d6879</code></span>
+      <span class="commit-date">27 Jul 2026, 01:55 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with dynamic video content and GSAP-powered reveal animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with dynamic video content and GSAP-powered reveal animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 9 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #100 &bull; <code>e354911</code></span>
+      <span class="commit-date">28 Jul 2026, 01:16 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with GSAP-powered scroll animations and dynamic video data integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with GSAP-powered scroll animations and dynamic video data integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 35 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #101 &bull; <code>572e88a</code></span>
+      <span class="commit-date">29 Jul 2026, 11:34 AM</span>
+    </div>
+    <div class="commit-title">feat: complete Navbar CMS integration, admin dashboard rebuild & backend mapping</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: complete Navbar CMS integration, admin dashboard rebuild & backend mapping</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 10 files changed, 1738 insertions(+), 724 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #102 &bull; <code>bd0535a</code></span>
+      <span class="commit-date">29 Jul 2026, 12:02 PM</span>
+    </div>
+    <div class="commit-title">fix: resolve admin dashboard loading timeout & add offline fallback</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: resolve admin dashboard loading timeout & add offline fallback</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 41 insertions(+), 14 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #103 &bull; <code>f385272</code></span>
+      <span class="commit-date">29 Jul 2026, 12:11 PM</span>
+    </div>
+    <div class="commit-title">feat: implement CMS modules for homepage, navbar, and site management with backend integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement CMS modules for homepage, navbar, and site management with backend integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 11 files changed, 738 insertions(+), 1779 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #104 &bull; <code>f67f0c6</code></span>
+      <span class="commit-date">30 Jul 2026, 02:00 PM</span>
+    </div>
+    <div class="commit-title">feat: implement modular CMS structure for Zenvora3D admin pages and TechMaster platform components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement modular CMS structure for Zenvora3D admin pages and TechMaster platform components</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 49 files changed, 14069 insertions(+), 10750 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #105 &bull; <code>102f370</code></span>
+      <span class="commit-date">30 Jul 2026, 06:10 PM</span>
+    </div>
+    <div class="commit-title">feat: implement central CMS aggregate API, sync models, and add corresponding frontend modules and data context</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement central CMS aggregate API, sync models, and add corresponding frontend modules and data context</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 19 files changed, 1167 insertions(+), 335 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #106 &bull; <code>38ef306</code></span>
+      <span class="commit-date">31 Jul 2026, 10:17 AM</span>
+    </div>
+    <div class="commit-title">feat: implement modular content management system for site policies, routes, and UI components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement modular content management system for site policies, routes, and UI components</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 64 files changed, 4048 insertions(+), 1050 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #107 &bull; <code>71638d3</code></span>
+      <span class="commit-date">31 Jul 2026, 10:58 AM</span>
+    </div>
+    <div class="commit-title">feat: update Render backend URL to https://techmasterbackend.onrender.com across website and admin dashboard</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: update Render backend URL to https://techmasterbackend.onrender.com across website and admin dashboard</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 23 files changed, 24 insertions(+), 24 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #108 &bull; <code>cc5168d</code></span>
+      <span class="commit-date">31 Jul 2026, 11:13 AM</span>
+    </div>
+    <div class="commit-title">fix: smart API URL normalizer and graceful fallback hydration to prevent API connection error screen on Vercel</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: smart API URL normalizer and graceful fallback hydration to prevent API connection error screen on Vercel</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 14 insertions(+), 14 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #109 &bull; <code>b3cb484</code></span>
+      <span class="commit-date">31 Jul 2026, 12:00 PM</span>
+    </div>
+    <div class="commit-title">fix: safe array extraction for longVideos and shortsReels in Home.tsx to fix uncaught map TypeError crash</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: safe array extraction for longVideos and shortsReels in Home.tsx to fix uncaught map TypeError crash</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 15 insertions(+), 3 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #110 &bull; <code>07077db</code></span>
+      <span class="commit-date">31 Jul 2026, 01:50 PM</span>
+    </div>
+    <div class="commit-title">feat: complete homepage dynamic cms integration, pc media upload, channels circle avatar, brand wall white logos, and clean admin tabs</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: complete homepage dynamic cms integration, pc media upload, channels circle avatar, brand wall white logos, and clean admin tabs</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 18 files changed, 662 insertions(+), 278 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #111 &bull; <code>747ac08</code></span>
+      <span class="commit-date">31 Jul 2026, 01:53 PM</span>
+    </div>
+    <div class="commit-title">fix: remove unused import in Home.tsx to resolve Vercel build TS6133 error</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: fix: remove unused import in Home.tsx to resolve Vercel build TS6133 error</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #112 &bull; <code>83f4eab</code></span>
+      <span class="commit-date">01 Aug 2026, 02:41 PM</span>
+    </div>
+    <div class="commit-title">feat: implement featured video seeding and backend routes for homepage content management</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement featured video seeding and backend routes for homepage content management</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 21 files changed, 1706 insertions(+), 380 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #113 &bull; <code>47d2bf9</code></span>
+      <span class="commit-date">03 Aug 2026, 10:37 AM</span>
+    </div>
+    <div class="commit-title">feat: implement core application structure with page routing, scroll navigation, and home page content fetching</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement core application structure with page routing, scroll navigation, and home page content fetching</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 5 files changed, 155 insertions(+), 184 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #114 &bull; <code>de4e7b1</code></span>
+      <span class="commit-date">03 Aug 2026, 04:33 PM</span>
+    </div>
+    <div class="commit-title">feat: implement backend scripts for database maintenance and integrate featured reels with Cloudinary and frontend components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement backend scripts for database maintenance and integrate featured reels with Cloudinary and frontend components</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 14 files changed, 1123 insertions(+), 234 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #115 &bull; <code>62fffd4</code></span>
+      <span class="commit-date">03 Aug 2026, 04:40 PM</span>
+    </div>
+    <div class="commit-title">feat: implement backend API foundation with middleware and add Stripe-integrated reel carousel component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement backend API foundation with middleware and add Stripe-integrated reel carousel component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 5 insertions(+), 3 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #116 &bull; <code>44e6f08</code></span>
+      <span class="commit-date">03 Aug 2026, 05:35 PM</span>
+    </div>
+    <div class="commit-title">feat: add StripeReelsCarousel component with YouTube and Instagram integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add StripeReelsCarousel component with YouTube and Instagram integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 21 insertions(+), 20 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #117 &bull; <code>0fecc19</code></span>
+      <span class="commit-date">03 Aug 2026, 05:49 PM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic home page with CMS data integration and add 3D glass sphere component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic home page with CMS data integration and add 3D glass sphere component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 9 insertions(+), 16 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #118 &bull; <code>a644027</code></span>
+      <span class="commit-date">03 Aug 2026, 05:51 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Home page with dynamic CMS data fetching and scroll animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Home page with dynamic CMS data fetching and scroll animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #119 &bull; <code>b8645fe</code></span>
+      <span class="commit-date">03 Aug 2026, 05:55 PM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic home page with real-time CMS integration and add GlassSphere component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic home page with real-time CMS integration and add GlassSphere component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 3 insertions(+), 3 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #120 &bull; <code>a58ecbe</code></span>
+      <span class="commit-date">04 Aug 2026, 05:56 PM</span>
+    </div>
+    <div class="commit-title">feat: initialize frontend modules, layout components, and backend routes while scaffolding infrastructure for featured videos and content management</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: initialize frontend modules, layout components, and backend routes while scaffolding infrastructure for featured videos and content management</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 15 files changed, 488 insertions(+), 1915 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #121 &bull; <code>9a5fcba</code></span>
+      <span class="commit-date">04 Aug 2026, 06:08 PM</span>
+    </div>
+    <div class="commit-title">feat: implement StripeReelsCarousel component for embedded YouTube and Instagram video playback</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement StripeReelsCarousel component for embedded YouTube and Instagram video playback</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 13 insertions(+), 22 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #122 &bull; <code>985d9c3</code></span>
+      <span class="commit-date">04 Aug 2026, 06:36 PM</span>
+    </div>
+    <div class="commit-title">feat: implement 3D interactive LongVideosCarousel component with YouTube metadata fetching</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement 3D interactive LongVideosCarousel component with YouTube metadata fetching</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 18 insertions(+), 11 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #123 &bull; <code>093efc0</code></span>
+      <span class="commit-date">05 Aug 2026, 02:37 PM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic metadata extraction, stabilize CMS contact modules, resolve upload pathing, and enable footer/dashboard analytics synchronization</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic metadata extraction, stabilize CMS contact modules, resolve upload pathing, and enable footer/dashboard analytics synchronization</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 14 files changed, 743 insertions(+), 250 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #124 &bull; <code>1a2b489</code></span>
+      <span class="commit-date">06 Aug 2026, 12:33 PM</span>
+    </div>
+    <div class="commit-title">feat: add modular page components and utility scripts for project management and site navigation</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add modular page components and utility scripts for project management and site navigation</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 8 files changed, 91 insertions(+), 68 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #125 &bull; <code>babd8a5</code></span>
+      <span class="commit-date">06 Aug 2026, 12:46 PM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive Header component with scroll-linked navigation and fullscreen overlay menu</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive Header component with scroll-linked navigation and fullscreen overlay menu</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 20 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #126 &bull; <code>29c4ad7</code></span>
+      <span class="commit-date">06 Aug 2026, 12:51 PM</span>
+    </div>
+    <div class="commit-title">feat: add responsive Header component with integrated navigation, scroll-based metrics, and GSAP-animated menu overlay</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add responsive Header component with integrated navigation, scroll-based metrics, and GSAP-animated menu overlay</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+), 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #127 &bull; <code>24925ca</code></span>
+      <span class="commit-date">06 Aug 2026, 02:19 PM</span>
+    </div>
+    <div class="commit-title">feat: add GlassSphere component and update project documentation with feature walkthrough</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add GlassSphere component and update project documentation with feature walkthrough</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 12 insertions(+), 8 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #128 &bull; <code>41206a5</code></span>
+      <span class="commit-date">06 Aug 2026, 02:25 PM</span>
+    </div>
+    <div class="commit-title">feat: add GlassSphere component with custom shader and responsive parallax logic</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add GlassSphere component with custom shader and responsive parallax logic</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 1 insertion(+), 1 deletion(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #129 &bull; <code>08b80b0</code></span>
+      <span class="commit-date">06 Aug 2026, 03:22 PM</span>
+    </div>
+    <div class="commit-title">docs: initialize project documentation with architecture and setup guide</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: docs: initialize project documentation with architecture and setup guide</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 149 insertions(+)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #130 &bull; <code>0e79bd4</code></span>
+      <span class="commit-date">12 Aug 2026, 02:41 PM</span>
+    </div>
+    <div class="commit-title">feat: implement core frontend structure and CMS-driven dynamic data handling for the website</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement core frontend structure and CMS-driven dynamic data handling for the website</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 13 files changed, 230 insertions(+), 142 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #131 &bull; <code>4fafcc6</code></span>
+      <span class="commit-date">12 Aug 2026, 02:47 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Portfolio, Home, and Footer components for the application frontend</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Portfolio, Home, and Footer components for the application frontend</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 3 files changed, 1 insertion(+), 36 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #132 &bull; <code>5907b31</code></span>
+      <span class="commit-date">12 Aug 2026, 03:13 PM</span>
+    </div>
+    <div class="commit-title">feat: implement Portfolio page with channel data management and social media integration</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement Portfolio page with channel data management and social media integration</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 8 insertions(+), 5 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #133 &bull; <code>0b79584</code></span>
+      <span class="commit-date">13 Aug 2026, 11:24 AM</span>
+    </div>
+    <div class="commit-title">feat: add home page, portfolio page, glass sphere animation, and brand logo asset</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add home page, portfolio page, glass sphere animation, and brand logo asset</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 4 files changed, 32 insertions(+), 28 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #134 &bull; <code>6e7e12f</code></span>
+      <span class="commit-date">13 Aug 2026, 11:29 AM</span>
+    </div>
+    <div class="commit-title">feat: add GlassSphere component with custom shader for logo rendering and scroll-based parallax animations</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add GlassSphere component with custom shader for logo rendering and scroll-based parallax animations</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 2 insertions(+), 2 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #135 &bull; <code>b77d0c3</code></span>
+      <span class="commit-date">13 Aug 2026, 02:38 PM</span>
+    </div>
+    <div class="commit-title">feat: initialize agent framework with comprehensive skill sets, architectural templates, and automated workflow scripts</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: initialize agent framework with comprehensive skill sets, architectural templates, and automated workflow scripts</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 225 files changed, 39957 insertions(+), 12 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #136 &bull; <code>3371ec8</code></span>
+      <span class="commit-date">13 Aug 2026, 03:26 PM</span>
+    </div>
+    <div class="commit-title">feat: implement LongVideosCarousel component with 3D perspective scroll and dynamic metadata support</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement LongVideosCarousel component with 3D perspective scroll and dynamic metadata support</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 1 file changed, 20 insertions(+), 10 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #137 &bull; <code>29f20eb</code></span>
+      <span class="commit-date">15 Aug 2026, 09:33 AM</span>
+    </div>
+    <div class="commit-title">feat: implement new header, home, and portfolio page layouts with global navigation and GSAP-powered interactive elements</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement new header, home, and portfolio page layouts with global navigation and GSAP-powered interactive elements</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 6 files changed, 96 insertions(+), 390 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #138 &bull; <code>e6bc5bc</code></span>
+      <span class="commit-date">15 Aug 2026, 09:47 AM</span>
+    </div>
+    <div class="commit-title">feat: initialize project structure with custom CSS theme and core layout components</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: initialize project structure with custom CSS theme and core layout components</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 6 files changed, 135 insertions(+), 135 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #139 &bull; <code>5293378</code></span>
+      <span class="commit-date">15 Aug 2026, 09:57 AM</span>
+    </div>
+    <div class="commit-title">feat: implement responsive GlassSphere 3D component and integrate live CMS-driven content into Home page</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement responsive GlassSphere 3D component and integrate live CMS-driven content into Home page</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 7 insertions(+), 7 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #140 &bull; <code>efe9810</code></span>
+      <span class="commit-date">15 Aug 2026, 10:05 AM</span>
+    </div>
+    <div class="commit-title">feat: implement dynamic home page content management and add glass sphere component</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: implement dynamic home page content management and add glass sphere component</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 4 insertions(+), 4 deletions(-)</div>
+  </div>
+
+  <div class="commit-card">
+    <div class="commit-header">
+      <span class="commit-num">Commit #141 &bull; <code>16eb891</code></span>
+      <span class="commit-date">15 Aug 2026, 10:12 AM</span>
+    </div>
+    <div class="commit-title">feat: add GlassSphere 3D component and integrate it into the Home page hero section</div>
+    <ul class="commit-bullets">
+      <li>Implemented core logic, layout structure, and stability updates for: feat: add GlassSphere 3D component and integrate it into the Home page hero section</li>
+    </ul>
+    <div class="commit-meta">Author: ZenvoraPvtLtd | Impact: 2 files changed, 5 insertions(+), 5 deletions(-)</div>
+  </div>
+
+</div>
+</body>
+</html>

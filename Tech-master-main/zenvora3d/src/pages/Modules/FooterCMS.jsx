@@ -1,0 +1,477 @@
+import React, { useState, useEffect } from 'react';
+import { PageShellContainer } from '../../components/PageShellContainer';
+import { useDatabase } from '../../context/DatabaseContext';
+import { Toast } from '../../components/ui/Toast';
+import { Button } from '../../components/ui/Button';
+import { 
+  Save, Check, Plus, Trash2, Mail, Phone, MapPin, 
+  Globe, ShieldAlert, Sparkles, Layers, Link as LinkIcon 
+} from 'lucide-react';
+
+const defaultFooterData = {
+  brandTitle: "Let's Build <br/><span class='text-gold font-sans font-extrabold'>Something Amazing.</span>",
+  brandDescription: "We create premium websites, web applications and digital experiences that help brands grow online.",
+  columns: [
+    {
+      header: "IDENTITY",
+      links: [
+        { name: "HOME PAGE", id: "home" },
+        { name: "ABOUT FOUNDER", id: "about" },
+        { name: "JOURNEY", id: "journey" },
+      ]
+    },
+    {
+      header: "ENGAGEMENT",
+      links: [
+        { name: "OUR WORK", id: "portfolio" },
+        { name: "BLOG", id: "blog" },
+        { name: "CAREERS", id: "career" },
+      ]
+    },
+    {
+      header: "QUICK LINKS",
+      links: [
+        { name: "CONTACT PAGE", id: "contact" },
+        { name: "PRIVACY POLICY", id: "privacy" },
+        { name: "TERMS OF SERVICE", id: "terms" },
+      ]
+    }
+  ],
+  cards: {
+    email: "",
+    phone: "",
+    youtubeTitle: "",
+    youtubeUrl: "",
+    creatorHqAddress: "",
+    googleMapsUrl: ""
+  },
+  socials: {
+    youtube: "",
+    linkedin: "",
+    instagram: "",
+    facebook: "",
+    twitter: ""
+  },
+  copyrightText: "TECH MASTER. ALL RIGHTS RESERVED.",
+  developerText: ""
+};
+
+const cleanSocialUrl = (url) => {
+  if (!url || typeof url !== 'string') return "";
+  if (url.includes("techmasterf")) return "";
+  return url.trim();
+};
+
+const mergeFooterData = (incomingFooter) => {
+  if (!incomingFooter) return defaultFooterData;
+  const rawSocials = incomingFooter.socials || {};
+  const rawCards = incomingFooter.cards || {};
+  return {
+    brandTitle: incomingFooter.brandTitle !== undefined ? incomingFooter.brandTitle : defaultFooterData.brandTitle,
+    brandDescription: incomingFooter.brandDescription !== undefined ? incomingFooter.brandDescription : defaultFooterData.brandDescription,
+    columns: incomingFooter.columns && incomingFooter.columns.length > 0 ? incomingFooter.columns : defaultFooterData.columns,
+    cards: {
+      email: rawCards.email !== undefined ? rawCards.email : defaultFooterData.cards.email,
+      phone: rawCards.phone !== undefined ? rawCards.phone : defaultFooterData.cards.phone,
+      youtubeTitle: rawCards.youtubeTitle !== undefined ? rawCards.youtubeTitle : defaultFooterData.cards.youtubeTitle,
+      youtubeUrl: rawCards.youtubeUrl !== undefined ? rawCards.youtubeUrl : defaultFooterData.cards.youtubeUrl,
+      creatorHqAddress: rawCards.creatorHqAddress !== undefined ? rawCards.creatorHqAddress : defaultFooterData.cards.creatorHqAddress,
+      googleMapsUrl: rawCards.googleMapsUrl !== undefined ? rawCards.googleMapsUrl : defaultFooterData.cards.googleMapsUrl
+    },
+    socials: {
+      youtube: cleanSocialUrl(rawSocials.youtube),
+      linkedin: cleanSocialUrl(rawSocials.linkedin),
+      instagram: cleanSocialUrl(rawSocials.instagram),
+      facebook: cleanSocialUrl(rawSocials.facebook),
+      twitter: cleanSocialUrl(rawSocials.twitter)
+    },
+    copyrightText: incomingFooter.copyrightText !== undefined ? incomingFooter.copyrightText : "",
+    developerText: incomingFooter.developerText !== undefined ? incomingFooter.developerText : ""
+  };
+};
+
+export const FooterCMS = () => {
+  const { db, updateSection, apiFetch } = useDatabase();
+  const [toast, setToast] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const [formData, setFormData] = useState(() => mergeFooterData(db?.footer));
+
+  // Custom form state setter that marks form as dirty (edited by user)
+  const updateFormData = (updater) => {
+    setIsDirty(true);
+    setFormData(updater);
+  };
+
+  useEffect(() => {
+    // Only synchronize from database updates if user has NOT modified the form
+    if (db?.footer && !isDirty) {
+      setFormData(mergeFooterData(db.footer));
+    }
+  }, [db?.footer, isDirty]);
+
+  const showToast = (msg, type = 'success') => setToast({ id: Date.now(), message: msg, type });
+
+  const handleSave = async () => {
+    setIsSaved(true);
+    try {
+      const sanitizedFormData = {
+        ...formData,
+        socials: {
+          youtube: cleanSocialUrl(formData.socials?.youtube),
+          linkedin: cleanSocialUrl(formData.socials?.linkedin),
+          instagram: cleanSocialUrl(formData.socials?.instagram),
+          facebook: cleanSocialUrl(formData.socials?.facebook),
+          twitter: cleanSocialUrl(formData.socials?.twitter)
+        }
+      };
+
+      updateSection('footer', sanitizedFormData);
+      if (apiFetch) {
+        await apiFetch('/cms/update', {
+          method: 'POST',
+          body: JSON.stringify({ key: 'footer', value: sanitizedFormData })
+        });
+      }
+      setFormData(sanitizedFormData);
+      setIsDirty(false);
+      showToast('Footer settings saved successfully!', 'success');
+    } catch (err) {
+      console.error("Save error:", err);
+      showToast('Footer saved locally!', 'warning');
+    } finally {
+      setTimeout(() => setIsSaved(false), 2000);
+    }
+  };
+
+  // Helper to handle column header update
+  const handleColumnHeaderChange = (colIdx, val) => {
+    const updatedCols = [...formData.columns];
+    updatedCols[colIdx].header = val;
+    updateFormData({ ...formData, columns: updatedCols });
+  };
+
+  // Helper to update specific link
+  const handleLinkChange = (colIdx, linkIdx, field, val) => {
+    const updatedCols = [...formData.columns];
+    updatedCols[colIdx].links[linkIdx][field] = val;
+    updateFormData({ ...formData, columns: updatedCols });
+  };
+
+  // Delete link
+  const handleDeleteLink = (colIdx, linkIdx) => {
+    const updatedCols = [...formData.columns];
+    updatedCols[colIdx].links = updatedCols[colIdx].links.filter((_, idx) => idx !== linkIdx);
+    updateFormData({ ...formData, columns: updatedCols });
+  };
+
+  // Add new link to column
+  const handleAddLink = (colIdx) => {
+    const updatedCols = [...formData.columns];
+    updatedCols[colIdx].links = [...updatedCols[colIdx].links, { name: 'NEW LINK', id: 'home' }];
+    updateFormData({ ...formData, columns: updatedCols });
+  };
+
+  const footerRoadmap = [
+    { title: 'Footer Brand Description', key: 'brandDescription' },
+    { title: 'Quick Links & Column Headers', key: 'columnHeaders' },
+    { title: 'Footer Details & Cards', key: 'footerDetails' },
+    { title: 'Social Media Links', key: 'socialLinks' }
+  ];
+
+  return (
+    <PageShellContainer
+      pageTitle="Footer Global Section"
+      pageSlug="#footer"
+      pageKey="footer_cms"
+      sectionsRoadmap={footerRoadmap}
+    >
+      <div className="space-y-8">
+        <Toast toast={toast} onClose={() => setToast(null)} />
+
+        {/* SECTION 1: Brand details */}
+        <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+          <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-3">
+            <Sparkles className="w-4 h-4 text-luxury-gold" />
+            <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+              Footer Brand Description
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 text-xs">
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Brand Heading (HTML Supported for styling highlight)
+              </label>
+              <input
+                type="text"
+                value={formData.brandTitle}
+                onChange={(e) => updateFormData({ ...formData, brandTitle: e.target.value })}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-luxury-gold/40 font-mono text-[11px]"
+              />
+              <span className="text-[9px] text-zinc-500 mt-1 block">
+                Use <code>&lt;span class='text-gold'&gt;Highlight Text&lt;/span&gt;</code> to render parts of heading in Gold.
+              </span>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Brand Paragraph Description
+              </label>
+              <textarea
+                rows={3}
+                value={formData.brandDescription}
+                onChange={(e) => updateFormData({ ...formData, brandDescription: e.target.value })}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-luxury-gold/40"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 2: Sitemap columns */}
+        <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+          <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-3">
+            <Layers className="w-4 h-4 text-luxury-gold" />
+            <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+              Quick Links & Column Headers
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {formData.columns.map((column, colIdx) => (
+              <div key={colIdx} className="bg-zinc-900/40 border border-zinc-800/60 p-4 rounded-xl space-y-4">
+                <div>
+                  <label className="text-luxury-gold font-mono uppercase text-[10px] block mb-1.5 font-bold">
+                    Column {colIdx + 1} Header
+                  </label>
+                  <input
+                    type="text"
+                    value={column.header}
+                    onChange={(e) => handleColumnHeaderChange(colIdx, e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-luxury-gold/40 font-bold uppercase tracking-wider"
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 font-mono text-[9px] uppercase">Links list ({column.links?.length || 0})</span>
+                    <button
+                      type="button"
+                      onClick={() => handleAddLink(colIdx)}
+                      className="text-[9px] font-mono text-luxury-gold hover:text-white uppercase flex items-center gap-1 transition-colors"
+                    >
+                      <Plus className="w-3 h-3" /> Add Link
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                    {column.links?.map((link, linkIdx) => (
+                      <div key={linkIdx} className="flex items-center gap-2 bg-zinc-950/80 border border-zinc-800/80 p-2 rounded-lg">
+                        <div className="grid grid-cols-2 gap-1.5 w-full text-[10px]">
+                          <input
+                            type="text"
+                            placeholder="Text Label"
+                            value={link.name}
+                            onChange={(e) => handleLinkChange(colIdx, linkIdx, 'name', e.target.value)}
+                            className="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-1 text-zinc-200 focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Page ID/Slug"
+                            value={link.id}
+                            onChange={(e) => handleLinkChange(colIdx, linkIdx, 'id', e.target.value)}
+                            className="bg-zinc-900 border border-zinc-800 rounded px-1.5 py-1 text-zinc-400 font-mono focus:outline-none"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteLink(colIdx, linkIdx)}
+                          className="p-1 hover:bg-rose-500/10 text-zinc-500 hover:text-rose-400 rounded transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION 3: Cards details */}
+        <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+          <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-3">
+            <Mail className="w-4 h-4 text-luxury-gold" />
+            <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+              Footer Details & Cards
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 1: Direct Mail Address
+              </label>
+              <div className="relative">
+                <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <input
+                  type="email"
+                  value={formData.cards.email}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, email: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 2: Booking Office Phone
+              </label>
+              <div className="relative">
+                <Phone className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.cards.phone}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, phone: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 3: YouTube Channel Display Name
+              </label>
+              <div className="relative">
+                <svg className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                <input
+                  type="text"
+                  value={formData.cards.youtubeTitle}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, youtubeTitle: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 3: YouTube Channel Link
+              </label>
+              <div className="relative">
+                <LinkIcon className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.cards.youtubeUrl}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, youtubeUrl: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none font-mono"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 4: Creator HQ Address Name
+              </label>
+              <div className="relative">
+                <MapPin className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.cards.creatorHqAddress}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, creatorHqAddress: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Card 4: Creator HQ Google Maps URL
+              </label>
+              <div className="relative">
+                <LinkIcon className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.cards.googleMapsUrl}
+                  onChange={(e) => updateFormData({ ...formData, cards: { ...formData.cards, googleMapsUrl: e.target.value } })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-zinc-200 focus:outline-none font-mono"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 4: Social media & copyright details */}
+        <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+          <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-3">
+            <Globe className="w-4 h-4 text-luxury-gold" />
+            <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+              Social Media Links & Copyright Notice
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {Object.keys(formData.socials).filter((platform) => platform !== 'github').map((platform) => (
+              <div key={platform}>
+                <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                  {platform} URL
+                </label>
+                <input
+                  type="text"
+                  value={formData.socials[platform] || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    updateFormData(prev => ({ 
+                      ...prev, 
+                      socials: { ...prev.socials, [platform]: val } 
+                    }));
+                  }}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none font-mono"
+                />
+              </div>
+            ))}
+
+            <div className="md:col-span-2 border-t border-zinc-800/60 pt-4">
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Copyright Company Name / Notice
+              </label>
+              <input
+                type="text"
+                value={formData.copyrightText}
+                onChange={(e) => updateFormData({ ...formData, copyrightText: e.target.value })}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none uppercase tracking-wider"
+              />
+            </div>
+
+            <div className="md:col-span-2 pt-2">
+              <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">
+                Designed & Developed By Credit Text
+              </label>
+              <input
+                type="text"
+                value={formData.developerText}
+                onChange={(e) => updateFormData({ ...formData, developerText: e.target.value })}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SAVE PANEL */}
+        <div className="flex justify-end pt-4 border-t border-zinc-800/80">
+          <Button
+            onClick={handleSave}
+            variant="gold"
+            className="flex items-center gap-2 font-bold px-6 py-2.5"
+          >
+            {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+            Save Footer Changes
+          </Button>
+        </div>
+      </div>
+    </PageShellContainer>
+  );
+};

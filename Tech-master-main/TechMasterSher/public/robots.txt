@@ -1,0 +1,26 @@
+# TechMaster Robots.txt Configuration
+# Target: All standard search engine crawlers
+
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /src/
+Allow: /favicon.svg
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.svg
+Allow: /*.css
+Allow: /*.js
+
+# Disallow administrative, private, and backend API endpoints
+Disallow: /admin/
+Disallow: /admin
+Disallow: /api/
+Disallow: /api/*
+Disallow: /_admin/
+Disallow: /scratch/
+Disallow: /dist/
+
+# Canonical XML Sitemap Reference
+Sitemap: https://www.techmasterco.com/sitemap.xml
