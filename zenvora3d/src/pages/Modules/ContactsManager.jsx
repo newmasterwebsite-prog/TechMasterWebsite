@@ -174,7 +174,7 @@ export const ContactsManager = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800">
+                <div className="flex flex-col space-y-3 pt-2 border-t border-zinc-800">
                   <div>
                     <span className="text-zinc-500 uppercase tracking-wider block text-[10px]">Email</span>
                     <a href={`mailto:${selectedEnquiry.email}`} className="text-luxury-gold font-mono underline">{selectedEnquiry.email}</a>
