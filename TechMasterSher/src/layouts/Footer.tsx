@@ -221,7 +221,8 @@ export const Footer: React.FC<FooterProps> = ({ onChangePage }) => {
               "events",
               "services",
               "testimonials",
-              "faq"
+              "faq",
+              "blog"
             ]);
 
             const defaultCols = [
@@ -237,7 +238,6 @@ export const Footer: React.FC<FooterProps> = ({ onChangePage }) => {
                 header: "ENGAGEMENT",
                 links: [
                   { name: "OUR WORK", id: "portfolio" },
-                  { name: "BLOG", id: "blog" },
                   { name: "CAREERS", id: "career" },
                 ]
               },

@@ -24,7 +24,6 @@ const defaultFooterData = {
       header: "ENGAGEMENT",
       links: [
         { name: "OUR WORK", id: "portfolio" },
-        { name: "BLOG", id: "blog" },
         { name: "CAREERS", id: "career" },
       ]
     },
@@ -66,10 +65,16 @@ const mergeFooterData = (incomingFooter) => {
   if (!incomingFooter) return defaultFooterData;
   const rawSocials = incomingFooter.socials || {};
   const rawCards = incomingFooter.cards || {};
+  const rawCols = incomingFooter.columns && incomingFooter.columns.length > 0 ? incomingFooter.columns : defaultFooterData.columns;
+  const cleanedCols = rawCols.map((col) => ({
+    ...col,
+    links: (col.links || []).filter((l) => l.id !== "blog" && l.name !== "BLOG")
+  }));
+
   return {
     brandTitle: incomingFooter.brandTitle !== undefined ? incomingFooter.brandTitle : defaultFooterData.brandTitle,
     brandDescription: incomingFooter.brandDescription !== undefined ? incomingFooter.brandDescription : defaultFooterData.brandDescription,
-    columns: incomingFooter.columns && incomingFooter.columns.length > 0 ? incomingFooter.columns : defaultFooterData.columns,
+    columns: cleanedCols,
     cards: {
       email: rawCards.email !== undefined ? rawCards.email : defaultFooterData.cards.email,
       phone: rawCards.phone !== undefined ? rawCards.phone : defaultFooterData.cards.phone,
