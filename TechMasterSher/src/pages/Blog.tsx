@@ -78,8 +78,13 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
     }
   ];
 
-  const rawBlogs = (liveBlogData?.blogs || blogsData || localDb?.blogs || localDb?.blogsData || defaultBlogs);
-  const blogsList = Array.isArray(rawBlogs) ? rawBlogs.filter((b: any) => b.active !== false && b.status !== "draft") : defaultBlogs;
+  const rawBlogs = (liveBlogData?.blogs && liveBlogData.blogs.length > 0) 
+    ? liveBlogData.blogs 
+    : ((blogsData && blogsData.length > 0) 
+      ? blogsData 
+      : ((localDb?.blogs && localDb.blogs.length > 0) ? localDb.blogs : defaultBlogs));
+  const filteredList = Array.isArray(rawBlogs) ? rawBlogs.filter((b: any) => b.active !== false && b.status !== "draft") : defaultBlogs;
+  const blogsList = filteredList.length > 0 ? filteredList : defaultBlogs;
 
   const defaultHero = {
     badge: "CREATOR JOURNAL",
@@ -268,15 +273,10 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
 
       {/* Blog List Grid */}
       <section className="max-w-7xl mx-auto text-left relative z-10">
-        {blogsList.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl">
-            <p className="text-gray-400 text-sm">No articles available.</p>
-          </div>
-        ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
+        <motion.div
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
             <AnimatePresence mode="popLayout">
               {blogsList.map((post: any, idx: number) => (
                 <motion.div
@@ -331,7 +331,6 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
               ))}
             </AnimatePresence>
           </motion.div>
-        )}
       </section>
     </div>
   );
