@@ -72,38 +72,7 @@ export const Blogs = () => {
       showLatest: true,
       showFilters: true
     },
-    blogs: [
-      {
-        id: "blog-1",
-        title: "The Art of Golden Ratios in Modern Luxury Branding",
-        slug: "golden-ratios-luxury-branding",
-        category: "Branding",
-        coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800",
-        excerpt: "Exploring mathematical elegance in high-fashion identity design and visual hierarchy.",
-        content: "Detailed technical whitepaper on golden ratios in modern digital branding...",
-        publishDate: "2026-07-20",
-        readTime: "6 min read",
-        author: "Aman",
-        featured: true,
-        status: "published",
-        active: true
-      },
-      {
-        id: "blog-2",
-        title: "Building 60FPS Three.js Configurators for WebGL",
-        slug: "60fps-threejs-configurators",
-        category: "Marketing",
-        coverImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800",
-        excerpt: "Optimizing GPU memory buffers, draw calls, and lighting shaders for interactive browser experiences.",
-        content: "Deep-dive technical guide into Three.js performance tuning...",
-        publishDate: "2026-07-15",
-        readTime: "10 min read",
-        author: "TechMaster Lead",
-        featured: true,
-        status: "published",
-        active: true
-      }
-    ],
+    blogs: [],
     seo: {
       metaTitle: "Tech & Creator Journal | TechMaster",
       metaDescription: "Read guides on software architecture, developer education, and high-scale media strategy.",

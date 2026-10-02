@@ -45,46 +45,18 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
     if (saved) localDb = JSON.parse(saved);
   } catch (e) {}
 
-  const defaultBlogs = [
-    {
-      id: "blog-1",
-      title: "The Art of Golden Ratios in Modern Luxury Branding",
-      slug: "golden-ratios-luxury-branding",
-      category: "Branding",
-      coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800",
-      excerpt: "Exploring mathematical elegance in high-fashion identity design and visual hierarchy.",
-      content: "Detailed technical whitepaper on golden ratios in modern digital branding...",
-      publishDate: "2026-07-20",
-      readTime: "6 min read",
-      author: "Aman",
-      featured: true,
-      status: "published",
-      active: true
-    },
-    {
-      id: "blog-2",
-      title: "Building 60FPS Three.js Configurators for WebGL",
-      slug: "60fps-threejs-configurators",
-      category: "Marketing",
-      coverImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800",
-      excerpt: "Optimizing GPU memory buffers, draw calls, and lighting shaders for interactive browser experiences.",
-      content: "Deep-dive technical guide into Three.js performance tuning...",
-      publishDate: "2026-07-15",
-      readTime: "10 min read",
-      author: "TechMaster Lead",
-      featured: true,
-      status: "published",
-      active: true
-    }
-  ];
+  let rawBlogs: any[] = [];
+  if (liveBlogData && Array.isArray(liveBlogData.blogs)) {
+    rawBlogs = liveBlogData.blogs;
+  } else if (Array.isArray(blogsData)) {
+    rawBlogs = blogsData;
+  } else if (localDb && Array.isArray(localDb.blogs)) {
+    rawBlogs = localDb.blogs;
+  } else if (localDb && Array.isArray(localDb.blogsData)) {
+    rawBlogs = localDb.blogsData;
+  }
 
-  const rawBlogs = (liveBlogData?.blogs && liveBlogData.blogs.length > 0) 
-    ? liveBlogData.blogs 
-    : ((blogsData && blogsData.length > 0) 
-      ? blogsData 
-      : ((localDb?.blogs && localDb.blogs.length > 0) ? localDb.blogs : defaultBlogs));
-  const filteredList = Array.isArray(rawBlogs) ? rawBlogs.filter((b: any) => b.active !== false && b.status !== "draft") : defaultBlogs;
-  const blogsList = filteredList.length > 0 ? filteredList : defaultBlogs;
+  const blogsList = rawBlogs.filter((b: any) => b && b.active !== false && b.status !== "draft");
 
   const defaultHero = {
     badge: "CREATOR JOURNAL",
