@@ -17,7 +17,6 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
     strategyStatsData, 
     strategyPillarsData, 
     strategyPresetsData, 
-    blogCategoriesData, 
     latestInsightsData,
   } = useData();
 
@@ -123,14 +122,6 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
   const rawPresets = (liveBlogData?.strategyPresets || strategyPresetsData || localDb?.strategyPresets || defaultPresets);
   const presets = Array.isArray(rawPresets) ? rawPresets.filter((p: any) => p.active !== false) : defaultPresets;
 
-  const defaultCategories = [
-    { name: "All" }, { name: "Lifestyle" }, { name: "Marketing" }, { name: "Branding" }, { name: "Creator Journey" }, { name: "Tips" }, { name: "Latest News" }
-  ];
-  const rawCategories = (liveBlogData?.blogCategories || blogCategoriesData || localDb?.blogCategories || defaultCategories);
-  const validCategories = Array.isArray(rawCategories) ? rawCategories : defaultCategories;
-  const categories = [{ name: "All" }, ...validCategories.filter((c: any) => c.name !== "All" && c.active !== false)];
-
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeStrategyPreset, setActiveStrategyPreset] = useState<string>("");
 
   useEffect(() => {
@@ -140,10 +131,6 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
   }, [presets, activeStrategyPreset]);
 
   const activePresetItem = presets.find((p: any) => p.presetName === activeStrategyPreset || p.id === activeStrategyPreset) || presets[0] || {};
-
-  const filteredBlogs = selectedCategory === "All"
-    ? blogsList
-    : blogsList.filter((post: any) => post.category === selectedCategory);
 
   return (
     <div className="relative text-white min-h-screen pt-24 pb-8 px-6 overflow-hidden">
@@ -280,48 +267,11 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
         </section>
       )}
 
-      {/* Main Blog Hub */}
-      <section className="max-w-7xl mx-auto text-left relative z-10 mb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-6 mb-10 gap-6">
-          <div>
-            <h2 className="font-serif text-3xl font-light">
-              {latestInsightsData?.title || localDb?.latestInsights?.title || "Latest Insights"}
-            </h2>
-            <p className="text-gray-400 text-xs mt-1 font-light">
-              {latestInsightsData?.subtitle || localDb?.latestInsights?.subtitle || "Browse thoughts, guides, and updates from the team"}
-            </p>
-          </div>
-          
-          {/* Category Filter Bar */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category: any) => (
-              <button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
-                className={`px-4 py-2 rounded-full text-xs transition-all duration-300 cursor-pointer ${
-                  selectedCategory === category.name
-                    ? "bg-gold text-black font-semibold border border-gold"
-                    : "bg-white/[0.03] border border-white/5 hover:border-white/20 text-gray-300 hover:text-white"
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Blog List Grid */}
       <section className="max-w-7xl mx-auto text-left relative z-10">
-        {filteredBlogs.length === 0 ? (
+        {blogsList.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl">
-            <p className="text-gray-400 text-sm">No articles found in this category.</p>
-            <button
-              onClick={() => setSelectedCategory("All")}
-              className="text-gold text-xs uppercase tracking-[1.5px] font-bold mt-4 hover:underline cursor-pointer"
-            >
-              Reset Filters
-            </button>
+            <p className="text-gray-400 text-sm">No articles available.</p>
           </div>
         ) : (
           <motion.div
@@ -329,7 +279,7 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             <AnimatePresence mode="popLayout">
-              {filteredBlogs.map((post: any, idx: number) => (
+              {blogsList.map((post: any, idx: number) => (
                 <motion.div
                   key={post.id || post.slug || idx}
                   layout
