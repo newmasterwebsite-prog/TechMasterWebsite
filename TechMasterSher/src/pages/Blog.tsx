@@ -17,7 +17,6 @@ export const Blog: React.FC<BlogProps> = ({ onChangePage }) => {
     strategyStatsData, 
     strategyPillarsData, 
     strategyPresetsData, 
-    latestInsightsData,
   } = useData();
 
   const [liveBlogData, setLiveBlogData] = useState<any>(null);
