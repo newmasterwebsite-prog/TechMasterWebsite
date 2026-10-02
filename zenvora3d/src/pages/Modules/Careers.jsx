@@ -196,8 +196,8 @@ export const Careers = () => {
     return 'application/octet-stream';
   };
 
-  const handleDownloadResume = (rawUrl, candidateName, originalFileName) => {
-    if (!rawUrl) {
+  const handleDownloadResume = (rawUrl, candidateName, originalFileName, applicantId) => {
+    if (!rawUrl && !applicantId) {
       showToast("No resume file available for this applicant", "info");
       return;
     }
@@ -205,7 +205,7 @@ export const Careers = () => {
     let ext = ".pdf";
     if (originalFileName && originalFileName.lastIndexOf('.') !== -1) {
       ext = originalFileName.substring(originalFileName.lastIndexOf('.'));
-    } else if (rawUrl.lastIndexOf('.') !== -1 && !rawUrl.startsWith('data:')) {
+    } else if (rawUrl && rawUrl.lastIndexOf('.') !== -1 && !rawUrl.startsWith('data:')) {
       const urlExt = rawUrl.substring(rawUrl.lastIndexOf('.'));
       if (['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.txt', '.rtf'].includes(urlExt.toLowerCase())) {
         ext = urlExt;
@@ -216,7 +216,7 @@ export const Careers = () => {
     const downloadFileName = `${cleanCandidateName}_Resume${ext}`;
 
     // CASE 1: Resume is stored as a permanent Base64 Data URI (Instant 1ms download, zero server dependency)
-    if (rawUrl.startsWith("data:")) {
+    if (rawUrl && rawUrl.startsWith("data:")) {
       try {
         const parts = rawUrl.split(",");
         const mimeMatch = parts[0].match(/:(.*?);/);
@@ -245,14 +245,14 @@ export const Careers = () => {
       }
     }
 
-    // CASE 2: Resume is a URL (Legacy / External link / Server Path)
+    // CASE 2: Resume is a URL or ID (Legacy / External link / Server Path)
     const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
-    let fullRawUrl = rawUrl;
-    if (rawUrl.startsWith("/uploads/")) {
+    let fullRawUrl = rawUrl || "";
+    if (rawUrl && rawUrl.startsWith("/uploads/")) {
       fullRawUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
     }
 
-    const downloadApiUrl = `${baseUrl}/resumes/download?url=${encodeURIComponent(fullRawUrl)}&filename=${encodeURIComponent(downloadFileName)}`;
+    const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(applicantId || '')}&url=${encodeURIComponent(fullRawUrl)}&filename=${encodeURIComponent(downloadFileName)}`;
 
     // Create temporary link to trigger native browser save dialog
     const link = document.createElement("a");
@@ -802,7 +802,7 @@ export const Careers = () => {
                           <td className="py-2.5 px-4">
                             {rawResume ? (
                               <button 
-                                onClick={() => handleDownloadResume(rawResume, name, resumeName)}
+                                onClick={() => handleDownloadResume(rawResume, name, resumeName, r.id || r._id)}
                                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px] font-bold"
                                 title="Click to download resume file onto PC"
                               >
