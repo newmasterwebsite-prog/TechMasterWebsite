@@ -89,7 +89,8 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
     "events",
     "services",
     "testimonials",
-    "faq"
+    "faq",
+    "blog"
   ]);
 
   const defaultIdentityItems = [
@@ -100,7 +101,6 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
 
   const defaultEngagementItems = [
     { name: "Our Work", id: "portfolio" },
-    { name: "Blog", id: "blog" },
     { name: "Careers", id: "career" },
   ];
 
@@ -231,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
             { name: "Journey", id: "journey" },
             { name: "Our Work", id: "portfolio" },
             { name: "Careers", id: "career" },
-          ]).map((item: any) => {
+          ]).filter((item: any) => !removedNavIds.has(item.id)).map((item: any) => {
             const href = item.id === "home" ? "/" : item.id === "portfolio" ? "/what-we-do" : `/${item.id}`;
             return (
               <a

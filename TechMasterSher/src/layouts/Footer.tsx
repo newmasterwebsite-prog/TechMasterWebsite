@@ -222,6 +222,7 @@ export const Footer: React.FC<FooterProps> = ({ onChangePage }) => {
               "services",
               "testimonials",
               "faq",
+              "Blog"
 
             ]);
 
