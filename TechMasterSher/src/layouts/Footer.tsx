@@ -222,8 +222,9 @@ export const Footer: React.FC<FooterProps> = ({ onChangePage }) => {
               "services",
               "testimonials",
               "faq",
-              "Blog"
-
+              "blog",
+              "Blog",
+              "BLOG"
             ]);
 
             const defaultCols = [
@@ -255,7 +256,11 @@ export const Footer: React.FC<FooterProps> = ({ onChangePage }) => {
             const rawCols = footerData?.columns || defaultCols;
             return rawCols.map((column: any) => ({
               ...column,
-              links: (column.links || []).filter((link: any) => !removedFooterIds.has(link.id))
+              links: (column.links || []).filter((link: any) => {
+                const idLower = String(link.id || "").toLowerCase();
+                const nameLower = String(link.name || "").toLowerCase();
+                return !removedFooterIds.has(link.id) && idLower !== "blog" && nameLower !== "blog";
+              })
             }));
           })().map((column: any, colIdx: number) => (
             <div key={colIdx}>

@@ -90,7 +90,9 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
     "services",
     "testimonials",
     "faq",
-    "blog"
+    "blog",
+    "Blog",
+    "BLOG"
   ]);
 
   const defaultIdentityItems = [
@@ -110,14 +112,20 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
     { name: "Terms of Service", id: "terms" },
   ];
 
+  const isBlogItem = (item: any) => {
+    const idLower = String(item?.id || "").toLowerCase();
+    const nameLower = String(item?.name || "").toLowerCase();
+    return idLower === "blog" || nameLower === "blog";
+  };
+
   const rawIdentity = dbData?.navigation?.identityItems || defaultIdentityItems;
-  const identityItems = rawIdentity.filter((item: any) => !removedNavIds.has(item.id));
+  const identityItems = rawIdentity.filter((item: any) => !removedNavIds.has(item.id) && !isBlogItem(item));
 
   const rawEngagement = dbData?.navigation?.engagementItems || defaultEngagementItems;
-  const engagementItems = rawEngagement.filter((item: any) => !removedNavIds.has(item.id));
+  const engagementItems = rawEngagement.filter((item: any) => !removedNavIds.has(item.id) && !isBlogItem(item));
 
   const rawQuickLinks = dbData?.navigation?.quickLinksItems || defaultQuickLinksItems;
-  const quickLinksItems = rawQuickLinks.filter((item: any) => !removedNavIds.has(item.id));
+  const quickLinksItems = rawQuickLinks.filter((item: any) => !removedNavIds.has(item.id) && !isBlogItem(item));
 
   const handleNavClick = (pageId: string) => {
     if (!pageId) {
