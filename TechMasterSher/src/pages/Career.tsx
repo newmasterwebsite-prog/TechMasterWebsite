@@ -294,7 +294,9 @@ export const Career: React.FC = () => {
       dataPayload.append("resume", formData.resumeFile);
       dataPayload.append("resumeBase64", resumeBase64);
 
-      const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
+      const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
+        .replace(/\/+$/, "")
+        .replace(/^http:\/\//i, "https://");
       const endpoints = [
         `${baseUrl}/cms/public/resume`,
         `${baseUrl}/public/resume`,
@@ -332,8 +334,9 @@ export const Career: React.FC = () => {
         message: formData.whyJoin,
         whyJoin: formData.whyJoin,
         coverLetter: formData.coverLetter,
-        resumeFileUrl: result?.data?.resumeFileUrl || resumeBase64,
-        resumeUrl: result?.data?.resumeFileUrl || resumeBase64,
+        resumeFileUrl: result?.data?.resumeFileUrl || result?.data?.resumeUrl || resumeBase64,
+        resumeUrl: result?.data?.resumeUrl || result?.data?.resumeFileUrl || resumeBase64,
+        resumeBase64Data: resumeBase64,
         resumeFileName: formData.resumeFile?.name || "resume.pdf",
         status: "New",
         date: new Date().toISOString().split('T')[0],

@@ -196,7 +196,7 @@ export const Careers = () => {
     return 'application/octet-stream';
   };
 
-  const handleDownloadResume = (rawUrl, candidateName, originalFileName, applicantId) => {
+  const handleDownloadResume = async (rawUrl, candidateName, originalFileName, applicantId) => {
     if (!rawUrl && !applicantId) {
       showToast("No resume file available for this applicant", "info");
       return;
@@ -206,7 +206,8 @@ export const Careers = () => {
     if (originalFileName && originalFileName.lastIndexOf('.') !== -1) {
       ext = originalFileName.substring(originalFileName.lastIndexOf('.'));
     } else if (rawUrl && rawUrl.lastIndexOf('.') !== -1 && !rawUrl.startsWith('data:')) {
-      const urlExt = rawUrl.substring(rawUrl.lastIndexOf('.'));
+      const cleanUrlNoQuery = rawUrl.split('?')[0];
+      const urlExt = cleanUrlNoQuery.substring(cleanUrlNoQuery.lastIndexOf('.'));
       if (['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.txt', '.rtf'].includes(urlExt.toLowerCase())) {
         ext = urlExt;
       }
@@ -246,23 +247,60 @@ export const Careers = () => {
     }
 
     // CASE 2: Resume is a URL or ID (Legacy / External link / Server Path)
-    const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
-    let fullRawUrl = rawUrl || "";
-    if (rawUrl && rawUrl.startsWith("/uploads/")) {
-      fullRawUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
+    showToast(`Downloading ${downloadFileName}...`, "info");
+
+    try {
+      // Normalize baseUrl: Ensure HTTPS for Render to avoid 302 redirect issues across machines
+      let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
+        .replace(/\/+$/, "");
+      if (baseUrl.includes("onrender.com") && baseUrl.startsWith("http://")) {
+        baseUrl = baseUrl.replace(/^http:\/\//i, "https://");
+      }
+
+      let fullRawUrl = rawUrl || "";
+      if (rawUrl && rawUrl.startsWith("/uploads/")) {
+        fullRawUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
+      }
+
+      const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(applicantId || '')}&url=${encodeURIComponent(fullRawUrl)}&filename=${encodeURIComponent(downloadFileName)}`;
+
+      // Fetch the file as a Blob to download directly and reliably without opening blank browser tabs
+      const response = await fetch(downloadApiUrl);
+
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          const errData = await response.json().catch(() => null);
+          throw new Error(errData?.message || `Server returned ${response.status}`);
+        }
+        throw new Error(`Download failed (HTTP ${response.status})`);
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const jsonData = await response.json().catch(() => null);
+        if (jsonData && jsonData.success === false) {
+          throw new Error(jsonData.message || "Resume file not found on server");
+        }
+      }
+
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.style.display = "none";
+      link.href = blobUrl;
+      link.download = downloadFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 15000);
+
+      showToast(`Downloaded ${downloadFileName} successfully!`, "success");
+    } catch (err) {
+      console.error("Resume download failed:", err);
+      showToast(`Resume download error: ${err.message || "Failed to download"}`, "error");
     }
-
-    const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(applicantId || '')}&url=${encodeURIComponent(fullRawUrl)}&filename=${encodeURIComponent(downloadFileName)}`;
-
-    // Create temporary link to trigger native browser save dialog
-    const link = document.createElement("a");
-    link.href = downloadApiUrl;
-    link.target = "_blank";
-    link.download = downloadFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast(`Downloading ${downloadFileName}...`, "success");
   };
 
   const fetchResumesFromBackend = async () => {
@@ -785,7 +823,7 @@ export const Careers = () => {
                     {formData.resumes.map((r, idx) => {
                       const name = r.candidateName || r.name || r.fullName || r.applicantName || "Anonymous Candidate";
                       const jobRole = r.jobApplied || r.jobTitle || r.position || r.role || "General Application";
-                      const rawResume = r.resumeFileUrl || r.resumeUrl || r.resume || "";
+                      const rawResume = r.resumeBase64Data || r.resumeFileUrl || r.resumeUrl || r.resume || "";
                       const resumeLink = getSafeResumeUrl(rawResume);
                       const resumeName = r.resumeFileName || "Resume File";
                       const dateStr = r.date || (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "Recent");
@@ -950,7 +988,7 @@ export const Careers = () => {
             {(() => {
               const name = selectedApplicant.candidateName || selectedApplicant.name || selectedApplicant.fullName || "Anonymous Candidate";
               const jobRole = selectedApplicant.jobApplied || selectedApplicant.jobTitle || selectedApplicant.position || "General Application";
-              const rawResume = selectedApplicant.resumeFileUrl || selectedApplicant.resumeUrl || selectedApplicant.resume || "";
+              const rawResume = selectedApplicant.resumeBase64Data || selectedApplicant.resumeFileUrl || selectedApplicant.resumeUrl || selectedApplicant.resume || "";
               const resumeLink = getSafeResumeUrl(rawResume);
               const resumeName = selectedApplicant.resumeFileName || "Uploaded Resume PDF";
               const portfolio = selectedApplicant.portfolioUrl || selectedApplicant.experience || selectedApplicant.portfolioLink || "";
@@ -988,18 +1026,16 @@ export const Careers = () => {
                     </div>
                   )}
 
-                  {rawResume && (
-                    <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
-                      <span className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5 font-bold">Uploaded Resume Document</span> 
-                      <button 
-                        type="button"
-                        onClick={() => handleDownloadResume(rawResume, name, resumeName)}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-luxury-gold text-black font-bold font-mono text-xs hover:bg-yellow-400 transition-colors shadow-gold-glow cursor-pointer"
-                      >
-                        <Download className="w-4 h-4 text-black" /> Download Resume ({resumeName})
-                      </button>
-                    </div>
-                  )}
+                  <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
+                    <span className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5 font-bold">Uploaded Resume Document</span> 
+                    <button 
+                      type="button"
+                      onClick={() => handleDownloadResume(rawResume, name, resumeName, selectedApplicant.id || selectedApplicant._id)}
+                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-luxury-gold text-black font-bold font-mono text-xs hover:bg-yellow-400 transition-colors shadow-gold-glow cursor-pointer"
+                    >
+                      <Download className="w-4 h-4 text-black" /> Download Resume ({resumeName})
+                    </button>
+                  </div>
 
                   {whyJoin && (
                     <div>
