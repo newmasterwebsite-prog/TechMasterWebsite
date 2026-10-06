@@ -546,7 +546,7 @@ const handleResumeDownload = async (req: any, res: any) => {
           return res.sendFile(directPath);
         }
         // Partial substring match in directory
-        const matched = existingFiles.find(f => f === decodedCand || f.includes(decodedCand) || decodedCand.includes(f));
+        const matched = existingFiles.find((f: string) => f === decodedCand || f.includes(decodedCand) || decodedCand.includes(f));
         if (matched) {
           const matchedPath = path.join(resumesDir, matched);
           if (fs.existsSync(matchedPath) && fs.statSync(matchedPath).isFile()) {
@@ -684,7 +684,7 @@ router.post("/public/contact", handleEnquirySubmission);
 router.post("/enquiry", handleEnquirySubmission);
 
 // Aggregate endpoint for the public frontends
-router.get("/", async (req, res, next) => {
+router.get("/", async (req: any, res: any, next: any) => {
   try {
     // 1. Fetch all CMSData generic key-value documents (excluding heavy applicant submission arrays)
     const cmsDocs = await CMSData.find({ key: { $nin: ["resumes", "careerApplications", "contactEnquiries", "enquiries"] } });
