@@ -9,53 +9,103 @@ const getApiBaseUrl = () => {
   return normalized.endsWith("/api/v1") ? normalized : `${normalized}/api/v1`;
 };
 
+// Safe localStorage writer that NEVER throws QuotaExceededError or crashes React state updates
+export const safeSetLocalStorage = (key, value) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    localStorage.setItem(key, stringValue);
+  } catch (error) {
+    console.warn(`localStorage.setItem failed for key "${key}" (quota or security issue):`, error);
+    // If quota exceeded and key is zenvora_db, save a compact version without oversized keys
+    if (key === 'zenvora_db' && typeof value === 'object' && value !== null) {
+      try {
+        const compact = {};
+        for (const [k, v] of Object.entries(value)) {
+          if (k.startsWith('resume_file_') || k.startsWith('file_')) continue;
+          const vStr = JSON.stringify(v);
+          if (vStr && vStr.length < 80000) {
+            compact[k] = v;
+          }
+        }
+        localStorage.setItem(key, JSON.stringify(compact));
+      } catch (innerError) {
+        console.warn("Could not save compact zenvora_db to localStorage:", innerError);
+      }
+    }
+  }
+};
+
+// Clean up any historical giant/corrupted zenvora_db from localStorage to prevent quota lockup
+try {
+  if (typeof window !== 'undefined') {
+    const existing = localStorage.getItem('zenvora_db');
+    if (existing && (existing.includes('resume_file_') || existing.length > 2500000)) {
+      const parsed = JSON.parse(existing);
+      const cleaned = {};
+      for (const [k, v] of Object.entries(parsed)) {
+        if (!k.startsWith('resume_file_') && !k.startsWith('file_') && JSON.stringify(v).length < 200000) {
+          cleaned[k] = v;
+        }
+      }
+      localStorage.setItem('zenvora_db', JSON.stringify(cleaned));
+    }
+  }
+} catch (e) {}
+
 const DatabaseContext = createContext();
 
 export const DatabaseProvider = ({ children }) => {
   const [db, setDb] = useState(() => {
-    const saved = localStorage.getItem('zenvora_db');
-    if (saved) {
-      try {
+    try {
+      const saved = localStorage.getItem('zenvora_db');
+      if (saved) {
         const parsed = JSON.parse(saved);
         return { ...initialData, ...parsed };
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn("Error parsing zenvora_db from localStorage:", e);
     }
     return initialData;
   });
 
   const [auth, setAuth] = useState(() => {
-    const savedAuth = localStorage.getItem('zenvora_auth');
-    if (savedAuth) {
-      try {
+    try {
+      const savedAuth = localStorage.getItem('zenvora_auth');
+      if (savedAuth) {
         return JSON.parse(savedAuth); // { user, token, isLoggedIn: true }
-      } catch (e) {}
-    }
+      }
+    } catch (e) {}
     return { user: null, token: "", isLoggedIn: false };
   });
 
   const [notifications, setNotifications] = useState([
-    { id: "not-1", text: "New booking enquiry from Gabriella Rossi (Dolce & Gabbana)", type: "enquiry", unread: true, time: "2 hours ago" },
-    { id: "not-2", text: "Resume uploaded by Rohan Varma for Editor opening", type: "career", unread: true, time: "4 hours ago" },
+    { id: "not-1", text: "New booking enquiry received", type: "enquiry", unread: true, time: "2 hours ago" },
+    { id: "not-2", text: "Resume uploaded for open position", type: "career", unread: true, time: "4 hours ago" },
     { id: "not-3", text: "System Auto-Backup completed successfully", type: "system", unread: false, time: "Yesterday" }
   ]);
 
   const persistAuth = (nextAuth) => {
     setAuth(nextAuth);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('zenvora_auth', JSON.stringify(nextAuth));
+      try {
+        localStorage.setItem('zenvora_auth', JSON.stringify(nextAuth));
+      } catch (e) {
+        console.warn("Failed to persist auth in localStorage:", e);
+      }
     }
   };
 
   // Unified API caller helper
   const apiFetch = async (path, options = {}) => {
-    const savedAuth = localStorage.getItem('zenvora_auth');
     let token = "";
-    if (savedAuth) {
-      try {
+    try {
+      const savedAuth = localStorage.getItem('zenvora_auth');
+      if (savedAuth) {
         const parsed = JSON.parse(savedAuth);
         token = parsed.token || "";
-      } catch (e) {}
-    }
+      }
+    } catch (e) {}
 
     const headers = {
       "Content-Type": "application/json",
@@ -78,7 +128,9 @@ export const DatabaseProvider = ({ children }) => {
 
     if (response.status === 401) {
       persistAuth({ user: null, token: "", isLoggedIn: false });
-      localStorage.removeItem('zenvora_auth');
+      try {
+        localStorage.removeItem('zenvora_auth');
+      } catch (e) {}
       throw new Error("Session expired. Please log in again.");
     }
 
@@ -106,7 +158,7 @@ export const DatabaseProvider = ({ children }) => {
 
         if (typeof window !== 'undefined') {
           const syncPayload = { key, timestamp: Date.now() };
-          localStorage.setItem('techmaster-cms-last-updated', JSON.stringify(syncPayload));
+          safeSetLocalStorage('techmaster-cms-last-updated', syncPayload);
           window.dispatchEvent(new CustomEvent('techmaster-cms-updated', { detail: syncPayload }));
         }
       } catch (error) {
@@ -124,7 +176,15 @@ export const DatabaseProvider = ({ children }) => {
       } catch (e) {}
 
       const res = await apiFetch("/cms").catch(() => null);
-      const backendData = (res && res.success && res.data) ? res.data : {};
+      const rawBackendData = (res && res.success && res.data) ? res.data : {};
+
+      // Filter out resume base64 binary dumps or giant file keys from the CMS payload
+      // so it never causes browser memory bloat or localStorage QuotaExceededError
+      const backendData = {};
+      for (const [k, v] of Object.entries(rawBackendData)) {
+        if (k.startsWith('resume_file_') || k.startsWith('file_')) continue;
+        backendData[k] = v;
+      }
 
       setDb(prev => {
         const mergedFooter = {
@@ -171,11 +231,16 @@ export const DatabaseProvider = ({ children }) => {
           }
         }
 
-        if (JSON.stringify(prev) === JSON.stringify(merged)) {
-          return prev;
+        // Clean out any residual resume_file_* keys
+        for (const k of Object.keys(merged)) {
+          if (k.startsWith('resume_file_') || k.startsWith('file_')) {
+            delete merged[k];
+          }
         }
 
-        localStorage.setItem('zenvora_db', JSON.stringify(merged));
+        // Safely persist merged db without throwing QuotaExceededError
+        safeSetLocalStorage('zenvora_db', merged);
+
         return merged;
       });
     } catch (error) {
@@ -206,7 +271,7 @@ export const DatabaseProvider = ({ children }) => {
               contactEnquiries: updatedContactEnquiries,
               enquiries: updatedEnquiries
             };
-            localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+            safeSetLocalStorage('zenvora_db', nextDb);
             return nextDb;
           });
         }
@@ -240,14 +305,15 @@ export const DatabaseProvider = ({ children }) => {
       });
       
       if (res.success && res.data) {
-        const savedDb = localStorage.getItem('zenvora_db');
         let profilePic = "";
-        if (savedDb) {
-          try {
+        try {
+          const savedDb = localStorage.getItem('zenvora_db');
+          if (savedDb) {
             const parsed = JSON.parse(savedDb);
             profilePic = parsed.adminProfile?.imageUrl || parsed.adminProfile?.avatar || "";
-          } catch (e) {}
-        }
+          }
+        } catch (e) {}
+
         if (!profilePic) {
           profilePic = res.data.admin?.avatar || res.data.admin?.imageUrl || "";
         }
@@ -281,7 +347,9 @@ export const DatabaseProvider = ({ children }) => {
       console.error("Logout request to backend skipped:", e);
     }
     persistAuth({ user: null, token: "", isLoggedIn: false });
-    localStorage.removeItem('zenvora_auth');
+    try {
+      localStorage.removeItem('zenvora_auth');
+    } catch (e) {}
   };
 
   // Profile update handler
@@ -297,7 +365,7 @@ export const DatabaseProvider = ({ children }) => {
       };
       nextUser = { ...currentUser, ...updatedFields };
       const nextAuth = { ...prev, user: nextUser, isLoggedIn: true };
-      localStorage.setItem('zenvora_auth', JSON.stringify(nextAuth));
+      safeSetLocalStorage('zenvora_auth', nextAuth);
       return nextAuth;
     });
 
@@ -306,13 +374,13 @@ export const DatabaseProvider = ({ children }) => {
       void syncSectionToBackend("adminProfile", updatedProfile);
 
       const nextDb = { ...prev, adminProfile: updatedProfile };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
 
     if (typeof window !== 'undefined') {
       const syncPayload = { key: 'adminProfile', timestamp: Date.now() };
-      localStorage.setItem('techmaster-cms-last-updated', JSON.stringify(syncPayload));
+      safeSetLocalStorage('techmaster-cms-last-updated', syncPayload);
       window.dispatchEvent(new CustomEvent('techmaster-cms-updated', { detail: syncPayload }));
     }
   };
@@ -334,7 +402,7 @@ export const DatabaseProvider = ({ children }) => {
     }
   };
 
-  // Forgot password mock
+  // Forgot password
   const requestPasswordReset = async (email) => {
     try {
       const res = await apiFetch("/admin/forgot-password", {
@@ -357,13 +425,13 @@ export const DatabaseProvider = ({ children }) => {
     };
 
     setDb(prev => {
-      const list = prev[collection] || [];
+      const list = Array.isArray(prev[collection]) ? prev[collection] : [];
       const updatedList = [newItem, ...list];
 
       void syncSectionToBackend(collection, updatedList);
 
       const nextDb = { ...prev, [collection]: updatedList };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };
@@ -371,13 +439,13 @@ export const DatabaseProvider = ({ children }) => {
   // Generic CRUD: Update
   const updateItem = (collection, id, updatedFields) => {
     setDb(prev => {
-      const list = prev[collection] || [];
+      const list = Array.isArray(prev[collection]) ? prev[collection] : [];
       const updatedList = list.map(item => item.id === id ? { ...item, ...updatedFields } : item);
 
       void syncSectionToBackend(collection, updatedList);
 
       const nextDb = { ...prev, [collection]: updatedList };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };
@@ -385,13 +453,13 @@ export const DatabaseProvider = ({ children }) => {
   // Generic CRUD: Delete
   const deleteItem = (collection, id) => {
     setDb(prev => {
-      const list = prev[collection] || [];
+      const list = Array.isArray(prev[collection]) ? prev[collection] : [];
       const updatedList = list.filter(item => item.id !== id);
 
       void syncSectionToBackend(collection, updatedList);
 
       const nextDb = { ...prev, [collection]: updatedList };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };
@@ -399,7 +467,7 @@ export const DatabaseProvider = ({ children }) => {
   // Delete Nested Item (Helper for Services)
   const deleteNestedItem = (sectionName, listKey, id) => {
     setDb(prev => {
-      const list = prev[sectionName]?.[listKey] || [];
+      const list = Array.isArray(prev[sectionName]?.[listKey]) ? prev[sectionName][listKey] : [];
       const updatedList = list.filter(item => String(item.id) !== String(id));
       const updatedSection = {
         ...prev[sectionName],
@@ -409,7 +477,7 @@ export const DatabaseProvider = ({ children }) => {
       void syncSectionToBackend(sectionName, updatedSection);
 
       const nextDb = { ...prev, [sectionName]: updatedSection };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };
@@ -417,7 +485,7 @@ export const DatabaseProvider = ({ children }) => {
   // Quick Status Toggle
   const toggleStatus = (collection, id) => {
     setDb(prev => {
-      const list = prev[collection] || [];
+      const list = Array.isArray(prev[collection]) ? prev[collection] : [];
       const updatedList = list.map(item => {
         if (item.id === id) {
           if (collection === 'resumes') {
@@ -436,14 +504,13 @@ export const DatabaseProvider = ({ children }) => {
       void syncSectionToBackend(collection, updatedList);
 
       const nextDb = { ...prev, [collection]: updatedList };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };
 
   const updateSection = (sectionName, data, legacyPayload) => {
     setDb(prev => {
-      // Handle the case where the caller used the 3-argument pattern: updateSection(key, null, payload)
       const payload = (data === null && legacyPayload !== undefined) ? legacyPayload : data;
       const isArray = Array.isArray(payload);
       const updatedSection = isArray ? payload : {
@@ -454,7 +521,7 @@ export const DatabaseProvider = ({ children }) => {
       void syncSectionToBackend(sectionName, updatedSection);
 
       const nextDb = { ...prev, [sectionName]: updatedSection };
-      localStorage.setItem('zenvora_db', JSON.stringify(nextDb));
+      safeSetLocalStorage('zenvora_db', nextDb);
       return nextDb;
     });
   };

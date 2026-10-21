@@ -15,19 +15,29 @@ const defaultPagesCount = 20;
 export const Dashboard = ({ setCurrentView }) => {
   const { db } = useDatabase();
 
-  // Dynamic calculations from real DB collections
-  const collaborationCount = db?.collaborations?.length || db?.brandPartners?.length || 0;
-  const enquiriesList = db?.enquiries || db?.contactEnquiries || [];
-  const pendingEnquiriesCount = enquiriesList.filter(e => e.status === 'Unread' || e.status === 'New').length;
-  const portfolioCount = db?.portfolio?.length || 0;
-  const pagesCount = db?.pagesList?.length || defaultPagesCount;
+  // Dynamic calculations from real DB collections with complete null-safety
+  const collaborationCount = Array.isArray(db?.collaborations) 
+    ? db.collaborations.length 
+    : (Array.isArray(db?.brandPartners) ? db.brandPartners.length : 0);
+
+  const enquiriesList = Array.isArray(db?.enquiries)
+    ? db.enquiries
+    : (Array.isArray(db?.contactEnquiries) ? db.contactEnquiries : []);
+
+  const pendingEnquiriesCount = enquiriesList.filter(e => e && (e.status === 'Unread' || e.status === 'New')).length;
+  
+  const portfolioCount = Array.isArray(db?.portfolio) 
+    ? db.portfolio.length 
+    : (typeof db?.portfolio === 'object' && db?.portfolio ? Object.keys(db.portfolio).length : 0);
+
+  const pagesCount = Array.isArray(db?.pagesList) ? db.pagesList.length : defaultPagesCount;
 
   const summaryCards = [
     { title: "Managed Pages", value: pagesCount, icon: FileText, color: "from-amber-500/10 to-amber-500/20", label: "Active website views", viewKey: "pages" },
-    { title: "Blogs Published", value: (db?.blogs || []).length, icon: FileText, color: "from-emerald-500/10 to-emerald-500/20", label: "Creator journal posts", viewKey: "blogs" },
+    { title: "Blogs Published", value: (Array.isArray(db?.blogs) ? db.blogs : []).length, icon: FileText, color: "from-emerald-500/10 to-emerald-500/20", label: "Creator journal posts", viewKey: "blogs" },
     { title: "Showcase Projects", value: portfolioCount, icon: Briefcase, color: "from-pink-500/10 to-pink-500/20", label: "Curated work items", viewKey: "portfolio" },
     { title: "Client Enquiries", value: enquiriesList.length, icon: MessageSquare, color: "from-rose-500/10 to-rose-500/20", label: "Total contact submissions", viewKey: "contacts" },
-    { title: "Career Resumes", value: (db?.resumes || []).length, icon: FileSpreadsheet, color: "from-cyan-500/10 to-cyan-500/20", label: "Applications received", viewKey: "careers" }
+    { title: "Career Resumes", value: (Array.isArray(db?.resumes) ? db.resumes : []).length, icon: FileSpreadsheet, color: "from-cyan-500/10 to-cyan-500/20", label: "Applications received", viewKey: "careers" }
   ];
 
   // Dynamic Activities Logs generated from real DB collections
@@ -35,6 +45,7 @@ export const Dashboard = ({ setCurrentView }) => {
 
   if (Array.isArray(db?.blogs) && db.blogs.length > 0) {
     db.blogs.slice(0, 2).forEach((blog, idx) => {
+      if (!blog) return;
       dynamicActivities.push({
         id: `blog-${blog.id || idx}`,
         text: `Blog published: '${blog.title || "Untitled"}' in category '${blog.category || "General"}'.`,
@@ -46,6 +57,7 @@ export const Dashboard = ({ setCurrentView }) => {
 
   if (Array.isArray(enquiriesList) && enquiriesList.length > 0) {
     enquiriesList.slice(0, 2).forEach((enq, idx) => {
+      if (!enq) return;
       dynamicActivities.push({
         id: `enq-${enq.id || idx}`,
         text: `Enquiry submission received from ${enq.name || enq.email || enq.candidateName || "Client"} (${enq.category || "Business"}).`,
@@ -57,9 +69,10 @@ export const Dashboard = ({ setCurrentView }) => {
 
   if (Array.isArray(db?.resumes) && db.resumes.length > 0) {
     db.resumes.slice(0, 2).forEach((res, idx) => {
+      if (!res) return;
       dynamicActivities.push({
         id: `resume-${res.id || idx}`,
-        text: `Resume submission received from ${res.candidateName || "Applicant"} for job applied '${res.jobApplied || "Editor"}'.`,
+        text: `Resume submission received from ${res.candidateName || res.name || res.fullName || "Applicant"} for job applied '${res.jobApplied || res.jobTitle || res.position || "Editor"}'.`,
         type: "career",
         time: res.createdAt ? new Date(res.createdAt).toLocaleDateString() : "Recently"
       });
@@ -68,9 +81,9 @@ export const Dashboard = ({ setCurrentView }) => {
 
   // Fallback logs if DB is empty
   const activities = dynamicActivities.length > 0 
-    ? dynamicActivities.sort((a, b) => b.id.localeCompare(a.id)).slice(0, 6)
+    ? dynamicActivities.sort((a, b) => String(b?.id || '').localeCompare(String(a?.id || ''))).slice(0, 6)
     : [
-        { id: 1, text: "Welcome to TechMaster Website Management System.", type: "system", time: "Just now" }
+        { id: "default-1", text: "Welcome to TechMaster Website Management System.", type: "system", time: "Just now" }
       ];
 
   return (

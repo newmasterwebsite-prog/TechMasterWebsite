@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDatabase } from '../../context/DatabaseContext';
+import { useDatabase, safeSetLocalStorage } from '../../context/DatabaseContext';
 import { useMediaManager } from '../../context/MediaContext';
 import { 
   Briefcase, Users, Check, Save, Plus, Trash2, Edit3, Eye, EyeOff, 
@@ -271,7 +271,7 @@ export const Careers = () => {
     // 1. Resolve applicant object and parameters
     const applicantObj = (typeof applicantOrUrl === 'object' && applicantOrUrl !== null)
       ? applicantOrUrl
-      : (formData.resumes.find(x => (x.id || x._id) === applicantId) || {});
+      : ((formData?.resumes || []).find(x => x && (x.id || x._id) === applicantId) || {});
 
     const rawUrl = (typeof applicantOrUrl === 'string' ? applicantOrUrl : '') ||
       applicantObj.resumeBase64Data ||
@@ -296,9 +296,9 @@ export const Careers = () => {
     }
 
     const cleanCandidateName = (resolvedName || "Applicant").replace(/[^a-zA-Z0-9]/g, "_");
-    const downloadFileName = `${cleanCandidateName}_Resume${ext}`;
+    const downloadFileName = resolvedOriginalName || `${cleanCandidateName}_Resume${ext}`;
 
-    const triggerDownload = (blob, fileName) => {
+    const triggerBlobDownload = (blob, fileName) => {
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.style.display = "none";
@@ -308,10 +308,10 @@ export const Careers = () => {
       link.click();
       document.body.removeChild(link);
       setTimeout(() => window.URL.revokeObjectURL(blobUrl), 15000);
-      showToast(`Downloaded ${fileName} successfully!`, "success");
+      showToast(`Downloaded original resume: ${fileName}`, "success");
     };
 
-    // CASE 1: Resume is stored as a Base64 Data URI (Instant 1ms download, zero server dependency)
+    // CASE 1: Resume is stored as a Base64 Data URI
     if (rawUrl && rawUrl.startsWith("data:")) {
       try {
         const parts = rawUrl.split(",");
@@ -324,100 +324,96 @@ export const Careers = () => {
           u8arr[n] = bstr.charCodeAt(n);
         }
         const blob = new Blob([u8arr], { type: mimeType });
-        triggerDownload(blob, downloadFileName);
+        triggerBlobDownload(blob, downloadFileName);
         return;
       } catch (err) {
-        console.warn("Base64 Data URI decoding failed, falling back to server/dossier:", err);
+        console.warn("Base64 Data URI decoding failed:", err);
       }
     }
 
-    // CASE 2: Resume is fetched via Backend API (or generated client-side if unavailable)
-    showToast(`Downloading ${downloadFileName}...`, "info");
+    if (!rawUrl && !resolvedId) {
+      showToast(`No resume file or link found for ${resolvedName}.`, "error");
+      return;
+    }
 
-    try {
-      let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
-        .replace(/\/+$/, "");
-      if (baseUrl.includes("onrender.com") && baseUrl.startsWith("http://")) {
-        baseUrl = baseUrl.replace(/^http:\/\//i, "https://");
+    showToast(`Fetching original resume for ${resolvedName}...`, "info");
+
+    // CASE 2: Resume has an HTTP/HTTPS URL (Cloudinary, backend /uploads, etc.)
+    if (rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://") || rawUrl.startsWith("/"))) {
+      let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1").replace(/\/+$/, "");
+      let fullUrl = rawUrl;
+      if (rawUrl.startsWith("/uploads/")) {
+        fullUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
       }
 
-      let fullRawUrl = rawUrl || "";
-      if (rawUrl && rawUrl.startsWith("/uploads/")) {
-        fullRawUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
-      } else if (rawUrl && rawUrl.startsWith("data:")) {
-        // Never put large base64 data into URL query parameters to avoid HTTP 414
-        fullRawUrl = "";
-      }
-
-      const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId || '')}&filename=${encodeURIComponent(downloadFileName)}` +
-        (fullRawUrl ? `&url=${encodeURIComponent(fullRawUrl)}` : '') +
-        `&name=${encodeURIComponent(resolvedName)}`;
-
-      // Fetch with an 8-second timeout so the client browser never hangs
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-      let response = null;
+      // Try 1: Direct fetch with CORS mode
       try {
-        response = await fetch(downloadApiUrl, { signal: controller.signal });
-      } catch (fetchErr) {
-        console.warn("Server download fetch error:", fetchErr);
-      } finally {
-        clearTimeout(timeoutId);
-      }
-
-      let fileBlob = null;
-      if (response && response.ok) {
-        const contentType = response.headers.get("content-type") || "";
-        if (contentType.includes("application/json")) {
-          const json = await response.json().catch(() => null);
-          if (json && json.success === false) {
-            console.warn("Server returned success: false, switching to instant client dossier fallback");
-          } else {
-            fileBlob = await response.blob().catch(() => null);
+        const res = await fetch(fullUrl, { mode: 'cors' }).catch(() => null);
+        if (res && res.ok) {
+          const blob = await res.blob();
+          if (blob && blob.size > 100 && !blob.type.includes('text/html')) {
+            triggerBlobDownload(blob, downloadFileName);
+            return;
           }
-        } else {
-          fileBlob = await response.blob().catch(() => null);
         }
+      } catch (e) {
+        console.warn("Direct fetch for original resume failed (likely CORS):", e);
       }
 
-      // If server returned valid blob, download it
-      if (fileBlob && fileBlob.size > 50) {
-        triggerDownload(fileBlob, downloadFileName);
+      // Try 2: Backend download endpoint as proxy
+      try {
+        const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId || '')}&filename=${encodeURIComponent(downloadFileName)}&url=${encodeURIComponent(fullUrl)}&name=${encodeURIComponent(resolvedName)}`;
+        const res = await fetch(downloadApiUrl).catch(() => null);
+        if (res && res.ok) {
+          const blob = await res.blob();
+          if (blob && blob.size > 100 && !blob.type.includes('application/json') && !blob.type.includes('text/html')) {
+            triggerBlobDownload(blob, downloadFileName);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("Backend proxy download failed:", e);
+      }
+
+      // Try 3: Direct browser download/navigation trigger
+      // Opening or downloading the original URL in the browser guarantees the authentic uploaded file is received
+      try {
+        const link = document.createElement("a");
+        link.href = fullUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.download = downloadFileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast(`Original resume accessed: ${downloadFileName}`, "success");
+        return;
+      } catch (e) {
+        window.open(fullUrl, "_blank");
+        showToast(`Opened original resume: ${downloadFileName}`, "success");
         return;
       }
+    }
 
-      // Client-Side Zero-Failure Fallback: Generate the candidate dossier PDF
-      const dossierBlob = generateClientPdfBlob({
-        ...applicantObj,
-        id: resolvedId,
-        name: resolvedName,
-        candidateName: resolvedName,
-        jobTitle: applicantObj.jobApplied || applicantObj.jobTitle || applicantObj.position || "Candidate",
-        email: applicantObj.email,
-        phone: applicantObj.phone,
-        whyJoin: applicantObj.whyJoin || applicantObj.message,
-        coverLetter: applicantObj.coverLetter,
-        portfolioUrl: applicantObj.portfolioUrl || applicantObj.portfolio
-      }, downloadFileName);
-
-      triggerDownload(dossierBlob, downloadFileName.endsWith(".pdf") ? downloadFileName : `${downloadFileName}.pdf`);
-    } catch (err) {
-      console.warn("Download encountered exception, generating emergency dossier:", err);
+    // CASE 3: Only resolvedId is present, try backend download endpoint
+    if (resolvedId) {
       try {
-        const dossierBlob = generateClientPdfBlob({
-          id: resolvedId,
-          name: resolvedName,
-          candidateName: resolvedName,
-          jobTitle: applicantObj.jobApplied || applicantObj.jobTitle || "Candidate",
-          email: applicantObj.email,
-          phone: applicantObj.phone
-        }, downloadFileName);
-        triggerDownload(dossierBlob, downloadFileName.endsWith(".pdf") ? downloadFileName : `${downloadFileName}.pdf`);
-      } catch (e2) {
-        showToast(`Resume download error: ${err.message || "Failed to download"}`, "error");
+        let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1").replace(/\/+$/, "");
+        const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId)}&filename=${encodeURIComponent(downloadFileName)}&name=${encodeURIComponent(resolvedName)}`;
+        const res = await fetch(downloadApiUrl);
+        if (res && res.ok) {
+          const blob = await res.blob();
+          if (blob && blob.size > 100 && !blob.type.includes('application/json')) {
+            triggerBlobDownload(blob, downloadFileName);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("Backend download failed:", e);
       }
     }
+
+    showToast(`Could not access original resume for ${resolvedName}. Please verify file upload.`, "error");
   };
 
   const fetchResumesFromBackend = async () => {
@@ -591,10 +587,8 @@ export const Careers = () => {
       if (cleanedState.process) parsed.careerProcess = cleanedState.process;
       if (cleanedState.processHeader) parsed.processHeader = cleanedState.processHeader;
       if (cleanedState.hero) parsed.careerHero = cleanedState.hero;
-      parsed.resumes = cleanedState.resumes;
-      parsed.careerApplications = cleanedState.resumes;
-      localStorage.setItem('zenvora_db', JSON.stringify(parsed));
-      localStorage.setItem('techmaster-cms-last-updated', JSON.stringify({ key: 'careers', timestamp: Date.now() }));
+      safeSetLocalStorage('zenvora_db', parsed);
+      safeSetLocalStorage('techmaster-cms-last-updated', { key: 'careers', timestamp: Date.now() });
       window.dispatchEvent(new CustomEvent('techmaster-cms-updated', { detail: { key: 'careers', timestamp: Date.now() } }));
     } catch (e) {}
 
@@ -937,7 +931,7 @@ export const Careers = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800/60">
-                    {formData.resumes.map((r, idx) => {
+                    {(formData?.resumes || []).filter(Boolean).map((r, idx) => {
                       const name = r.candidateName || r.name || r.fullName || r.applicantName || "Anonymous Candidate";
                       const jobRole = r.jobApplied || r.jobTitle || r.position || r.role || "General Application";
                       const rawResume = r.resumeBase64Data || r.resumeFileUrl || r.resumeUrl || r.resume || "";
@@ -956,21 +950,28 @@ export const Careers = () => {
                           <td className="py-2.5 px-4 font-mono text-zinc-500 text-[10px]">{dateStr}</td>
                           <td className="py-2.5 px-4">
                             {rawResume ? (
-                              <button 
-                                onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px] font-bold"
-                                title="Click to download resume file onto PC"
-                              >
-                                <Download className="w-3.5 h-3.5" /> Download {resumeName}
-                              </button>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <button 
+                                  onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px] font-bold"
+                                  title="Download candidate's original resume file"
+                                >
+                                  <Download className="w-3.5 h-3.5" /> Download
+                                </button>
+                                {resumeLink && (
+                                  <a
+                                    href={resumeLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-1 rounded text-zinc-400 hover:text-luxury-gold hover:bg-zinc-800 transition-colors inline-flex items-center"
+                                    title="Open original resume in new tab"
+                                  >
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                  </a>
+                                )}
+                              </div>
                             ) : (
-                              <button 
-                                onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px]"
-                                title="Download Application Dossier"
-                              >
-                                <Download className="w-3.5 h-3.5" /> Dossier
-                              </button>
+                              <span className="text-zinc-500 text-[10px] font-mono italic">No file attached</span>
                             )}
                           </td>
                           <td className="py-2.5 px-4">
@@ -1151,13 +1152,25 @@ export const Careers = () => {
 
                   <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
                     <span className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5 font-bold">Uploaded Resume Document</span> 
-                    <button 
-                      type="button"
-                      onClick={() => handleDownloadResume(selectedApplicant, name, resumeName, selectedApplicant.id || selectedApplicant._id)}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-luxury-gold text-black font-bold font-mono text-xs hover:bg-yellow-400 transition-colors shadow-gold-glow cursor-pointer"
-                    >
-                      <Download className="w-4 h-4 text-black" /> Download Resume ({resumeName})
-                    </button>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button 
+                        type="button"
+                        onClick={() => handleDownloadResume(selectedApplicant, name, resumeName, selectedApplicant.id || selectedApplicant._id)}
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-luxury-gold text-black font-bold font-mono text-xs hover:bg-yellow-400 transition-colors shadow-gold-glow cursor-pointer"
+                      >
+                        <Download className="w-4 h-4 text-black" /> Download Original Resume
+                      </button>
+                      {resumeLink && (
+                        <a
+                          href={resumeLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-200 text-xs font-mono hover:text-luxury-gold hover:border-luxury-gold/40 transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" /> Open in New Tab
+                        </a>
+                      )}
+                    </div>
                   </div>
 
                   {whyJoin && (

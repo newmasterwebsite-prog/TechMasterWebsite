@@ -117,13 +117,19 @@ function AppContent() {
   );
 }
 
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 function App() {
   return (
-    <DatabaseProvider>
-      <MediaProvider>
-        <AppContent />
-      </MediaProvider>
-    </DatabaseProvider>
+    <ErrorBoundary>
+      <DatabaseProvider>
+        <MediaProvider>
+          <ErrorBoundary>
+            <AppContent />
+          </ErrorBoundary>
+        </MediaProvider>
+      </DatabaseProvider>
+    </ErrorBoundary>
   );
 }
 
