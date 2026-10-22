@@ -95,13 +95,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [dbData, setDbData] = useState<any>(null);
   const DEFAULT_API_URL = "https://techmasterbackend-4l9g.onrender.com/api/v1";
   const getApiBaseUrl = () => {
-    if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
-      return "http://localhost:5000/api/v1";
-    }
     const envUrl = import.meta.env.VITE_API_URL?.trim();
-    if (!envUrl) return DEFAULT_API_URL;
-    const normalized = envUrl.replace(/\/+$|\/api\/v1\/*$/i, "");
-    return normalized.endsWith("/api/v1") ? normalized : `${normalized}/api/v1`;
+    if (envUrl) {
+      const normalized = envUrl.replace(/\/+$|\/api\/v1\/*$/i, "");
+      return normalized.endsWith("/api/v1") ? normalized : `${normalized}/api/v1`;
+    }
+    return DEFAULT_API_URL;
   };
   const REFRESH_INTERVAL_MS = 30000;
 

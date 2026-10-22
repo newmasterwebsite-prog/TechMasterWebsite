@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Eye, ThumbsUp, Flame, ArrowRight, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, ThumbsUp, ArrowRight, ChevronDown } from "lucide-react";
 import { mediaUrl } from "../utils/media";
 
 export interface ArticleItem {
@@ -168,7 +168,6 @@ export const LatestArticlesSection: React.FC<LatestArticlesSectionProps> = ({ da
   const badgeText = data?.badge || "LATEST ARTICLES";
   const headingText = data?.heading || "Featured Stories & Press Highlights";
   const descriptionText = data?.description || "Exclusive deep dives, industry interviews, and thought leadership from Arvind Kharra & Tech Master.";
-  const hotBadgeText = data?.hotBadge || "HOT";
   const hotTitleText = data?.hotTitle || "Hot";
 
   return (
@@ -321,22 +320,12 @@ export const LatestArticlesSection: React.FC<LatestArticlesSectionProps> = ({ da
         ========================================================== */}
         <div className="lg:col-span-5 bg-[#0b0b0e]/95 border border-white/10 hover:border-gold/30 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-colors duration-500">
           <div>
-            {/* Header: Flame Icon + "Hot" + "Newest ∨" Dropdown */}
+            {/* Header: Clean normal title + "Newest ∨" Dropdown */}
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-rose-600/30">
-                  <Flame className="w-5 h-5 fill-current" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-white font-bold text-lg sm:text-xl tracking-tight">
-                    {hotTitleText}
-                  </span>
-                  {hotBadgeText && (
-                    <span className="bg-rose-500/20 text-rose-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border border-rose-500/30">
-                      {hotBadgeText}
-                    </span>
-                  )}
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-bold text-lg sm:text-xl tracking-tight">
+                  {hotTitleText && hotTitleText.toLowerCase() !== "hot" ? hotTitleText : "Trending Stories"}
+                </span>
               </div>
 
               <div className="inline-flex items-center gap-1 text-sky-400 hover:text-gold text-xs font-mono font-medium cursor-pointer transition-colors">

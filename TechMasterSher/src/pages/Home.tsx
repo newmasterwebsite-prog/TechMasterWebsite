@@ -59,40 +59,42 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
 
   useEffect(() => {
     const fetchHomepage = async () => {
-      try {
-        const envUrl =
-          typeof window !== "undefined" &&
-            (window.location.hostname === "localhost" ||
-              window.location.hostname === "127.0.0.1")
-            ? "http://localhost:5000/api/v1"
-            : import.meta.env.VITE_API_URL?.trim();
+      const candidates = [
+        import.meta.env.VITE_API_URL?.trim(),
+        typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+          ? "http://localhost:5000/api/v1"
+          : null,
+        "https://techmasterbackend-4l9g.onrender.com/api/v1"
+      ].filter(Boolean) as string[];
 
-        const base = envUrl
-          ? envUrl
-            .replace(/\/+$|\/api\/v1\/*$/i, "")
-            .endsWith("/api/v1")
-            ? envUrl.replace(/\/+$|\/api\/v1\/*$/i, "")
-            : `${envUrl.replace(/\/+$|\/api\/v1\/*$/i, "")}/api/v1`
-          : "https://techmasterbackend-4l9g.onrender.com/api/v1";
+      for (const rawUrl of candidates) {
+        try {
+          const base = rawUrl.replace(/\/+$|\/api\/v1\/*$/i, "").endsWith("/api/v1")
+            ? rawUrl.replace(/\/+$|\/api\/v1\/*$/i, "")
+            : `${rawUrl.replace(/\/+$|\/api\/v1\/*$/i, "")}/api/v1`;
 
-        const res = await fetch(`${base}/homepage?t=${Date.now()}`);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 1800);
+          const res = await fetch(`${base}/homepage?t=${Date.now()}`, { signal: controller.signal });
+          clearTimeout(timeoutId);
 
-        if (res.ok) {
-          const json = await res.json();
-
-          if (json.success && json.data) {
-            setLiveHomeData(json.data);
-            try {
-              const currentSaved = localStorage.getItem("zenvora_db");
-              const parsed = currentSaved ? JSON.parse(currentSaved) : {};
-              parsed.homepageCMS = json.data;
-              parsed.homepage = json.data;
-              localStorage.setItem("zenvora_db", JSON.stringify(parsed));
-            } catch (e) {}
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.data) {
+              setLiveHomeData(json.data);
+              try {
+                const currentSaved = localStorage.getItem("zenvora_db");
+                const parsed = currentSaved ? JSON.parse(currentSaved) : {};
+                parsed.homepageCMS = json.data;
+                parsed.homepage = json.data;
+                localStorage.setItem("zenvora_db", JSON.stringify(parsed));
+              } catch (e) {}
+              break;
+            }
           }
+        } catch (e) {
+          // If candidate failed or timed out, try next candidate
         }
-      } catch (e) {
-        console.warn("Direct Homepage fetch error:", e);
       }
     };
 

@@ -1293,18 +1293,37 @@ export const Homepage = () => {
                   </p>
                 </div>
               </div>
-              <label className="flex items-center gap-2 cursor-pointer bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg hover:border-luxury-gold/40 transition-colors">
-                <span className="text-[11px] font-mono text-zinc-300">Section Enabled</span>
-                <input
-                  type="checkbox"
-                  checked={formData.latestArticles?.visible !== false}
-                  onChange={(e) => persistChanges({
-                    ...formData,
-                    latestArticles: { ...(formData.latestArticles || {}), visible: e.target.checked }
-                  })}
-                  className="rounded bg-zinc-800 border-zinc-700 text-luxury-gold focus:ring-0 w-4 h-4"
-                />
-              </label>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 cursor-pointer bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg hover:border-luxury-gold/40 transition-colors">
+                  <span className="text-[11px] font-mono text-zinc-300">Section Enabled</span>
+                  <input
+                    type="checkbox"
+                    checked={formData.latestArticles?.visible !== false}
+                    onChange={(e) => persistChanges({
+                      ...formData,
+                      latestArticles: { ...(formData.latestArticles || {}), visible: e.target.checked }
+                    })}
+                    className="rounded bg-zinc-800 border-zinc-700 text-luxury-gold focus:ring-0 w-4 h-4"
+                  />
+                </label>
+                <Button 
+                  type="button"
+                  onClick={() => handlePublishAll(true)} 
+                  disabled={isPublishing} 
+                  variant="gold" 
+                  size="sm" 
+                  className="text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5 shadow-lg shadow-gold/20"
+                >
+                  {isPublishing ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
+                  ) : isSaved ? (
+                    <Check className="w-3.5 h-3.5 text-black" />
+                  ) : (
+                    <Save className="w-3.5 h-3.5" />
+                  )}
+                  {isPublishing ? 'Saving...' : isSaved ? 'Saved Live!' : 'Save & Update Website'}
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
@@ -1350,33 +1369,18 @@ export const Homepage = () => {
                   className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 resize-none"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Hot Badge</label>
-                  <input
-                    type="text"
-                    value={formData.latestArticles?.hotBadge || ''}
-                    placeholder="HOT"
-                    onChange={(e) => persistChanges({
-                      ...formData,
-                      latestArticles: { ...(formData.latestArticles || {}), hotBadge: e.target.value }
-                    })}
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-rose-400 font-mono font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Hot Column Title</label>
-                  <input
-                    type="text"
-                    value={formData.latestArticles?.hotTitle || ''}
-                    placeholder="Hot"
-                    onChange={(e) => persistChanges({
-                      ...formData,
-                      latestArticles: { ...(formData.latestArticles || {}), hotTitle: e.target.value }
-                    })}
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-bold"
-                  />
-                </div>
+              <div>
+                <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Right Column Title</label>
+                <input
+                  type="text"
+                  value={formData.latestArticles?.hotTitle || ''}
+                  placeholder="Trending Stories"
+                  onChange={(e) => persistChanges({
+                    ...formData,
+                    latestArticles: { ...(formData.latestArticles || {}), hotTitle: e.target.value }
+                  })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-bold"
+                />
               </div>
             </div>
           </div>
@@ -1552,6 +1556,30 @@ export const Homepage = () => {
                   </div>
                 ))}
             </div>
+          </div>
+
+          {/* Section 10 Bottom Save Action Bar */}
+          <div className="bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-xs text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-luxury-gold animate-pulse" />
+              <span>Articles section changes are saved directly to MongoDB and synced live to the Website.</span>
+            </div>
+            <Button
+              type="button"
+              onClick={() => handlePublishAll(true)}
+              disabled={isPublishing}
+              variant="gold"
+              className="w-full sm:w-auto px-6 py-2.5 font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-gold/30"
+            >
+              {isPublishing ? (
+                <RefreshCw className="w-4 h-4 animate-spin text-black" />
+              ) : isSaved ? (
+                <Check className="w-4 h-4 text-black" />
+              ) : (
+                <Save className="w-4 h-4 text-black" />
+              )}
+              <span>{isPublishing ? 'Publishing to Website...' : isSaved ? 'Saved & Live on Website!' : 'Save & Publish All Changes'}</span>
+            </Button>
           </div>
         </div>
       )}
