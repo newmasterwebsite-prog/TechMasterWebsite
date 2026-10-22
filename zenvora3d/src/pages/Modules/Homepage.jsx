@@ -4,7 +4,8 @@ import { useMediaManager } from '../../context/MediaContext';
 import { 
   Home as HomeIcon, Check, Save, Plus, Trash2, Edit3, Eye, EyeOff, 
   ArrowUp, ArrowDown, Sparkles, Image as ImageIcon, Video, Link as LinkIcon, 
-  Layers, Sliders, Play, ShieldCheck, Globe, Move, Search, RefreshCw, X, RotateCcw, AlertTriangle, UploadCloud
+  Layers, Sliders, Play, ShieldCheck, Globe, Move, Search, RefreshCw, X, RotateCcw, AlertTriangle, UploadCloud,
+  Newspaper, Flame, ExternalLink, Star
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
@@ -232,6 +233,98 @@ export const Homepage = () => {
       ]
     },
 
+    // SECTION: Latest Articles & Hot Press Features
+    latestArticles: {
+      badge: 'LATEST ARTICLES',
+      heading: 'Featured Stories & Press Highlights',
+      description: 'Exclusive deep dives, industry interviews, and thought leadership from Arvind Kharra & Tech Master.',
+      hotBadge: 'HOT',
+      hotTitle: 'Hot',
+      visible: true,
+      list: [
+        {
+          id: 'art-1',
+          title: 'From influencers to trusted voices: The changing role of creators in tech buying decisions',
+          excerpt: 'Authored by Arvind Kharra (Founder of TechMaster), exploring how technology creators have transitioned from mere product reviewers to trusted advisory voices driving high-stake purchase decisions.',
+          category: 'CREATOR ECONOMY',
+          authorName: 'Arvind Kharra',
+          authorRole: 'Founder, TechMaster',
+          authorAvatar: '/TechMaster.jpeg',
+          date: '23.09.2026',
+          readTime: '4 min read',
+          views: '24,850',
+          likes: '2,340',
+          imageUrl: '/articles/adgully_creators.jpg',
+          articleUrl: 'https://www.adgully.com/post/20995/from-influencers-to-trusted-voices-the-changing-role-of-creators-in-tech-buying-decisions#google_vignette',
+          isFeatured: true,
+          isHot: false,
+          order: 1,
+          visible: true,
+          deleted: false
+        },
+        {
+          id: 'art-2',
+          title: 'Content creators decode the future of influence at Convergence India 2026',
+          excerpt: 'At the 33rd Convergence India Expo, Arvind Kharra highlighted AI as an empowering support system rather than a disruptor, emphasizing authenticity and trust in digital media.',
+          category: 'DIGITAL MEDIA',
+          authorName: 'Communications Today',
+          authorRole: 'Media Coverage',
+          authorAvatar: '/Tech MAster Logo.png',
+          date: '07.04.2026',
+          readTime: '3 min read',
+          views: '19,420',
+          likes: '1,890',
+          imageUrl: '/articles/convergence_india.jpg',
+          articleUrl: 'https://www.communicationstoday.co.in/content-creators-decode-the-future-of-influence-at-convergence-india-2026/',
+          isFeatured: false,
+          isHot: true,
+          order: 2,
+          visible: true,
+          deleted: false
+        },
+        {
+          id: 'art-3',
+          title: '5 Made-in-India AI Innovations Driving the Next Wave of Digital Transformation',
+          excerpt: 'India’s AI ecosystem is moving beyond experimentation, with groundbreaking solutions solving real-world enterprise operations and digital visibility at scale.',
+          category: 'ARTIFICIAL INTELLIGENCE',
+          authorName: 'CXO Today',
+          authorRole: 'Tech Analysis',
+          authorAvatar: '/NextUniverz.jpeg',
+          date: '18.09.2026',
+          readTime: '5 min read',
+          views: '15,630',
+          likes: '1,420',
+          imageUrl: '/articles/cxotoday_ai.jpg',
+          articleUrl: 'https://cxotoday.com/others/5-made-in-india-ai-innovations-driving-the-next-wave-of-digital-transformation/',
+          isFeatured: false,
+          isHot: false,
+          order: 3,
+          visible: true,
+          deleted: false
+        },
+        {
+          id: 'art-4',
+          title: 'AI travel planning: 7 money checks to make before booking flights, hotels',
+          excerpt: 'Arvind Kharra, Founder & CEO of Tech Master, explains how AI tools can optimise total trip budgets, calculate all-in hidden costs, and evaluate travel alternatives.',
+          category: 'TRAVEL TECH',
+          authorName: 'CNBC TV18',
+          authorRole: 'Featured Expert',
+          authorAvatar: '/MasterWheels.jpeg',
+          date: '17.08.2026',
+          readTime: '6 min read',
+          views: '28,910',
+          likes: '2,780',
+          imageUrl: '/articles/cnbc_travel_ai.jpg',
+          articleUrl: 'https://www.cnbctv18.com/travel/ai-travel-planning-money-checks-to-make-before-booking-flights-hotels-19969900.htm',
+          isFeatured: false,
+          isHot: false,
+          order: 4,
+          visible: true,
+          deleted: false
+        }
+      ]
+    },
+
     // SECTION 10: Brand Collaborations
     brandCollaborations: {
       badge: 'BRAND COLLABORATIONS',
@@ -308,6 +401,13 @@ export const Homepage = () => {
       list: (rawHomepage.longVideos?.list && rawHomepage.longVideos.list.length > 0)
         ? rawHomepage.longVideos.list
         : defaultHomepageCMS.longVideos.list
+    },
+    latestArticles: {
+      ...defaultHomepageCMS.latestArticles,
+      ...(rawHomepage.latestArticles || {}),
+      list: (rawHomepage.latestArticles?.list && rawHomepage.latestArticles.list.length > 0)
+        ? rawHomepage.latestArticles.list
+        : defaultHomepageCMS.latestArticles.list
     },
     brandCollaborations: {
       ...defaultHomepageCMS.brandCollaborations,
@@ -432,6 +532,11 @@ export const Homepage = () => {
                 ...defaultHomepageCMS.longVideos,
                 ...(data.longVideos || {}),
                 list: (data.longVideos?.list && data.longVideos.list.length > 0) ? data.longVideos.list : (prev.longVideos?.list || defaultHomepageCMS.longVideos.list)
+              },
+              latestArticles: {
+                ...defaultHomepageCMS.latestArticles,
+                ...(data.latestArticles || {}),
+                list: (data.latestArticles?.list && data.latestArticles.list.length > 0) ? data.latestArticles.list : (prev.latestArticles?.list || defaultHomepageCMS.latestArticles.list)
               },
               brandCollaborations: {
                 ...defaultHomepageCMS.brandCollaborations,
@@ -601,6 +706,15 @@ export const Homepage = () => {
       processedItem.brandLogo = bImg;
     }
 
+    if (listKey === 'list' && parentKey === 'latestArticles') {
+      const aImg = processedItem.imageUrl || processedItem.image || '';
+      processedItem.imageUrl = aImg;
+      processedItem.image = aImg;
+      if (processedItem.isFeatured) {
+        // Only one featured article at a time if desired, or allow multiple
+      }
+    }
+
     let updated;
     if (processedItem.id) {
       updated = list.map(i => i.id === processedItem.id ? processedItem : i);
@@ -634,8 +748,9 @@ export const Homepage = () => {
     { id: 'sec-7', label: 'Section 7: Statistics Counters' },
     { id: 'sec-8', label: 'Section 8: Featured Shorts & Reels' },
     { id: 'sec-9', label: 'Section 9: Featured Long Videos' },
-    { id: 'sec-10', label: 'Section 10: Brand Collaborations Wall' },
-    { id: 'sec-11', label: 'Section 11: Contact CTA Settings' }
+    { id: 'sec-articles', label: 'Section 10: Latest Articles & Hot Stories' },
+    { id: 'sec-10', label: 'Section 11: Brand Collaborations Wall' },
+    { id: 'sec-11', label: 'Section 12: Contact CTA Settings' }
   ];
 
   return (
@@ -1159,7 +1274,289 @@ export const Homepage = () => {
         </div>
       )}
 
-      {/* SECTION 10: BRAND COLLABORATIONS */}
+      {/* SECTION: LATEST ARTICLES & PRESS STORIES */}
+      {activeSection === 'sec-articles' && (
+        <div className="space-y-6">
+          {/* Header & Meta Settings Card */}
+          <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center text-luxury-gold">
+                  <Newspaper className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+                    Latest Articles & Hot Stories Settings
+                  </h3>
+                  <p className="text-[11px] text-zinc-400">
+                    Manage the homepage articles section placed above Brand Collaborations
+                  </p>
+                </div>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg hover:border-luxury-gold/40 transition-colors">
+                <span className="text-[11px] font-mono text-zinc-300">Section Enabled</span>
+                <input
+                  type="checkbox"
+                  checked={formData.latestArticles?.visible !== false}
+                  onChange={(e) => persistChanges({
+                    ...formData,
+                    latestArticles: { ...(formData.latestArticles || {}), visible: e.target.checked }
+                  })}
+                  className="rounded bg-zinc-800 border-zinc-700 text-luxury-gold focus:ring-0 w-4 h-4"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div>
+                <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Section Tag / Badge</label>
+                <input
+                  type="text"
+                  value={formData.latestArticles?.badge || ''}
+                  placeholder="LATEST ARTICLES"
+                  onChange={(e) => persistChanges({
+                    ...formData,
+                    latestArticles: { ...(formData.latestArticles || {}), badge: e.target.value }
+                  })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-mono"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Main Heading</label>
+                <input
+                  type="text"
+                  value={formData.latestArticles?.heading || ''}
+                  placeholder="Featured Stories & Press Highlights"
+                  onChange={(e) => persistChanges({
+                    ...formData,
+                    latestArticles: { ...(formData.latestArticles || {}), heading: e.target.value }
+                  })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white font-serif font-bold"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="md:col-span-2">
+                <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Subtitle / Description</label>
+                <textarea
+                  rows={2}
+                  value={formData.latestArticles?.description || ''}
+                  placeholder="Exclusive deep dives, industry interviews, and thought leadership from Arvind Kharra & Tech Master."
+                  onChange={(e) => persistChanges({
+                    ...formData,
+                    latestArticles: { ...(formData.latestArticles || {}), description: e.target.value }
+                  })}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 resize-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Hot Badge</label>
+                  <input
+                    type="text"
+                    value={formData.latestArticles?.hotBadge || ''}
+                    placeholder="HOT"
+                    onChange={(e) => persistChanges({
+                      ...formData,
+                      latestArticles: { ...(formData.latestArticles || {}), hotBadge: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-rose-400 font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Hot Column Title</label>
+                  <input
+                    type="text"
+                    value={formData.latestArticles?.hotTitle || ''}
+                    placeholder="Hot"
+                    onChange={(e) => persistChanges({
+                      ...formData,
+                      latestArticles: { ...(formData.latestArticles || {}), hotTitle: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-bold"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Articles Management Card */}
+          <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+                  Articles & Publications ({(formData.latestArticles?.list || []).filter(a => !a.deleted).length})
+                </h3>
+                <p className="text-[11px] text-zinc-400">
+                  Left side displays the main featured card. Right side displays Hot cards and list.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="relative w-48">
+                  <Search className="w-3 h-3 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <input
+                    type="text"
+                    placeholder="Search articles..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded pl-7 pr-2 py-1 text-xs text-zinc-200"
+                  />
+                </div>
+                <Button
+                  onClick={() => setModalConfig({
+                    listKey: 'list',
+                    parentKey: 'latestArticles',
+                    item: {
+                      title: '',
+                      excerpt: '',
+                      category: 'TECH',
+                      authorName: 'Arvind Kharra',
+                      authorRole: 'Founder, TechMaster',
+                      authorAvatar: '/TechMaster.jpeg',
+                      date: new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
+                      readTime: '4 min read',
+                      views: '15,000',
+                      likes: '1,500',
+                      imageUrl: '',
+                      articleUrl: '',
+                      isFeatured: (formData.latestArticles?.list || []).filter(a => a.isFeatured && !a.deleted).length === 0,
+                      isHot: false,
+                      visible: true
+                    }
+                  })}
+                  variant="gold"
+                  size="sm"
+                  className="text-xs uppercase whitespace-nowrap"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Add Article
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(formData.latestArticles?.list || [])
+                .filter(a => ((a.title || '') + ' ' + (a.category || '') + ' ' + (a.authorName || '')).toLowerCase().includes(searchQuery.toLowerCase()) && !a.deleted)
+                .map((art, idx) => (
+                  <div
+                    key={art.id || idx}
+                    className="bg-zinc-900/60 border border-zinc-800 hover:border-luxury-gold/50 rounded-xl p-4 flex flex-col justify-between space-y-3 transition-all group relative"
+                  >
+                    <div className="flex gap-3">
+                      <div className="w-24 h-24 rounded-lg overflow-hidden bg-black/60 shrink-0 border border-zinc-800 relative">
+                        {art.imageUrl ? (
+                          <img src={art.imageUrl} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                            <ImageIcon className="w-6 h-6" />
+                          </div>
+                        )}
+                        {art.isFeatured && (
+                          <span className="absolute top-1 left-1 bg-amber-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                            ★ Featured
+                          </span>
+                        )}
+                        {art.isHot && (
+                          <span className="absolute bottom-1 left-1 bg-rose-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                            🔥 Hot
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold text-luxury-gold bg-luxury-gold/10 px-2 py-0.5 rounded">
+                            {art.category || 'ARTICLE'}
+                          </span>
+                          <span className="text-[10px] text-zinc-500 font-mono">{art.date}</span>
+                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ml-auto ${art.visible !== false ? 'bg-emerald-500/15 text-emerald-400' : 'bg-zinc-800 text-zinc-500'}`}>
+                            {art.visible !== false ? 'Active' : 'Hidden'}
+                          </span>
+                        </div>
+                        <h4 className="text-white font-semibold text-xs leading-snug line-clamp-2 group-hover:text-luxury-gold transition-colors">
+                          {art.title || 'Untitled Article'}
+                        </h4>
+                        <p className="text-zinc-400 text-[11px] line-clamp-2 leading-relaxed">
+                          {art.excerpt}
+                        </p>
+                        <div className="flex items-center gap-3 text-[10px] text-zinc-500 pt-1 font-mono">
+                          <span>By: <strong className="text-zinc-300">{art.authorName || 'Tech Master'}</strong></span>
+                          {art.views && <span>👁 {art.views}</span>}
+                          {art.likes && <span>👍 {art.likes}</span>}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-zinc-800/80 pt-2 text-xs">
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => swapOrder('list', 'latestArticles', idx, -1)}
+                          disabled={idx === 0}
+                          className="p-1 text-zinc-400 hover:text-white disabled:opacity-30"
+                          title="Move Up"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => swapOrder('list', 'latestArticles', idx, 1)}
+                          disabled={idx === (formData.latestArticles?.list || []).length - 1}
+                          className="p-1 text-zinc-400 hover:text-white disabled:opacity-30"
+                          title="Move Down"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleItemVisibility('list', 'latestArticles', art.id)}
+                          className={`p-1 ${art.visible !== false ? 'text-zinc-400 hover:text-amber-400' : 'text-zinc-600 hover:text-emerald-400'}`}
+                          title={art.visible !== false ? 'Hide from Website' : 'Show on Website'}
+                        >
+                          {art.visible !== false ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {art.articleUrl && (
+                          <a
+                            href={art.articleUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-zinc-400 hover:text-luxury-gold p-1"
+                            title="Open external article link"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setModalConfig({
+                            listKey: 'list',
+                            parentKey: 'latestArticles',
+                            item: { ...art }
+                          })}
+                          className="text-zinc-400 hover:text-luxury-gold flex items-center gap-1 text-[11px] px-2 py-1 bg-zinc-800/80 rounded hover:bg-zinc-800"
+                        >
+                          <Edit3 className="w-3 h-3" /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleItemDelete('list', 'latestArticles', art.id)}
+                          className="text-zinc-400 hover:text-rose-400 p-1"
+                          title="Delete Article"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 11: BRAND COLLABORATIONS */}
       {activeSection === 'sec-10' && (
         <div className="space-y-4">
           <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4">
@@ -1300,101 +1697,367 @@ export const Homepage = () => {
       {/* CREATE / EDIT MODAL */}
       {modalConfig && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <form onSubmit={handleModalSave} className="bg-zinc-950 border border-zinc-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <form onSubmit={handleModalSave} className={`bg-zinc-950 border border-zinc-800 rounded-2xl ${modalConfig.parentKey === 'latestArticles' ? 'max-w-xl' : 'max-w-md'} w-full p-6 space-y-4 shadow-2xl`}>
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
-                {modalConfig.item.id ? 'Edit Item' : 'Create New Item'}
+                {modalConfig.parentKey === 'latestArticles' 
+                  ? (modalConfig.item.id ? 'Edit Article & Publication' : 'Add New Article')
+                  : (modalConfig.item.id ? 'Edit Item' : 'Create New Item')}
               </h3>
               <button type="button" onClick={() => setModalConfig(null)} className="text-zinc-500 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              {Object.keys(modalConfig.item).filter(k => !['id', 'order', 'visible', 'deleted'].includes(k)).map(key => {
-                const isImageKey = ['circleImage', 'image', 'imageUrl', 'logo', 'logoUrl', 'avatar', 'thumbnail'].includes(key);
-                const isVideoKey = ['url', 'videoUrl', 'video', 'bgMediaUrl'].includes(key);
-                const isMediaKey = isImageKey || isVideoKey;
-                const fieldLabel = (key === 'circleImage' || key === 'logoUrl') ? 'Channel Avatar Image URL' : (key === 'url' || key === 'videoUrl') ? 'Reel Video URL / Cloudinary URL' : key;
-                return (
-                  <div key={key}>
-                    <label className="text-zinc-400 block mb-1 font-mono uppercase text-[10px]">{fieldLabel}</label>
-                    {isMediaKey ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                          {isImageKey && (
-                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-luxury-gold bg-black shrink-0 flex items-center justify-center shadow-md">
-                              <img 
-                                src={modalConfig.item[key] || defaultCircleAvatar} 
-                                alt="Preview" 
-                                className="w-full h-full object-cover" 
-                              />
-                            </div>
-                          )}
-                          <input
-                            type="text"
-                            placeholder={isVideoKey ? "Cloudinary Video URL / YouTube / Instagram Link" : "Cloudinary Image URL"}
-                            value={modalConfig.item[key] || ''}
-                            onChange={(e) => setModalConfig({
-                              ...modalConfig,
-                              item: { ...modalConfig.item, [key]: e.target.value }
-                            })}
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none font-mono text-[11px]"
-                          />
-                        </div>
-                        <div className="flex items-center gap-2 pt-1">
-                          <label className="flex-1 bg-luxury-gold/15 hover:bg-luxury-gold/25 text-luxury-gold border border-luxury-gold/40 rounded-lg px-3 py-2 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm">
-                            <UploadCloud className="w-4 h-4 text-luxury-gold" />
-                            {isUploading ? 'Uploading to Cloudinary...' : isVideoKey ? 'Upload Video to Cloudinary' : 'Upload Photo from PC'}
-                            <input 
-                              type="file" 
-                              accept={isVideoKey ? "video/*,image/*" : "image/*"}
-                              disabled={isUploading}
-                              onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
-                                  handleDirectFileUpload(e.target.files[0], (uploadedUrl) => {
-                                    setModalConfig(prev => ({
-                                      ...prev,
-                                      item: { ...prev.item, [key]: uploadedUrl, videoUrl: isVideoKey ? uploadedUrl : prev.item.videoUrl }
-                                    }));
-                                  });
-                                }
-                              }}
-                              className="hidden" 
-                            />
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => openMediaManager({
-                              onSelect: (selectedUrl) => {
-                                setModalConfig(prev => ({
-                                  ...prev,
-                                  item: { ...prev.item, [key]: selectedUrl, videoUrl: isVideoKey ? selectedUrl : prev.item.videoUrl }
-                                }));
-                              }
-                            })}
-                            className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-lg px-3 py-2 text-[11px] flex items-center gap-1.5 cursor-pointer transition-colors"
-                          >
-                            <ImageIcon className="w-3.5 h-3.5 text-luxury-gold" />
-                            Media Library
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <input
-                        type="text"
-                        value={modalConfig.item[key] || ''}
-                        onChange={(e) => setModalConfig({
-                          ...modalConfig,
-                          item: { ...modalConfig.item, [key]: e.target.value }
-                        })}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none"
-                      />
-                    )}
+            {modalConfig.parentKey === 'latestArticles' ? (
+              <div className="space-y-3.5 max-h-[72vh] overflow-y-auto pr-1 text-xs">
+                {/* Title */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Article Headline / Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={modalConfig.item.title || ''}
+                    placeholder="e.g. From influencers to trusted voices..."
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, title: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white font-medium text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                </div>
+
+                {/* Excerpt / Summary */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Excerpt / Summary</label>
+                  <textarea
+                    rows={3}
+                    value={modalConfig.item.excerpt || ''}
+                    placeholder="Short summary of the article..."
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, excerpt: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 text-xs resize-none focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                </div>
+
+                {/* Category & Date */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Category Tag</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.category || ''}
+                      placeholder="e.g. CREATOR ECONOMY, AI"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, category: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-luxury-gold font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
                   </div>
-                );
-              })}
-            </div>
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Publication Date</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.date || ''}
+                      placeholder="e.g. 23.09.2026"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, date: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Author Info */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Author Name / Outlet</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.authorName || ''}
+                      placeholder="e.g. Arvind Kharra"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, authorName: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Author Role / Publication</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.authorRole || ''}
+                      placeholder="e.g. Founder, TechMaster"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, authorRole: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-400 text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Author Avatar URL */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Author Avatar URL</label>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full overflow-hidden border border-luxury-gold bg-black shrink-0">
+                      <img src={modalConfig.item.authorAvatar || defaultCircleAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                    </div>
+                    <input
+                      type="text"
+                      value={modalConfig.item.authorAvatar || ''}
+                      placeholder="/TechMaster.jpeg or image URL"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, authorAvatar: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-zinc-300 font-mono text-[11px]"
+                    />
+                  </div>
+                </div>
+
+                {/* Cover Image */}
+                <div className="space-y-2">
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Cover Image URL *</label>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 h-14 rounded-lg overflow-hidden border border-zinc-700 bg-black shrink-0">
+                      {modalConfig.item.imageUrl ? (
+                        <img src={modalConfig.item.imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                          <ImageIcon className="w-4 h-4" />
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={modalConfig.item.imageUrl || ''}
+                      placeholder="https://... or /articles/..."
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, imageUrl: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-mono text-[11px]"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="flex-1 bg-luxury-gold/15 hover:bg-luxury-gold/25 text-luxury-gold border border-luxury-gold/40 rounded-lg px-3 py-1.5 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+                      <UploadCloud className="w-3.5 h-3.5 text-luxury-gold" />
+                      {isUploading ? 'Uploading...' : 'Upload Image'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={isUploading}
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleDirectFileUpload(e.target.files[0], (uploadedUrl) => {
+                              setModalConfig(prev => ({
+                                ...prev,
+                                item: { ...prev.item, imageUrl: uploadedUrl }
+                              }));
+                            });
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => openMediaManager({
+                        onSelect: (selectedUrl) => {
+                          setModalConfig(prev => ({
+                            ...prev,
+                            item: { ...prev.item, imageUrl: selectedUrl }
+                          }));
+                        }
+                      })}
+                      className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-lg px-3 py-1.5 text-[11px] flex items-center gap-1.5"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-luxury-gold" />
+                      Media Library
+                    </button>
+                  </div>
+                </div>
+
+                {/* External Article URL */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Article Source URL (Read More Link)</label>
+                  <input
+                    type="url"
+                    value={modalConfig.item.articleUrl || ''}
+                    placeholder="https://example.com/article"
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, articleUrl: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sky-400 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                </div>
+
+                {/* Stats: Views, Likes, Read Time */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[9px] block mb-1">Views</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.views || ''}
+                      placeholder="e.g. 24,850"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, views: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300 font-mono text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[9px] block mb-1">Likes</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.likes || ''}
+                      placeholder="e.g. 2,340"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, likes: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300 font-mono text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[9px] block mb-1">Read Time</label>
+                    <input
+                      type="text"
+                      value={modalConfig.item.readTime || ''}
+                      placeholder="e.g. 4 min read"
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, readTime: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300 font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Feature Placement Switches */}
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-zinc-800/80">
+                  <label className="flex items-center gap-2 cursor-pointer bg-zinc-900/60 p-2 rounded-lg border border-zinc-800">
+                    <input
+                      type="checkbox"
+                      checked={modalConfig.item.isFeatured === true}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, isFeatured: e.target.checked }
+                      })}
+                      className="rounded bg-zinc-800 border-zinc-700 text-luxury-gold focus:ring-0"
+                    />
+                    <span className="text-[11px] text-zinc-200">★ Left Main Card</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer bg-zinc-900/60 p-2 rounded-lg border border-zinc-800">
+                    <input
+                      type="checkbox"
+                      checked={modalConfig.item.isHot === true}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, isHot: e.target.checked }
+                      })}
+                      className="rounded bg-zinc-800 border-zinc-700 text-rose-500 focus:ring-0"
+                    />
+                    <span className="text-[11px] text-zinc-200">🔥 Right Hot Top</span>
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                {Object.keys(modalConfig.item).filter(k => !['id', 'order', 'visible', 'deleted'].includes(k)).map(key => {
+                  const isImageKey = ['circleImage', 'image', 'imageUrl', 'logo', 'logoUrl', 'avatar', 'thumbnail'].includes(key);
+                  const isVideoKey = ['url', 'videoUrl', 'video', 'bgMediaUrl'].includes(key);
+                  const isMediaKey = isImageKey || isVideoKey;
+                  const fieldLabel = (key === 'circleImage' || key === 'logoUrl') ? 'Channel Avatar Image URL' : (key === 'url' || key === 'videoUrl') ? 'Reel Video URL / Cloudinary URL' : key;
+                  return (
+                    <div key={key}>
+                      <label className="text-zinc-400 block mb-1 font-mono uppercase text-[10px]">{fieldLabel}</label>
+                      {isMediaKey ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                            {isImageKey && (
+                              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-luxury-gold bg-black shrink-0 flex items-center justify-center shadow-md">
+                                <img 
+                                  src={modalConfig.item[key] || defaultCircleAvatar} 
+                                  alt="Preview" 
+                                  className="w-full h-full object-cover" 
+                                />
+                              </div>
+                            )}
+                            <input
+                              type="text"
+                              placeholder={isVideoKey ? "Cloudinary Video URL / YouTube / Instagram Link" : "Cloudinary Image URL"}
+                              value={modalConfig.item[key] || ''}
+                              onChange={(e) => setModalConfig({
+                                ...modalConfig,
+                                item: { ...modalConfig.item, [key]: e.target.value }
+                              })}
+                              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none font-mono text-[11px]"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2 pt-1">
+                            <label className="flex-1 bg-luxury-gold/15 hover:bg-luxury-gold/25 text-luxury-gold border border-luxury-gold/40 rounded-lg px-3 py-2 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm">
+                              <UploadCloud className="w-4 h-4 text-luxury-gold" />
+                              {isUploading ? 'Uploading to Cloudinary...' : isVideoKey ? 'Upload Video to Cloudinary' : 'Upload Photo from PC'}
+                              <input 
+                                type="file" 
+                                accept={isVideoKey ? "video/*,image/*" : "image/*"}
+                                disabled={isUploading}
+                                onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    handleDirectFileUpload(e.target.files[0], (uploadedUrl) => {
+                                      setModalConfig(prev => ({
+                                        ...prev,
+                                        item: { ...prev.item, [key]: uploadedUrl, videoUrl: isVideoKey ? uploadedUrl : prev.item.videoUrl }
+                                      }));
+                                    });
+                                  }
+                                }}
+                                className="hidden" 
+                              />
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => openMediaManager({
+                                onSelect: (selectedUrl) => {
+                                  setModalConfig(prev => ({
+                                    ...prev,
+                                    item: { ...prev.item, [key]: selectedUrl, videoUrl: isVideoKey ? selectedUrl : prev.item.videoUrl }
+                                  }));
+                                }
+                              })}
+                              className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-lg px-3 py-2 text-[11px] flex items-center gap-1.5 cursor-pointer transition-colors"
+                            >
+                              <ImageIcon className="w-3.5 h-3.5 text-luxury-gold" />
+                              Media Library
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={modalConfig.item[key] || ''}
+                          onChange={(e) => setModalConfig({
+                            ...modalConfig,
+                            item: { ...modalConfig.item, [key]: e.target.value }
+                          })}
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
               <Button type="button" variant="outline" size="sm" onClick={() => setModalConfig(null)}>Cancel</Button>

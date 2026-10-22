@@ -113,6 +113,39 @@ export interface IFeaturedVideoItem {
   updatedAt?: Date;
 }
 
+export interface IArticleItem {
+  id?: string;
+  title: string;
+  excerpt?: string;
+  category?: string;
+  authorName?: string;
+  authorRole?: string;
+  authorAvatar?: string;
+  date?: string;
+  readTime?: string;
+  views?: string;
+  likes?: string;
+  imageUrl?: string;
+  articleUrl?: string;
+  isFeatured?: boolean;
+  isHot?: boolean;
+  order?: number;
+  visible?: boolean;
+  deleted?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ILatestArticles {
+  badge?: string;
+  heading?: string;
+  description?: string;
+  hotBadge?: string;
+  hotTitle?: string;
+  visible?: boolean;
+  list?: IArticleItem[];
+}
+
 export interface IHomepage extends Document, ICmsBase {
   hero?: any;
   introVision?: any;
@@ -122,6 +155,7 @@ export interface IHomepage extends Document, ICmsBase {
   statistics?: any;
   shortsReels?: any;
   longVideos?: any;
+  latestArticles?: ILatestArticles;
   brandCollaborations?: any;
   newsletterContact?: any;
   statisticsCounters?: any[];
@@ -141,6 +175,7 @@ const HomepageSchema = new Schema<IHomepage>(
     statistics: { type: Schema.Types.Mixed, default: {} },
     shortsReels: { type: Schema.Types.Mixed, default: {} },
     longVideos: { type: Schema.Types.Mixed, default: {} },
+    latestArticles: { type: Schema.Types.Mixed, default: {} },
     brandCollaborations: { type: Schema.Types.Mixed, default: {} },
     newsletterContact: { type: Schema.Types.Mixed, default: {} },
     statisticsCounters: { type: [Schema.Types.Mixed], default: [] },
@@ -156,4 +191,6 @@ const HomepageSchema = new Schema<IHomepage>(
   }
 );
 
+
 export const Homepage = model<IHomepage>("Homepage", HomepageSchema);
+

@@ -8,6 +8,7 @@ import { useData } from "../context/DataContext";
 import { StripeReelsCarousel } from "../components/StripeReelsCarousel";
 import { LongVideosCarousel } from "../components/LongVideosCarousel";
 import { AnimatedCounter } from "../components/AnimatedCounter";
+import { LatestArticlesSection } from "../components/LatestArticlesSection";
 import { mediaUrl } from "../utils/media";
 
 import asusLogo from "../assets/ASUS.jpeg";
@@ -1607,6 +1608,11 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
 
         </div>
       </section>
+
+      {/* =====================================================
+          LATEST ARTICLES & HOT STORIES (DYNAMIC CMS)
+      ====================================================== */}
+      <LatestArticlesSection data={activeHome?.latestArticles} />
 
       {/* =====================================================
           8. BRAND COLLABORATIONS

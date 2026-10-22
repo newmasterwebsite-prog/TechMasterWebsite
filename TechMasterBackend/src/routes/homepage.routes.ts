@@ -67,6 +67,96 @@ const defaultHomepageData = {
       { id: 'st-6', value: '50+', label: 'Global Brand Collaborations' }
     ]
   },
+  latestArticles: {
+    badge: 'LATEST ARTICLES',
+    heading: 'Featured Stories & Press Highlights',
+    description: 'Exclusive deep dives, industry interviews, and thought leadership from Arvind Kharra & Tech Master.',
+    hotBadge: 'HOT',
+    hotTitle: 'Hot',
+    visible: true,
+    list: [
+      {
+        id: 'art-1',
+        title: 'From influencers to trusted voices: The changing role of creators in tech buying decisions',
+        excerpt: 'Authored by Arvind Kharra (Founder of TechMaster), exploring how technology creators have transitioned from mere product reviewers to trusted advisory voices driving high-stake purchase decisions.',
+        category: 'CREATOR ECONOMY',
+        authorName: 'Arvind Kharra',
+        authorRole: 'Founder, TechMaster',
+        authorAvatar: '/TechMaster.jpeg',
+        date: '23.09.2026',
+        readTime: '4 min read',
+        views: '24,850',
+        likes: '2,340',
+        imageUrl: '/articles/adgully_creators.jpg',
+        articleUrl: 'https://www.adgully.com/post/20995/from-influencers-to-trusted-voices-the-changing-role-of-creators-in-tech-buying-decisions#google_vignette',
+        isFeatured: true,
+        isHot: false,
+        order: 1,
+        visible: true,
+        deleted: false
+      },
+      {
+        id: 'art-2',
+        title: 'Content creators decode the future of influence at Convergence India 2026',
+        excerpt: 'At the 33rd Convergence India Expo, Arvind Kharra highlighted AI as an empowering support system rather than a disruptor, emphasizing authenticity and trust in digital media.',
+        category: 'DIGITAL MEDIA',
+        authorName: 'Communications Today',
+        authorRole: 'Media Coverage',
+        authorAvatar: '/Tech MAster Logo.png',
+        date: '07.04.2026',
+        readTime: '3 min read',
+        views: '19,420',
+        likes: '1,890',
+        imageUrl: '/articles/convergence_india.jpg',
+        articleUrl: 'https://www.communicationstoday.co.in/content-creators-decode-the-future-of-influence-at-convergence-india-2026/',
+        isFeatured: false,
+        isHot: true,
+        order: 2,
+        visible: true,
+        deleted: false
+      },
+      {
+        id: 'art-3',
+        title: '5 Made-in-India AI Innovations Driving the Next Wave of Digital Transformation',
+        excerpt: 'India’s AI ecosystem is moving beyond experimentation, with groundbreaking solutions solving real-world enterprise operations and digital visibility at scale.',
+        category: 'ARTIFICIAL INTELLIGENCE',
+        authorName: 'CXO Today',
+        authorRole: 'Tech Analysis',
+        authorAvatar: '/NextUniverz.jpeg',
+        date: '18.09.2026',
+        readTime: '5 min read',
+        views: '15,630',
+        likes: '1,420',
+        imageUrl: '/articles/cxotoday_ai.jpg',
+        articleUrl: 'https://cxotoday.com/others/5-made-in-india-ai-innovations-driving-the-next-wave-of-digital-transformation/',
+        isFeatured: false,
+        isHot: false,
+        order: 3,
+        visible: true,
+        deleted: false
+      },
+      {
+        id: 'art-4',
+        title: 'AI travel planning: 7 money checks to make before booking flights, hotels',
+        excerpt: 'Arvind Kharra, Founder & CEO of Tech Master, explains how AI tools can optimise total trip budgets, calculate all-in hidden costs, and evaluate travel alternatives.',
+        category: 'TRAVEL TECH',
+        authorName: 'CNBC TV18',
+        authorRole: 'Featured Expert',
+        authorAvatar: '/MasterWheels.jpeg',
+        date: '17.08.2026',
+        readTime: '6 min read',
+        views: '28,910',
+        likes: '2,780',
+        imageUrl: '/articles/cnbc_travel_ai.jpg',
+        articleUrl: 'https://www.cnbctv18.com/travel/ai-travel-planning-money-checks-to-make-before-booking-flights-hotels-19969900.htm',
+        isFeatured: false,
+        isHot: false,
+        order: 4,
+        visible: true,
+        deleted: false
+      }
+    ]
+  },
   brandCollaborations: {
     badge: 'BRAND COLLABORATIONS',
     heading: 'Trusted By Leading Technology Brands',
@@ -82,6 +172,30 @@ const defaultHomepageData = {
     contactCtaText: 'Get In Touch'
   }
 };
+
+function normalizeArticleItem(v: any, index: number = 0): any {
+  if (!v) return null;
+  return {
+    id: v.id || v._id || `art-${Date.now()}-${index}`,
+    title: v.title || '',
+    excerpt: v.excerpt || v.description || '',
+    category: v.category || 'TECH',
+    authorName: v.authorName || v.author || 'Tech Master',
+    authorRole: v.authorRole || '',
+    authorAvatar: v.authorAvatar || '/TechMaster.jpeg',
+    date: v.date || v.publishedDate || '',
+    readTime: v.readTime || '',
+    views: v.views || '',
+    likes: v.likes || '',
+    imageUrl: v.imageUrl || v.image || '',
+    articleUrl: v.articleUrl || v.url || '',
+    isFeatured: v.isFeatured === true,
+    isHot: v.isHot === true,
+    order: typeof v.order === 'number' ? v.order : index + 1,
+    visible: v.visible !== false,
+    deleted: v.deleted === true
+  };
+}
 
 function formatViewsCount(count: number): string {
   if (!count) return "";
@@ -174,6 +288,11 @@ router.get("/", async (req, res, next) => {
     if (val.shortsReels && Array.isArray(val.shortsReels.list)) {
       val.shortsReels.list = val.shortsReels.list.map(normalizeReelItem).filter(Boolean);
     }
+    if (!val.latestArticles || !Array.isArray(val.latestArticles.list) || val.latestArticles.list.length === 0) {
+      val.latestArticles = defaultHomepageData.latestArticles;
+    } else {
+      val.latestArticles.list = val.latestArticles.list.map(normalizeArticleItem).filter(Boolean);
+    }
     ApiResponse.success(res, "Homepage data retrieved successfully", val);
   } catch (err) {
     next(err);
@@ -198,6 +317,10 @@ router.put("/", authenticate as any, async (req, res, next) => {
           if (meta.thumbnail && !item.thumbnail) item.thumbnail = meta.thumbnail;
         }
       }
+    }
+
+    if (payload.latestArticles && Array.isArray(payload.latestArticles.list)) {
+      payload.latestArticles.list = payload.latestArticles.list.map(normalizeArticleItem).filter(Boolean);
     }
 
     await CMSData.findOneAndUpdate({ key: "homepageCMS" }, { value: payload }, { upsert: true, new: true });
