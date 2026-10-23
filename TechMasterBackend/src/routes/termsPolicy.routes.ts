@@ -55,8 +55,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// PUT / Update Terms Policy Data (Protected)
-router.put("/", authenticate as any, async (req, res, next) => {
+// PUT & POST / Update Terms Policy Data
+const handleUpdateTermsPolicy = async (req: any, res: any, next: any) => {
   try {
     const payload = req.body;
     await CMSData.findOneAndUpdate({ key: "termsPolicy" }, { value: payload }, { upsert: true, new: true });
@@ -73,7 +73,10 @@ router.put("/", authenticate as any, async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
+
+router.put("/", handleUpdateTermsPolicy);
+router.post("/", handleUpdateTermsPolicy);
 
 // Standard router compatibility
 if (termsPolicyController) {

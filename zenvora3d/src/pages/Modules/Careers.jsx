@@ -17,9 +17,9 @@ export const Careers = () => {
   const [contentSubTab, setContentSubTab] = useState('culture'); // hero, jobs, form, applicants, culture, process
   const [previewMode, setPreviewMode] = useState('desktop');
   const [toast, setToast] = useState(null);
-  const [isSaved, setIsSaved] = useState(false);
   const [modalConfig, setModalConfig] = useState(null);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Default pre-populated production values
   const defaultCareersCMS = {
@@ -430,11 +430,14 @@ export const Careers = () => {
     });
   };
 
-  const fetchResumesFromBackend = async () => {
+  const fetchResumesFromBackend = async (isSilent = false) => {
+    if (!isSilent) setIsRefreshing(true);
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
-      // 1. Try dedicated /resumes endpoint
-      let res = await fetch(`${baseUrl}/resumes?t=${Date.now()}`).catch(() => null);
+      const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
+        .replace(/\/+$/, "")
+        .replace(/^http:\/\//i, "https://");
+      // 1. Try dedicated /resumes endpoint with cache-busting
+      let res = await fetch(`${baseUrl}/resumes?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
       if (res && res.ok) {
         const json = await res.json();
         if (json && json.success && Array.isArray(json.data)) {
@@ -443,11 +446,12 @@ export const Careers = () => {
             ...prev,
             resumes: sorted
           }));
+          if (!isSilent) showToast(`Refreshed! Found ${sorted.length} applications.`, "success");
           return;
         }
       }
       // 2. Fallback to /cms
-      res = await fetch(`${baseUrl}/cms?t=${Date.now()}`).catch(() => null);
+      res = await fetch(`${baseUrl}/cms?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
       if (res && res.ok) {
         const json = await res.json();
         const serverResumes = json.data?.resumes || json.data?.careerApplications || json.data?.careersCMS?.resumes;
@@ -457,10 +461,13 @@ export const Careers = () => {
             ...prev,
             resumes: sorted
           }));
+          if (!isSilent) showToast(`Refreshed! Found ${sorted.length} applications.`, "success");
         }
       }
     } catch (e) {
       console.warn("Resumes fetch warning:", e);
+    } finally {
+      if (!isSilent) setIsRefreshing(false);
     }
   };
 
@@ -518,7 +525,7 @@ export const Careers = () => {
           setFormData(prev => {
             const exists = (prev.resumes || []).some(r => String(r.id) === String(newApp.id));
             if (exists) return prev;
-            const updated = [newApp, ...(prev.resumes || [])];
+            const updated = sortResumesLatestFirst([newApp, ...(prev.resumes || [])]);
             updateSection('resumes', updated);
             return { ...prev, resumes: updated };
           });
@@ -527,8 +534,14 @@ export const Careers = () => {
       };
     } catch (e) {}
 
+    // 5-second automatic poll for instant updates in admin panel
+    const pollTimer = setInterval(() => {
+      fetchResumesFromBackend(true);
+    }, 5000);
+
     return () => {
       if (channel) channel.close();
+      clearInterval(pollTimer);
     };
   }, []);
 
@@ -942,8 +955,15 @@ export const Careers = () => {
             <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4 text-xs">
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">Applicants Submission Inbox ({(formData?.resumes || []).length})</h3>
-                <Button onClick={fetchResumesFromBackend} variant="outline" size="sm" className="text-[10px] uppercase font-mono">
-                  Refresh Applications
+                <Button 
+                  onClick={() => fetchResumesFromBackend(false)} 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-[10px] uppercase font-mono flex items-center gap-1.5 cursor-pointer hover:border-luxury-gold/50"
+                  disabled={isRefreshing}
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-luxury-gold' : ''}`} />
+                  {isRefreshing ? 'Refreshing...' : 'Refresh Applications'}
                 </Button>
               </div>
 

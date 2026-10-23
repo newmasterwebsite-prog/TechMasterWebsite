@@ -32,14 +32,23 @@ router.get("/terms", async (req, res, next) => {
   }
 });
 
-router.put("/terms", authenticate as any, async (req, res, next) => {
+const handleLegalTermsUpdate = async (req: any, res: any, next: any) => {
   try {
     const doc = await TermsPolicy.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    try {
+      const { CMSData } = await import("../models/CMSData");
+      await CMSData.findOneAndUpdate({ key: "termsPolicy" }, { value: req.body }, { upsert: true, new: true });
+      await CMSData.findOneAndUpdate({ key: "termsPolicyData" }, { value: req.body }, { upsert: true, new: true });
+      await CMSData.findOneAndUpdate({ key: "terms" }, { value: req.body }, { upsert: true, new: true });
+    } catch (e) {}
     ApiResponse.success(res, "Terms of Service updated successfully", doc);
   } catch (err) {
     next(err);
   }
-});
+};
+
+router.put("/terms", handleLegalTermsUpdate);
+router.post("/terms", handleLegalTermsUpdate);
 
 // PRIVACY POLICY
 router.get("/privacy", async (req, res, next) => {

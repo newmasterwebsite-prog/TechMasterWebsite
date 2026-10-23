@@ -467,24 +467,31 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
               >
                 ✕
               </button>
-              <span className="text-[9px] font-sans text-gold uppercase tracking-widest">{termsPolicyData?.smallBadge || "LEGAL PROTOCOLS"}</span>
-              <h3 className="font-sans text-2xl text-gold font-bold mb-6 mt-1">{termsPolicyData?.popupTitle || "Terms of Service"}</h3>
-              <div className="text-gray-300 text-xs md:text-sm leading-relaxed space-y-4 font-light">
-                {legalSettingsData?.showLastUpdated !== false && (
-                  <p><strong>Effective Date: {termsPolicyData?.effectiveDate || "July 7, 2026"}</strong></p>
-                )}
-                {termsPolicyData?.introParagraph && <p>{termsPolicyData.introParagraph}</p>}
-                
-                {Array.isArray(termsPolicyData?.sections) && [...termsPolicyData.sections]
-                  .filter((s: any) => s.status !== "Inactive")
-                  .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-                  .map((sec: any, idx: number) => (
-                    <div key={sec.id || idx} className="mt-4">
-                      <h4 className="text-white font-bold mb-1.5 uppercase tracking-wider text-xs">{sec.title}</h4>
-                      <div className="text-gray-400 leading-relaxed text-xs" dangerouslySetInnerHTML={{ __html: sec.body }} />
+              {(() => {
+                const activeTerms = termsPolicyData || dbData?.termsPolicy || dbData?.terms || dbData?.termsPolicyData;
+                return (
+                  <>
+                    <span className="text-[9px] font-sans text-gold uppercase tracking-widest">{activeTerms?.smallBadge || "LEGAL PROTOCOLS"}</span>
+                    <h3 className="font-sans text-2xl text-gold font-bold mb-6 mt-1">{activeTerms?.popupTitle || "Terms of Service"}</h3>
+                    <div className="text-gray-300 text-xs md:text-sm leading-relaxed space-y-4 font-light">
+                      {legalSettingsData?.showLastUpdated !== false && (
+                        <p><strong>Effective Date: {activeTerms?.effectiveDate || "July 7, 2026"}</strong></p>
+                      )}
+                      {activeTerms?.introParagraph && <p>{activeTerms.introParagraph}</p>}
+                      
+                      {Array.isArray(activeTerms?.sections) && [...activeTerms.sections]
+                        .filter((s: any) => s.status !== "Inactive")
+                        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+                        .map((sec: any, idx: number) => (
+                          <div key={sec.id || idx} className="mt-4">
+                            <h4 className="text-white font-bold mb-1.5 uppercase tracking-wider text-xs">{sec.title}</h4>
+                            <div className="text-gray-400 leading-relaxed text-xs" dangerouslySetInnerHTML={{ __html: sec.body }} />
+                          </div>
+                        ))}
                     </div>
-                  ))}
-              </div>
+                  </>
+                );
+              })()}
             </motion.div>
           </div>
         )}

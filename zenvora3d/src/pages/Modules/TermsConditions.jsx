@@ -272,20 +272,57 @@ export const TermsConditions = () => {
       }
     };
 
-    if (updateSection) updateSection('termsPolicy', fullPayload);
-    if (saveToLocalDb) saveToLocalDb('termsPolicy', fullPayload);
+    if (updateSection) {
+      updateSection('termsPolicy', fullPayload);
+      updateSection('terms', fullPayload);
+      updateSection('termsPolicyData', fullPayload);
+    }
+    if (saveToLocalDb) {
+      saveToLocalDb('termsPolicy', fullPayload);
+      saveToLocalDb('terms', fullPayload);
+      saveToLocalDb('termsPolicyData', fullPayload);
+    }
+
+    try {
+      const saved = localStorage.getItem('zenvora_db');
+      let localDb = saved ? JSON.parse(saved) : {};
+      localDb.termsPolicy = fullPayload;
+      localDb.terms = fullPayload;
+      localDb.termsPolicyData = fullPayload;
+      localStorage.setItem('zenvora_db', JSON.stringify(localDb));
+    } catch (e) {}
 
     try {
       if (apiFetch) {
         await apiFetch('/terms', {
           method: 'PUT',
           body: JSON.stringify(fullPayload)
+        }).catch(async () => {
+          // Fallback to POST
+          return await apiFetch('/terms', {
+            method: 'POST',
+            body: JSON.stringify(fullPayload)
+          });
         });
       }
+
+      // Instant cross-tab broadcast for 0ms website sync
+      try {
+        const channel = new BroadcastChannel("zenvora_cms_sync");
+        channel.postMessage({ type: "CMS_UPDATED", section: "termsPolicy", data: fullPayload });
+        channel.close();
+      } catch (bcErr) {}
+
+      if (typeof window !== 'undefined') {
+        const syncPayload = { key: 'termsPolicy', timestamp: Date.now() };
+        localStorage.setItem('techmaster-cms-last-updated', JSON.stringify(syncPayload));
+        window.dispatchEvent(new CustomEvent('techmaster-cms-updated', { detail: syncPayload }));
+      }
+
       triggerToast("Terms of Service CMS published & synced live with website!");
     } catch (err) {
       console.warn("Backend API sync warning:", err);
-      triggerToast("Saved locally! Backend: " + (err.message || "Updated"));
+      triggerToast("Saved locally & in browser! Backend: " + (err.message || "Updated"));
     } finally {
       setIsPublishing(false);
     }

@@ -11,8 +11,10 @@ export const Terms: React.FC = () => {
   useEffect(() => {
     const fetchTerms = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
-        const res = await fetch(`${baseUrl}/terms`);
+        const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
+          .replace(/\/+$/, "")
+          .replace(/^http:\/\//i, "https://");
+        const res = await fetch(`${baseUrl}/terms?t=${Date.now()}`, { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
@@ -24,6 +26,30 @@ export const Terms: React.FC = () => {
       }
     };
     fetchTerms();
+
+    // Listen for cross-tab or local storage updates from admin panel in real time!
+    const handleSync = () => {
+      fetchTerms();
+    };
+
+    window.addEventListener("techmaster-cms-updated", handleSync);
+    window.addEventListener("storage", handleSync);
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel("zenvora_cms_sync");
+      channel.onmessage = (event) => {
+        if (!event.data?.type || event.data?.type === "CMS_UPDATED") {
+          fetchTerms();
+        }
+      };
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener("techmaster-cms-updated", handleSync);
+      window.removeEventListener("storage", handleSync);
+      if (channel) channel.close();
+    };
   }, []);
 
   let localDb: any = {};
@@ -32,33 +58,33 @@ export const Terms: React.FC = () => {
     if (saved) localDb = JSON.parse(saved);
   } catch (e) {}
 
-  const rawData = liveTermsData || dbData?.termsPolicy || localDb?.termsPolicy || {};
+  const rawData = liveTermsData || dbData?.termsPolicy || dbData?.terms || dbData?.termsPolicyData || localDb?.termsPolicy || localDb?.terms || {};
 
   const smallBadge = rawData.smallBadge || "LEGAL PROTOCOLS";
   const popupTitle = rawData.popupTitle || "Terms of Service";
-  const effectiveDate = rawData.effectiveDate || "July 7, 2026";
+  const effectiveDate = rawData.effectiveDate || dbData?.websiteSettings?.termsEffectiveDate || dbData?.settings?.termsEffectiveDate || "July 7, 2026";
   const versionNumber = rawData.versionNumber || "v3.1";
-  const introParagraph = rawData.introParagraph || "By browsing this platform, subscribing to our mailing list, or submitting inquiries, you agree to these Terms of Service.";
+  const introParagraph = rawData.introParagraph || dbData?.websiteSettings?.termsIntro || dbData?.settings?.termsIntro || "By browsing this platform, subscribing to our mailing list, or submitting inquiries, you agree to these Terms of Service.";
 
   const defaultSections = [
     {
       id: "sec-1",
       title: "Intellectual Property",
-      body: "All site designs, 3D shaders, systems blueprints, and video snippets are the trademark properties of Aman and Tech Master Labs unless stated otherwise."
+      body: dbData?.websiteSettings?.termsIntellectualProperty || dbData?.settings?.termsIntellectualProperty || "All site designs, 3D shaders, systems blueprints, and video snippets are the trademark properties of Aman and Tech Master Labs unless stated otherwise."
     },
     {
       id: "sec-2",
       title: "User License",
-      body: "You are granted a limited license to explore our portfolio and code projects for educational research. Scraping, cloning, or distributing source codes commercially without express written consent is strictly prohibited."
+      body: dbData?.websiteSettings?.termsUserLicense || dbData?.settings?.termsUserLicense || "You are granted a limited license to explore our portfolio and code projects for educational research. Scraping, cloning, or distributing source codes commercially without express written consent is strictly prohibited."
     },
     {
       id: "sec-3",
       title: "Acceptable Use & Sandbox",
-      body: "Users must interact with our digital assets in good faith without attempting DDoS vectors, API key tampering, or malicious script injection."
+      body: dbData?.websiteSettings?.termsSandboxDeclarations || dbData?.settings?.termsSandboxDeclarations || "Users must interact with our digital assets in good faith without attempting DDoS vectors, API key tampering, or malicious script injection."
     }
   ];
 
-  const sectionsList = (rawData.sections && rawData.sections.length > 0) ? rawData.sections : defaultSections;
+  const sectionsList = (Array.isArray(rawData.sections) && rawData.sections.length > 0) ? rawData.sections : defaultSections;
 
   return (
     <div className="relative text-white min-h-screen pt-24 pb-16 px-6 overflow-hidden">

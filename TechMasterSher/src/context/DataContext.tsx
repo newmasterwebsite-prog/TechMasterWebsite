@@ -151,6 +151,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (db.testimonials) setTestimonialsData(db.testimonials);
     if (db.testimonialsPage) setTestimonialsPageData(db.testimonialsPage);
     if (db.termsPolicy) setTermsPolicyData(db.termsPolicy);
+    else if (db.terms) setTermsPolicyData(db.terms);
+    else if (db.termsPolicyData) setTermsPolicyData(db.termsPolicyData);
     if (db.privacyPolicy) setPrivacyPolicyData(db.privacyPolicy);
     if (db.cookiePolicy) setCookiePolicyData(db.cookiePolicy);
     if (db.legalSettings) setLegalSettingsData(db.legalSettings);
@@ -241,6 +243,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const fvJson = await fvRes.json();
           if (fvJson.success && Array.isArray(fvJson.data)) {
             fetchedDb.featuredVideos = fvJson.data;
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const termsRes = await fetch(`${baseUrl}/terms?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
+        if (termsRes && termsRes.ok) {
+          const termsJson = await termsRes.json();
+          if (termsJson.success && termsJson.data) {
+            fetchedDb.termsPolicy = termsJson.data;
+            fetchedDb.terms = termsJson.data;
+            fetchedDb.termsPolicyData = termsJson.data;
           }
         }
       } catch (e) {}

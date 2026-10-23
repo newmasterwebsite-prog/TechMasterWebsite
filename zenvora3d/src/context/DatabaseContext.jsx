@@ -160,6 +160,11 @@ export const DatabaseProvider = ({ children }) => {
           const syncPayload = { key, timestamp: Date.now() };
           safeSetLocalStorage('techmaster-cms-last-updated', syncPayload);
           window.dispatchEvent(new CustomEvent('techmaster-cms-updated', { detail: syncPayload }));
+          try {
+            const channel = new BroadcastChannel("zenvora_cms_sync");
+            channel.postMessage({ type: "CMS_UPDATED", section: key, data: value });
+            channel.close();
+          } catch (bcErr) {}
         }
       } catch (error) {
         console.error(`Failed to sync ${key} to backend:`, error);

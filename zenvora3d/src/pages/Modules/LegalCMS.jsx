@@ -42,6 +42,10 @@ export const LegalCMS = () => {
 
   const handleSaveDoc = (key, data) => {
     updateSection(key, data);
+    if (key === 'termsPolicy') {
+      updateSection('terms', data);
+      updateSection('termsPolicyData', data);
+    }
     showToast(`${key.replace(/([A-Z])/g, ' $1').toUpperCase()} updated successfully.`);
   };
 
