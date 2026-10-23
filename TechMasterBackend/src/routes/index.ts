@@ -717,10 +717,18 @@ router.post("/enquiry", handleEnquirySubmission);
 // Aggregate endpoint for the public frontends
 router.get("/", async (req: any, res: any, next: any) => {
   try {
-    // 1. Fetch all CMSData generic key-value documents (excluding heavy applicant submission arrays)
-    const cmsDocs = await CMSData.find({ key: { $nin: ["resumes", "careerApplications", "contactEnquiries", "enquiries"] } });
+    // 1. Fetch all CMSData generic key-value documents (excluding heavy applicant submission arrays and binary files)
+    const cmsDocs = await CMSData.find({
+      key: {
+        $nin: ["resumes", "careerApplications", "contactEnquiries", "enquiries"],
+        $not: /^(resume_file_|file_)/
+      }
+    });
     const cmsDataMap: Record<string, any> = {};
     for (const doc of cmsDocs) {
+      if (typeof doc.key === "string" && (doc.key.startsWith("resume_file_") || doc.key.startsWith("file_"))) {
+        continue;
+      }
       cmsDataMap[doc.key] = doc.value;
     }
 
