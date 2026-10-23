@@ -7,7 +7,13 @@ import {
   Monitor, Tablet, Smartphone, Clock, Palette, Play, Image as ImageIcon, X, RotateCcw, FileText, Download, Mail, Phone, ExternalLink, CheckCircle2, Heart, Award
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
-import { Toast } from '../../components/ui/Toast';
+const isMockResume = (r) => {
+  if (!r) return true;
+  const name = (r.candidateName || r.name || r.fullName || '').toLowerCase().trim();
+  const id = String(r.id || '').toLowerCase();
+  return id === 'res-1' || id === 'res-2' || id === 'res-3' || 
+         name === 'rohan varma' || name === 'neha kapoor' || name === 'aleksei ivanov';
+};
 
 export const Careers = () => {
   const { db, updateSection, apiFetch } = useDatabase();
@@ -152,7 +158,8 @@ export const Careers = () => {
     return defaultCareersCMS.jobs;
   };
 
-  const storedResumes = Array.isArray(db?.resumes) ? db.resumes : (Array.isArray(db?.careerApplications) ? db.careerApplications : []);
+  const rawResumes = Array.isArray(db?.resumes) ? db.resumes : (Array.isArray(db?.careerApplications) ? db.careerApplications : []);
+  const storedResumes = rawResumes.filter(r => !isMockResume(r));
 
   const [formData, setFormData] = useState({
     ...defaultCareersCMS,
@@ -394,13 +401,13 @@ export const Careers = () => {
     }
   };
 
-  // Helper: Deduplicate and sort all applications strictly newest first
+  // Helper: Deduplicate and sort all applications strictly newest first (Real applications only)
   const sortResumesLatestFirst = (list) => {
     if (!Array.isArray(list)) return [];
     const seen = new Set();
     const unique = [];
     for (const item of list) {
-      if (!item) continue;
+      if (!item || isMockResume(item)) continue;
       const key = String(item.id || item._id || item.email || Math.random()).trim().toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);

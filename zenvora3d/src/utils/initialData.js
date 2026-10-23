@@ -1033,48 +1033,8 @@ export const initialData = {
     }
   ],
 
-  // 11. RESUME LIST
-  resumes: [
-    {
-      id: "res-1",
-      candidateName: "Rohan Varma",
-      email: "rohan.varma@gmail.com",
-      phone: "+91 98765 43210",
-      jobApplied: "Creative Video Producer & Editor",
-      experienceYears: 4,
-      portfolioLink: "https://vimeo.com/rohandev",
-      status: "Reviewed",
-      resumeFileName: "Rohan_Varma_Showreel_2026.pdf",
-      coverLetter: "Hi TechMaster, I have been editing fashion documentaries for 4 years. I understand the luxury aesthetic, color grading, and timing. I would love to join your team.",
-      appliedAt: "2026-06-05T09:30:00Z"
-    },
-    {
-      id: "res-2",
-      candidateName: "Neha Kapoor",
-      email: "neha.kapoor@outlook.com",
-      phone: "+91 99999 88888",
-      jobApplied: "Luxury Public Relations (PR) Associate",
-      experienceYears: 2,
-      portfolioLink: "https://linkedin.com/in/nehakapoor",
-      status: "New",
-      resumeFileName: "Neha_Kapoor_Resume.pdf",
-      coverLetter: "I recently handled PR for the Elle Luxury Awards and have deep contacts inside Vogue and GQ. Let's take the brand to the next tier.",
-      appliedAt: "2026-06-12T14:15:00Z"
-    },
-    {
-      id: "res-3",
-      candidateName: "Aleksei Ivanov",
-      email: "aleksei.3d@artstation.com",
-      phone: "+7 900 123 4567",
-      jobApplied: "3D Motion Graphics Intern",
-      experienceYears: 1,
-      portfolioLink: "https://artstation.com/aleksei3d",
-      status: "Rejected",
-      resumeFileName: "Aleksei_Ivanov_Portfolio.pdf",
-      coverLetter: "Interested in the Remote 3D Internship. I specialize in luxury glass materials and liquid simulation.",
-      appliedAt: "2026-06-22T16:00:00Z"
-    }
-  ],
+  // 11. RESUME LIST (Real candidate submissions only)
+  resumes: [],
 
   // 12. BLOG MANAGEMENT
   blogs: [],
