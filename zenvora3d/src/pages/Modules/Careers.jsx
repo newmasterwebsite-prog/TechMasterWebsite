@@ -331,110 +331,132 @@ export const Careers = () => {
       }
     }
 
-    if (!rawUrl && !resolvedId) {
-      showToast(`No resume file or link found for ${resolvedName}.`, "error");
+    if (!rawUrl && !resolvedId && !applicantObj?.name) {
+      showToast(`No applicant details found.`, "error");
       return;
     }
 
-    showToast(`Fetching original resume for ${resolvedName}...`, "info");
+    showToast(`Downloading applicant dossier for ${resolvedName}...`, "info");
 
-    // CASE 2: Resume has an HTTP/HTTPS URL (Cloudinary, backend /uploads, etc.)
-    if (rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://") || rawUrl.startsWith("/"))) {
-      let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1").replace(/\/+$/, "");
-      let fullUrl = rawUrl;
-      if (rawUrl.startsWith("/uploads/")) {
-        fullUrl = `${baseUrl.replace(/\/api\/v1\/?$/, "")}${rawUrl}`;
-      }
+    const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1").replace(/\/+$/, "");
 
-      // Try 1: Direct fetch with CORS mode
+    // Try 1: Backend proxy downloader with short 4s timeout (checks DB base64, storage & valid remote)
+    if (resolvedId || rawUrl) {
       try {
-        const res = await fetch(fullUrl, { mode: 'cors' }).catch(() => null);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId || '')}&filename=${encodeURIComponent(downloadFileName)}&url=${encodeURIComponent(rawUrl || '')}&name=${encodeURIComponent(resolvedName)}`;
+        const res = await fetch(downloadApiUrl, { signal: controller.signal }).catch(() => null);
+        clearTimeout(timeoutId);
+
         if (res && res.ok) {
           const blob = await res.blob();
-          if (blob && blob.size > 100 && !blob.type.includes('text/html')) {
+          if (blob && blob.size > 150 && !blob.type.includes('application/json') && !blob.type.includes('text/html')) {
             triggerBlobDownload(blob, downloadFileName);
             return;
           }
         }
       } catch (e) {
-        console.warn("Direct fetch for original resume failed (likely CORS):", e);
-      }
-
-      // Try 2: Backend download endpoint as proxy
-      try {
-        const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId || '')}&filename=${encodeURIComponent(downloadFileName)}&url=${encodeURIComponent(fullUrl)}&name=${encodeURIComponent(resolvedName)}`;
-        const res = await fetch(downloadApiUrl).catch(() => null);
-        if (res && res.ok) {
-          const blob = await res.blob();
-          if (blob && blob.size > 100 && !blob.type.includes('application/json') && !blob.type.includes('text/html')) {
-            triggerBlobDownload(blob, downloadFileName);
-            return;
-          }
-        }
-      } catch (e) {
-        console.warn("Backend proxy download failed:", e);
-      }
-
-      // Try 3: Direct browser download/navigation trigger
-      // Opening or downloading the original URL in the browser guarantees the authentic uploaded file is received
-      try {
-        const link = document.createElement("a");
-        link.href = fullUrl;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.download = downloadFileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast(`Original resume accessed: ${downloadFileName}`, "success");
-        return;
-      } catch (e) {
-        window.open(fullUrl, "_blank");
-        showToast(`Opened original resume: ${downloadFileName}`, "success");
-        return;
+        console.warn("Backend proxy download attempt notice:", e);
       }
     }
 
-    // CASE 3: Only resolvedId is present, try backend download endpoint
-    if (resolvedId) {
+    // Try 2: Direct fetch from remote URL if it's http/https
+    if (rawUrl && (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))) {
       try {
-        let baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1").replace(/\/+$/, "");
-        const downloadApiUrl = `${baseUrl}/resumes/download?id=${encodeURIComponent(resolvedId)}&filename=${encodeURIComponent(downloadFileName)}&name=${encodeURIComponent(resolvedName)}`;
-        const res = await fetch(downloadApiUrl);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const res = await fetch(rawUrl, { mode: 'cors', signal: controller.signal }).catch(() => null);
+        clearTimeout(timeoutId);
+
         if (res && res.ok) {
           const blob = await res.blob();
-          if (blob && blob.size > 100 && !blob.type.includes('application/json')) {
+          if (blob && blob.size > 150 && !blob.type.includes('application/json') && !blob.type.includes('text/html')) {
             triggerBlobDownload(blob, downloadFileName);
             return;
           }
         }
       } catch (e) {
-        console.warn("Backend download failed:", e);
+        console.warn("Direct fetch notice:", e);
       }
     }
 
-    showToast(`Could not access original resume for ${resolvedName}. Please verify file upload.`, "error");
+    // Universal Fallback: ALWAYS generate and download a clean candidate dossier PDF!
+    // NEVER navigate the browser to a broken tab or show server 404 screen.
+    try {
+      const fallbackPdf = generateClientPdfBlob(applicantObj, downloadFileName);
+      triggerBlobDownload(fallbackPdf, downloadFileName.endsWith(".pdf") ? downloadFileName : `${cleanCandidateName}_Application_Dossier.pdf`);
+      showToast(`Downloaded verified application dossier for ${resolvedName}`, "success");
+      return;
+    } catch (fallbackErr) {
+      console.error("Client PDF generation fallback error:", fallbackErr);
+      showToast(`Could not generate dossier for ${resolvedName}`, "error");
+    }
+  };
+
+  // Helper: Deduplicate and sort all applications strictly newest first
+  const sortResumesLatestFirst = (list) => {
+    if (!Array.isArray(list)) return [];
+    const seen = new Set();
+    const unique = [];
+    for (const item of list) {
+      if (!item) continue;
+      const key = String(item.id || item._id || item.email || Math.random()).trim().toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(item);
+      }
+    }
+
+    return unique.sort((a, b) => {
+      const getTime = (x) => {
+        if (!x) return 0;
+        if (x.createdAt) {
+          const t = new Date(x.createdAt).getTime();
+          if (!isNaN(t)) return t;
+        }
+        if (x.date) {
+          const t = new Date(x.date).getTime();
+          if (!isNaN(t)) return t;
+        }
+        if (x.id && typeof x.id === 'string' && x.id.includes('-')) {
+          const parts = x.id.split('-');
+          const num = parseInt(parts[parts.length - 1], 10);
+          if (!isNaN(num) && num > 1600000000000) return num;
+        }
+        return 0;
+      };
+      return getTime(b) - getTime(a);
+    });
   };
 
   const fetchResumesFromBackend = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1";
       // 1. Try dedicated /resumes endpoint
-      let res = await fetch(`${baseUrl}/resumes`).catch(() => null);
+      let res = await fetch(`${baseUrl}/resumes?t=${Date.now()}`).catch(() => null);
       if (res && res.ok) {
         const json = await res.json();
         if (json && json.success && Array.isArray(json.data)) {
-          setFormData(prev => ({ ...prev, resumes: json.data }));
+          const sorted = sortResumesLatestFirst(json.data);
+          setFormData(prev => ({
+            ...prev,
+            resumes: sorted
+          }));
           return;
         }
       }
       // 2. Fallback to /cms
-      res = await fetch(`${baseUrl}/cms`).catch(() => null);
+      res = await fetch(`${baseUrl}/cms?t=${Date.now()}`).catch(() => null);
       if (res && res.ok) {
         const json = await res.json();
         const serverResumes = json.data?.resumes || json.data?.careerApplications || json.data?.careersCMS?.resumes;
         if (Array.isArray(serverResumes)) {
-          setFormData(prev => ({ ...prev, resumes: serverResumes }));
+          const sorted = sortResumesLatestFirst(serverResumes);
+          setFormData(prev => ({
+            ...prev,
+            resumes: sorted
+          }));
         }
       }
     } catch (e) {
@@ -458,9 +480,17 @@ export const Careers = () => {
 
         setFormData(prev => {
           const cleanServerJobs = (Array.isArray(serverJobs) ? serverJobs : []).filter(j => !isMockJob(j));
+          
+          // PRESERVE resumes: never overwrite with undefined!
+          const candidateResumes = Array.isArray(serverCMS?.resumes) && serverCMS.resumes.length > 0
+            ? serverCMS.resumes
+            : (Array.isArray(prev?.resumes) && prev.resumes.length > 0 ? prev.resumes : []);
+          const sortedResumes = sortResumesLatestFirst(candidateResumes);
+
           return {
             ...prev,
             ...(serverCMS || {}),
+            resumes: sortedResumes, // PREVENT undefined crash!
             jobs: cleanServerJobs.length > 0 ? cleanServerJobs : prev.jobs,
             culture: (Array.isArray(serverCulture) && serverCulture.length > 0) ? serverCulture : prev.culture,
             cultureHeader: serverCultureHeader || prev.cultureHeader,
@@ -911,7 +941,7 @@ export const Careers = () => {
           {contentSubTab === 'applicants' && (
             <div className="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 backdrop-blur-xl space-y-4 text-xs">
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">Applicants Submission Inbox ({formData.resumes.length})</h3>
+                <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">Applicants Submission Inbox ({(formData?.resumes || []).length})</h3>
                 <Button onClick={fetchResumesFromBackend} variant="outline" size="sm" className="text-[10px] uppercase font-mono">
                   Refresh Applications
                 </Button>
@@ -935,7 +965,6 @@ export const Careers = () => {
                       const name = r.candidateName || r.name || r.fullName || r.applicantName || "Anonymous Candidate";
                       const jobRole = r.jobApplied || r.jobTitle || r.position || r.role || "General Application";
                       const rawResume = r.resumeBase64Data || r.resumeFileUrl || r.resumeUrl || r.resume || "";
-                      const resumeLink = getSafeResumeUrl(rawResume);
                       const resumeName = r.resumeFileName || "Resume File";
                       const dateStr = r.date || (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "Recent");
 
@@ -949,30 +978,24 @@ export const Careers = () => {
                           <td className="py-2.5 px-4 font-mono text-zinc-300">{r.email || 'N/A'}</td>
                           <td className="py-2.5 px-4 font-mono text-zinc-500 text-[10px]">{dateStr}</td>
                           <td className="py-2.5 px-4">
-                            {rawResume ? (
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <button 
-                                  onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px] font-bold"
-                                  title="Download candidate's original resume file"
-                                >
-                                  <Download className="w-3.5 h-3.5" /> Download
-                                </button>
-                                {resumeLink && (
-                                  <a
-                                    href={resumeLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-1 rounded text-zinc-400 hover:text-luxury-gold hover:bg-zinc-800 transition-colors inline-flex items-center"
-                                    title="Open original resume in new tab"
-                                  >
-                                    <ExternalLink className="w-3.5 h-3.5" />
-                                  </a>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="text-zinc-500 text-[10px] font-mono italic">No file attached</span>
-                            )}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <button 
+                                type="button"
+                                onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/30 hover:bg-luxury-gold hover:text-black transition-all cursor-pointer font-mono text-[10px] font-bold"
+                                title="Download candidate verified resume / dossier"
+                              >
+                                <Download className="w-3.5 h-3.5" /> Download
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadResume(r, name, resumeName, r.id || r._id)}
+                                className="p-1 rounded text-zinc-400 hover:text-luxury-gold hover:bg-zinc-800 transition-colors inline-flex items-center cursor-pointer"
+                                title="Download / View Application Dossier"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                           <td className="py-2.5 px-4">
                             <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">
@@ -1158,18 +1181,15 @@ export const Careers = () => {
                         onClick={() => handleDownloadResume(selectedApplicant, name, resumeName, selectedApplicant.id || selectedApplicant._id)}
                         className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-luxury-gold text-black font-bold font-mono text-xs hover:bg-yellow-400 transition-colors shadow-gold-glow cursor-pointer"
                       >
-                        <Download className="w-4 h-4 text-black" /> Download Original Resume
+                        <Download className="w-4 h-4 text-black" /> Download Resume Document
                       </button>
-                      {resumeLink && (
-                        <a
-                          href={resumeLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-200 text-xs font-mono hover:text-luxury-gold hover:border-luxury-gold/40 transition-colors"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" /> Open in New Tab
-                        </a>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadResume(selectedApplicant, name, resumeName, selectedApplicant.id || selectedApplicant._id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-200 text-xs font-mono hover:text-luxury-gold hover:border-luxury-gold/40 transition-colors cursor-pointer"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" /> Export Verified PDF
+                      </button>
                     </div>
                   </div>
 

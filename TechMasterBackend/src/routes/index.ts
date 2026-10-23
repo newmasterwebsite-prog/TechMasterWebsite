@@ -105,21 +105,25 @@ const handleResumeSubmission = async (req: any, res: any, next: any) => {
       publicId = uniqueFileName;
       base64Data = `data:${mimeType};base64,${fileBuffer.toString("base64")}`;
 
-      // 1. Try Cloudinary upload if configured (gives permanent CDN URL)
+      // 1. Try Cloudinary upload if configured (with strict 4s timeout so submission is instant)
       try {
         if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
-          const uploadRes = await CloudinaryService.uploadBuffer(
+          const uploadPromise = CloudinaryService.uploadBuffer(
             fileBuffer,
             "techmaster/resumes",
             "auto",
             { public_id: uniqueFileName }
           );
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Cloudinary upload timeout (4s)")), 4000)
+          );
+          const uploadRes: any = await Promise.race([uploadPromise, timeoutPromise]);
           if (uploadRes && uploadRes.secure_url) {
             downloadUrl = uploadRes.secure_url;
           }
         }
       } catch (cloudErr) {
-        console.warn("Cloudinary resume upload notice (using database & local backup):", cloudErr);
+        console.warn("Cloudinary resume upload skipped or timed out (using database & local backup):", cloudErr);
       }
 
       if (!downloadUrl) {
@@ -227,7 +231,22 @@ const handleGetResumes = async (req: any, res: any, next: any) => {
     const doc = await CMSData.findOne({ key: "resumes" });
     const rawResumes = doc && Array.isArray(doc.value) ? doc.value : [];
     
-    const sanitized = rawResumes.map((r: any) => {
+    // Sort applications descending so newest applications are strictly at the top
+    const sorted = [...rawResumes].sort((a: any, b: any) => {
+      const getT = (x: any) => {
+        if (!x) return 0;
+        if (x.createdAt) { const t = new Date(x.createdAt).getTime(); if (!isNaN(t)) return t; }
+        if (x.date) { const t = new Date(x.date).getTime(); if (!isNaN(t)) return t; }
+        if (x.id && typeof x.id === 'string' && x.id.includes('-')) {
+          const num = parseInt(x.id.split('-').pop() || '', 10);
+          if (!isNaN(num) && num > 1600000000000) return num;
+        }
+        return 0;
+      };
+      return getT(b) - getT(a);
+    });
+
+    const sanitized = sorted.map((r: any) => {
       const { resumeBase64Data, ...rest } = r;
       const downloadPath = `/api/v1/resumes/download?id=${r.id || r._id}&file=${encodeURIComponent(r.resumeFileName || 'resume.pdf')}`;
       return {

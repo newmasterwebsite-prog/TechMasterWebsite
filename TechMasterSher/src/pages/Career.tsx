@@ -272,71 +272,65 @@ export const Career: React.FC = () => {
     }
 
     try {
-      const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = error => reject(error);
-        });
-      };
-
-      const resumeBase64 = await fileToBase64(formData.resumeFile);
-
       const dataPayload = new FormData();
-      dataPayload.append("name", formData.name);
-      dataPayload.append("email", formData.email);
-      dataPayload.append("phone", formData.phone);
+      dataPayload.append("name", formData.name.trim());
+      dataPayload.append("email", formData.email.trim());
+      dataPayload.append("phone", formData.phone.trim());
       dataPayload.append("jobTitle", formData.jobTitle || "General Application");
-      dataPayload.append("experience", formData.portfolioLink);
-      dataPayload.append("message", formData.whyJoin);
-      dataPayload.append("coverLetter", formData.coverLetter);
+      dataPayload.append("experience", formData.portfolioLink.trim());
+      dataPayload.append("message", formData.whyJoin.trim());
+      dataPayload.append("coverLetter", formData.coverLetter.trim());
       dataPayload.append("resume", formData.resumeFile);
-      dataPayload.append("resumeBase64", resumeBase64);
+      dataPayload.append("resumeFileName", formData.resumeFile.name);
 
       const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
         .replace(/\/+$/, "")
         .replace(/^http:\/\//i, "https://");
-      const endpoints = [
-        `${baseUrl}/cms/public/resume`,
-        `${baseUrl}/public/resume`,
-        `${baseUrl}/public/career-application`
-      ];
 
       let result: any = null;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000); // Fast 12s timeout
 
-      for (const ep of endpoints) {
-        try {
-          const res = await fetch(ep, {
+        const res = await fetch(`${baseUrl}/cms/public/resume`, {
+          method: "POST",
+          body: dataPayload,
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          result = await res.json();
+        } else {
+          // Quick single fallback if /cms/public/resume is rejected
+          const resFallback = await fetch(`${baseUrl}/public/resume`, {
             method: "POST",
             body: dataPayload
-          });
-          if (res.ok) {
-            result = await res.json();
-            break;
+          }).catch(() => null);
+          if (resFallback && resFallback.ok) {
+            result = await resFallback.json();
           }
-        } catch (e) {
-          console.warn(`Career submit endpoint failed: ${ep}`, e);
         }
+      } catch (submitErr) {
+        console.warn("Direct resume submit notice (proceeding with local backup):", submitErr);
       }
 
-      // Backup to local storage & broadcast sync event to Admin Panel
+      // Safe local storage sync & cross-tab broadcast
       const newApp = {
         id: result?.data?.id || `resume-${Date.now()}`,
-        name: formData.name,
-        candidateName: formData.name,
-        email: formData.email,
-        phone: formData.phone,
+        name: formData.name.trim(),
+        candidateName: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         jobTitle: formData.jobTitle || "General Application",
         jobApplied: formData.jobTitle || "General Application",
-        experience: formData.portfolioLink,
-        portfolioUrl: formData.portfolioLink,
-        message: formData.whyJoin,
-        whyJoin: formData.whyJoin,
-        coverLetter: formData.coverLetter,
-        resumeFileUrl: result?.data?.resumeFileUrl || result?.data?.resumeUrl || resumeBase64,
-        resumeUrl: result?.data?.resumeUrl || result?.data?.resumeFileUrl || resumeBase64,
-        resumeBase64Data: resumeBase64,
+        experience: formData.portfolioLink.trim(),
+        portfolioUrl: formData.portfolioLink.trim(),
+        message: formData.whyJoin.trim(),
+        whyJoin: formData.whyJoin.trim(),
+        coverLetter: formData.coverLetter.trim(),
+        resumeFileUrl: result?.data?.resumeFileUrl || result?.data?.resumeUrl || "",
+        resumeUrl: result?.data?.resumeUrl || result?.data?.resumeFileUrl || "",
         resumeFileName: formData.resumeFile?.name || "resume.pdf",
         status: "New",
         date: new Date().toISOString().split('T')[0],
@@ -348,6 +342,7 @@ export const Career: React.FC = () => {
         let localDb = saved ? JSON.parse(saved) : {};
         let existingResumes = Array.isArray(localDb.resumes) ? localDb.resumes : [];
         existingResumes.unshift(newApp);
+        if (existingResumes.length > 50) existingResumes = existingResumes.slice(0, 50);
         localDb.resumes = existingResumes;
         localDb.careerApplications = existingResumes;
         localStorage.setItem("zenvora_db", JSON.stringify(localDb));
@@ -355,7 +350,9 @@ export const Career: React.FC = () => {
         const channel = new BroadcastChannel("zenvora_cms_sync");
         channel.postMessage({ type: "APPLICATION_SUBMITTED", data: newApp });
         channel.close();
-      } catch (e) {}
+      } catch (storageErr) {
+        console.warn("Local storage update notice:", storageErr);
+      }
 
       setSubmitted(true);
     } catch (err: any) {
