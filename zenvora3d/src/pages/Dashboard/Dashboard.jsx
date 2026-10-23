@@ -13,7 +13,7 @@ import {
 const defaultPagesCount = 20;
 
 export const Dashboard = ({ setCurrentView }) => {
-  const { db } = useDatabase();
+  const { db, isLoading } = useDatabase();
 
   // Dynamic calculations from real DB collections with complete null-safety
   const collaborationCount = Array.isArray(db?.collaborations) 
@@ -103,7 +103,7 @@ export const Dashboard = ({ setCurrentView }) => {
         <div className="flex items-center gap-3 z-10 flex-wrap">
           <Button variant="secondary" size="sm" onClick={() => setCurrentView('contacts')} className="gap-2 border border-zinc-800 hover:border-zinc-700">
             <MessageSquare className="w-4 h-4" />
-            <span>Enquiries ({pendingEnquiriesCount})</span>
+            <span>Enquiries ({isLoading ? "..." : pendingEnquiriesCount})</span>
           </Button>
           <Button variant="primary" size="sm" onClick={() => setCurrentView('blogs')} className="gap-2">
             <Plus className="w-4 h-4 text-white stroke-[3]" />
@@ -118,30 +118,48 @@ export const Dashboard = ({ setCurrentView }) => {
           <Layers className="w-4 h-4 text-luxury-gold" />
           <span>Website Summary Matrix</span>
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {summaryCards.map((card, i) => {
-            const Icon = card.icon;
-            return (
-              <TiltCard 
-                key={i} 
-                onClick={() => setCurrentView(card.viewKey)}
-                className="relative overflow-hidden group border border-zinc-800/60 bg-zinc-950/40 p-4 rounded-lg cursor-pointer hover:border-luxury-gold/40 transition-all duration-300 shadow-md hover:shadow-gold-glow/5"
-                maxTilt={6}
-              >
+        
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[1, 2, 3, 4, 5].map((idx) => (
+              <div key={idx} className="relative overflow-hidden border border-zinc-800/60 bg-zinc-950/40 p-4 rounded-lg animate-pulse">
                 <div className="flex justify-between items-start">
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-none">{card.title}</span>
-                    <span className="font-serif text-3xl font-medium text-zinc-100 mt-2">{card.value}</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="h-2 w-16 bg-zinc-800/80 rounded"></div>
+                    <div className="h-7 w-12 bg-luxury-gold/20 rounded mt-1"></div>
                   </div>
-                  <div className={`p-2 rounded-md bg-gradient-to-br ${card.color} border border-zinc-800/80 group-hover:scale-105 transition-transform`}>
-                    <Icon className="w-4 h-4 text-luxury-gold" />
-                  </div>
+                  <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800/80"></div>
                 </div>
-                <p className="text-[10px] text-zinc-500 mt-3 group-hover:text-zinc-400 transition-colors">{card.label}</p>
-              </TiltCard>
-            );
-          })}
-        </div>
+                <div className="h-2 w-24 bg-zinc-800/40 rounded mt-4"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {summaryCards.map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <TiltCard 
+                  key={i} 
+                  onClick={() => setCurrentView(card.viewKey)}
+                  className="relative overflow-hidden group border border-zinc-800/60 bg-zinc-950/40 p-4 rounded-lg cursor-pointer hover:border-luxury-gold/40 transition-all duration-300 shadow-md hover:shadow-gold-glow/5"
+                  maxTilt={6}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest leading-none">{card.title}</span>
+                      <span className="font-serif text-3xl font-medium text-zinc-100 mt-2">{card.value}</span>
+                    </div>
+                    <div className={`p-2 rounded-md bg-gradient-to-br ${card.color} border border-zinc-800/80 group-hover:scale-105 transition-transform`}>
+                      <Icon className="w-4 h-4 text-luxury-gold" />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 mt-3 group-hover:text-zinc-400 transition-colors">{card.label}</p>
+                </TiltCard>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Quick Ops & Active Logging Timeline Area */}
@@ -182,20 +200,34 @@ export const Dashboard = ({ setCurrentView }) => {
 
         {/* Dynamic Activity Tracker Layout Logs */}
         <Card className="lg:col-span-2 border border-zinc-800/60 bg-zinc-950/20" title="Recent Management Logs" subtitle="Audit timeline of operations in this panel">
-          <div className="flex flex-col gap-4 mt-4">
-            {activities.map((act) => (
-              <div key={act.id} className="flex gap-4 items-start border-l border-zinc-800 pl-4 relative pb-2 transition-all hover:translate-x-0.5">
-                <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-luxury-gold shadow-[0_0_10px_rgba(212,175,55,0.6)]" />
-                <div className="flex-1 text-left">
-                  <p className="text-xs text-zinc-300 font-medium leading-relaxed">{act.text}</p>
-                  <span className="text-[9px] text-zinc-500 font-mono block mt-1 uppercase tracking-wider">{act.time}</span>
+          {isLoading ? (
+            <div className="flex flex-col gap-4 mt-4">
+              {[1, 2, 3].map((idx) => (
+                <div key={idx} className="flex gap-4 items-start border-l border-zinc-800 pl-4 relative pb-2 animate-pulse">
+                  <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-zinc-700" />
+                  <div className="flex-1 text-left flex flex-col gap-1.5">
+                    <div className="h-3 w-4/5 bg-zinc-800/80 rounded"></div>
+                    <div className="h-2 w-1/4 bg-zinc-800/40 rounded mt-1"></div>
+                  </div>
                 </div>
-                <Badge variant={act.type === 'campaign' ? 'gold' : act.type === 'career' ? 'info' : 'default'} className="text-[10px] tracking-wide scale-95 uppercase">
-                  {act.type}
-                </Badge>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 mt-4">
+              {activities.map((act) => (
+                <div key={act.id} className="flex gap-4 items-start border-l border-zinc-800 pl-4 relative pb-2 transition-all hover:translate-x-0.5">
+                  <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-luxury-gold shadow-[0_0_10px_rgba(212,175,55,0.6)]" />
+                  <div className="flex-1 text-left">
+                    <p className="text-xs text-zinc-300 font-medium leading-relaxed">{act.text}</p>
+                    <span className="text-[9px] text-zinc-500 font-mono block mt-1 uppercase tracking-wider">{act.time}</span>
+                  </div>
+                  <Badge variant={act.type === 'campaign' ? 'gold' : act.type === 'career' ? 'info' : 'default'} className="text-[10px] tracking-wide scale-95 uppercase">
+                    {act.type}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </div>

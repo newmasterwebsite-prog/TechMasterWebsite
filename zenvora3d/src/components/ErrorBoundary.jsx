@@ -18,6 +18,19 @@ export class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("TechMaster Admin Panel ErrorBoundary caught runtime exception:", error, errorInfo);
+    // Auto-heal corrupted/incompatible cache once automatically so client directly opens panel
+    try {
+      if (typeof window !== 'undefined') {
+        const alreadyHealed = sessionStorage.getItem('admin_auto_healed_v2');
+        if (!alreadyHealed) {
+          sessionStorage.setItem('admin_auto_healed_v2', 'true');
+          localStorage.removeItem('zenvora_db');
+          localStorage.removeItem('techmaster-cms-last-updated');
+          window.location.reload();
+          return;
+        }
+      }
+    } catch (e) {}
     this.setState({ error, errorInfo });
   }
 

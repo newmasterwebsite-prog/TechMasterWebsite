@@ -703,60 +703,7 @@ export const initialData = {
     { id: "pf-7", name: "Client Work", slug: "client-work", order: 7, isVisible: true, icon: "Briefcase", color: "#64748B" }
   ],
 
-  portfolio: [
-    {
-      id: "port-1",
-      title: "Chasing Shadows - Noir Fashion Film",
-      subtitle: "Cinematic Exploration of Light",
-      client: "Vogue India & Chanel",
-      category: "Commercial Shoots",
-      categories: ["Commercial Shoots", "Videos"],
-      year: "2026",
-      description: "A breathtaking cinematic exploration of light and shadow, featuring global fashion icons in bespoke haute couture.",
-      caseStudy: "The campaign challenged conventional fashion lighting by relying entirely on practical shadow play...",
-      externalUrl: "https://vogue.in/chanel-noir",
-      projectUrl: "https://chanel.com",
-      order: 1,
-      sortOrder: 1,
-      featured: true,
-      status: "Active",
-      accentColor: "#D4AF37",
-      
-      // Media
-      coverImage: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=800",
-      bannerImage: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1920",
-      galleryImages: ["https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800"],
-      multipleVideos: ["https://assets.mixkit.co/videos/preview/mixkit-fashion-woman-with-silver-glitter-makeup-40439-large.mp4"],
-      youtubeUrl: "",
-      vimeoUrl: "",
-      
-      // Metadata
-      tags: ["Cinematography", "Fashion", "VFX"],
-      technology: ["Unreal Engine 5", "DaVinci Resolve"],
-      industry: "Fashion",
-      location: "Mumbai, India",
-      duration: "3 Weeks",
-      photographer: "Rahul Sharma",
-      director: "TechMaster",
-      brand: "Chanel",
-      agency: "TechMaster Innovations",
-      credits: "Styling: Anaita Shroff, VFX: Studio Red",
-      awards: "Best Fashion Film 2026",
-      
-      // SEO
-      seoTitle: "Vogue Chanel Shoot - Noir Fashion",
-      seoDescription: "View our latest fashion film collaboration with Vogue India.",
-      metaKeywords: "Chanel, Vogue, Noir, Fashion Film, TechMaster",
-      canonicalUrl: "https://techmaster.com/portfolio/vogue-chanel",
-      ogImage: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200",
-      twitterImage: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200",
-      schema: "{}",
-      slug: "vogue-chanel-noir",
-      
-      createdAt: "2026-04-22T08:00:00Z",
-      updatedAt: "2026-04-25T10:00:00Z"
-    }
-  ],
+  portfolio: [],
 
   
   // ==========================================
@@ -1039,39 +986,8 @@ export const initialData = {
   // 12. BLOG MANAGEMENT
   blogs: [],
 
-  // 13. CONTACT ENQUIRIES
-  enquiries: [
-    {
-      id: "enq-1",
-      senderName: "Gabriella Rossi",
-      email: "g.rossi@dolcegabbana.it",
-      subject: "Luxury Campaign Brand Ambassador Booking",
-      message: "Dear TechMaster, We are planning our Winter '26 Cruise campaign launch in Lake Como and would love to discuss booking you for our opening event and a series of 3 short-form commercial reels. Let us know your availability for a brief call next week.",
-      category: "Booking",
-      date: "2026-06-29T10:30:00Z",
-      status: "Unread"
-    },
-    {
-      id: "enq-2",
-      senderName: "Vikram Sen",
-      email: "vikram@timesgroup.com",
-      subject: "Invitation to Speak: India Creator Summit",
-      message: "Hello TechMaster, We would like to invite you as our key speaker for the 'Elite Creators' track. We expect an audience of 1,200 aspiring digital marketers and creators.",
-      category: "Sponsorship",
-      date: "2026-06-25T14:00:00Z",
-      status: "Read"
-    },
-    {
-      id: "enq-3",
-      senderName: "Claire Dupont",
-      email: "claire.dupont@loreal.com",
-      subject: "Collaborative Product Release Proposal",
-      message: "Greetings. Loreal Luxe division is researching co-branded launches for Q4. Your profile matches our target demographic perfectly.",
-      category: "Booking",
-      date: "2026-06-20T09:00:00Z",
-      status: "Replied"
-    }
-  ],
+  // 13. CONTACT ENQUIRIES (Real client submissions only)
+  enquiries: [],
 
   // 14. SEO SETTINGS
   seo: [

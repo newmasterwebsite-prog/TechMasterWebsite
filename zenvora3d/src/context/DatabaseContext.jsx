@@ -36,19 +36,56 @@ export const safeSetLocalStorage = (key, value) => {
   }
 };
 
-// Clean up any historical giant/corrupted zenvora_db from localStorage to prevent quota lockup
+// Auto-sanitize and purge historical mock dummy records from state
+export const sanitizeDbState = (raw) => {
+  if (!raw || typeof raw !== 'object') return raw;
+  const copy = { ...raw };
+  if (Array.isArray(copy.enquiries)) {
+    copy.enquiries = copy.enquiries.filter(e => 
+      e && e.email !== 'vikram@timesgroup.com' && 
+      e.email !== 'g.rossi@dolcegabbana.it' && 
+      e.email !== 'claire.dupont@loreal.com' &&
+      e.id !== 'enq-1' && e.id !== 'enq-2' && e.id !== 'enq-3'
+    );
+  }
+  if (Array.isArray(copy.contactEnquiries)) {
+    copy.contactEnquiries = copy.contactEnquiries.filter(e => 
+      e && e.email !== 'vikram@timesgroup.com' && 
+      e.email !== 'g.rossi@dolcegabbana.it' && 
+      e.email !== 'claire.dupont@loreal.com' &&
+      e.id !== 'enq-1' && e.id !== 'enq-2' && e.id !== 'enq-3'
+    );
+  }
+  if (Array.isArray(copy.portfolio)) {
+    copy.portfolio = copy.portfolio.filter(p => p && p.id !== 'port-1' && p.title !== 'Chasing Shadows - Noir Fashion Film');
+  }
+  if (Array.isArray(copy.resumes)) {
+    copy.resumes = copy.resumes.filter(r => 
+      r && r.candidateName !== 'Rohan Varma' && 
+      r.candidateName !== 'Neha Kapoor' && 
+      r.candidateName !== 'Aleksei Ivanov' &&
+      r.id !== 'res-1' && r.id !== 'res-2' && r.id !== 'res-3'
+    );
+  }
+  return copy;
+};
+
+// Clean up any historical giant/corrupted zenvora_db or mock items from localStorage on startup
 try {
   if (typeof window !== 'undefined') {
     const existing = localStorage.getItem('zenvora_db');
-    if (existing && (existing.includes('resume_file_') || existing.length > 2500000)) {
-      const parsed = JSON.parse(existing);
-      const cleaned = {};
-      for (const [k, v] of Object.entries(parsed)) {
-        if (!k.startsWith('resume_file_') && !k.startsWith('file_') && JSON.stringify(v).length < 200000) {
-          cleaned[k] = v;
+    if (existing) {
+      if (existing.includes('resume_file_') || existing.length > 2500000 || existing.includes('timesgroup.com') || existing.includes('dolcegabbana.it') || existing.includes('port-1')) {
+        const parsed = JSON.parse(existing);
+        const sanitized = sanitizeDbState(parsed);
+        const cleaned = {};
+        for (const [k, v] of Object.entries(sanitized)) {
+          if (!k.startsWith('resume_file_') && !k.startsWith('file_') && JSON.stringify(v).length < 200000) {
+            cleaned[k] = v;
+          }
         }
+        localStorage.setItem('zenvora_db', JSON.stringify(cleaned));
       }
-      localStorage.setItem('zenvora_db', JSON.stringify(cleaned));
     }
   }
 } catch (e) {}
@@ -61,13 +98,15 @@ export const DatabaseProvider = ({ children }) => {
       const saved = localStorage.getItem('zenvora_db');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return { ...initialData, ...parsed };
+        return sanitizeDbState({ ...initialData, ...parsed });
       }
     } catch (e) {
       console.warn("Error parsing zenvora_db from localStorage:", e);
     }
     return initialData;
   });
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const [auth, setAuth] = useState(() => {
     try {
@@ -177,10 +216,10 @@ export const DatabaseProvider = ({ children }) => {
       let localParsed = {};
       try {
         const saved = localStorage.getItem('zenvora_db');
-        if (saved) localParsed = JSON.parse(saved);
+        if (saved) localParsed = sanitizeDbState(JSON.parse(saved));
       } catch (e) {}
 
-      const res = await apiFetch("/cms").catch(() => null);
+      const res = await apiFetch(`/cms?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
       const rawBackendData = (res && res.success && res.data) ? res.data : {};
 
       // Filter out resume base64 binary dumps or giant file keys from the CMS payload
@@ -199,13 +238,13 @@ export const DatabaseProvider = ({ children }) => {
           ...(localParsed.footer || {})
         };
 
-        const merged = {
+        const merged = sanitizeDbState({
           ...initialData,
           ...prev,
           ...localParsed,
           ...backendData,
           footer: mergedFooter
-        };
+        });
 
         if (merged.careersCMS) {
           if (Array.isArray(merged.careersCMS.culture) && merged.careersCMS.culture.length > 0) {
@@ -250,6 +289,8 @@ export const DatabaseProvider = ({ children }) => {
       });
     } catch (error) {
       console.error("Failed to fetch CMS state:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -560,6 +601,7 @@ export const DatabaseProvider = ({ children }) => {
       updateProfile,
       markNotificationRead,
       clearAllNotifications,
+      isLoading,
       refreshDatabase: fetchCMSData,
       apiFetch
     }}>
