@@ -1653,34 +1653,48 @@
     }
   },
   "termsPolicy": {
-    "smallBadge": "LEGAL PROTOCOLS ",
-    "popupTitle": "Terms of Service ",
-    "effectiveDate": "July 7, 2026  ",
-    "lastUpdatedDate": "July 7, 2026",
-    "versionNumber": "v3.1",
+    "smallBadge": "LEGAL PROTOCOLS",
+    "popupTitle": "Terms of Service",
+    "effectiveDate": "2 October 2026",
+    "lastUpdatedDate": "2 October 2026",
+    "versionNumber": "v3.2",
     "autoUpdateDate": false,
-    "introParagraph": "By browsing this platform, subscribing to our mailing list, or submitting inquiries, you agree to these Terms of Service. ",
+    "introParagraph": "By using techmasterco.com, you agree to these terms.",
     "visibility": true,
     "sections": [
       {
-        "id": "ts-1",
-        "title": "Intellectual Property",
-        "body": "All site designs, 3D shaders, systems blueprints, and video snippets are the trademark properties of Aman and Tech Master Labs unless stated otherwise.",
+        "id": "sec-1",
+        "title": "Our content",
+        "body": "All videos, images, logos, and text on this site belong to Tech Master or are used with permission. You may share links to them. You may not copy, re-upload, edit, or use them commercially without our written permission. You may not use our name or logo in a way that suggests we endorse you.",
         "order": 1,
         "status": "Active"
       },
       {
-        "id": "ts-2",
-        "title": "User License",
-        "body": "You are granted a limited license to explore our portfolio and code projects for educational research. Scraping, cloning, or distributing source codes commercially without express written consent is strictly prohibited.",
+        "id": "sec-2",
+        "title": "Using the site",
+        "body": "Do not hack, overload, or scrape the site, and do not use it for anything illegal. We are not responsible for third-party platforms we link to, such as YouTube or Instagram.",
         "order": 2,
         "status": "Active"
       },
       {
-        "id": "ts-3",
-        "title": "Sandbox Declarations",
-        "body": "All forms, databases, and estimates operate in safe sandbox demonstration pipelines.",
+        "id": "sec-3",
+        "title": "Inquiries and applications",
+        "body": "Sending an inquiry does not create a contract. Applying does not guarantee a reply. If you send us ideas or pitches, we have no duty to keep them confidential or pay for them unless we agree to that in writing.",
         "order": 3,
+        "status": "Active"
+      },
+      {
+        "id": "sec-4",
+        "title": "No guarantees",
+        "body": "The site is provided \"as is.\" To the extent the law allows, Tech Master is not liable for any loss that comes from using it.",
+        "order": 4,
+        "status": "Active"
+      },
+      {
+        "id": "sec-5",
+        "title": "Changes and law",
+        "body": "We may update these terms at any time. These terms are governed by Indian law, and the courts in Jaipur, Rajasthan, will handle any disputes.<br/><br/><strong>Contact:</strong> <a href=\"mailto:partners@techmasterco.com\" class=\"text-gold underline\">partners@techmasterco.com</a>",
+        "order": 5,
         "status": "Active"
       }
     ],

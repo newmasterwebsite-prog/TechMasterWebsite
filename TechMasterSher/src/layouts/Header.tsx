@@ -60,7 +60,25 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
   const navBtnText = activeHome?.navbar?.buttonText || (websiteSettings as any)?.buttonText || "LET'S TALK";
   const navBtnLink = activeHome?.navbar?.buttonLink || (websiteSettings as any)?.buttonLink || "contact";
 
+  const [liveTerms, setLiveTerms] = useState<any>(null);
+
+  const fetchLiveTerms = async () => {
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || "https://techmasterbackend-4l9g.onrender.com/api/v1")
+        .replace(/\/+$/, "")
+        .replace(/^http:\/\//i, "https://");
+      const res = await fetch(`${baseUrl}/terms?t=${Date.now()}`, { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setLiveTerms(json.data);
+        }
+      }
+    } catch (e) {}
+  };
+
   useEffect(() => {
+    fetchLiveTerms();
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 50);
@@ -69,7 +87,10 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Initialize immediately
     
-    const handleOpenTerms = () => setIsTermsOpen(true);
+    const handleOpenTerms = () => {
+      fetchLiveTerms();
+      setIsTermsOpen(true);
+    };
     const handleOpenPrivacy = () => setIsPrivacyOpen(true);
     window.addEventListener("open-terms-modal", handleOpenTerms);
     window.addEventListener("open-privacy-modal", handleOpenPrivacy);
@@ -468,7 +489,7 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onChangePage }) => {
                 ✕
               </button>
               {(() => {
-                const activeTerms = termsPolicyData || dbData?.termsPolicy || dbData?.terms || dbData?.termsPolicyData;
+                const activeTerms = liveTerms || termsPolicyData || dbData?.termsPolicy || dbData?.terms || dbData?.termsPolicyData;
                 return (
                   <>
                     <span className="text-[9px] font-sans text-gold uppercase tracking-widest">{activeTerms?.smallBadge || "LEGAL PROTOCOLS"}</span>

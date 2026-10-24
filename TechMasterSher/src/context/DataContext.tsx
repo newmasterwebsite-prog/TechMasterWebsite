@@ -227,37 +227,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const baseUrl = getApiBaseUrl();
       let fetchedDb: any = {};
 
-      try {
-        const response = await fetch(`${baseUrl}/cms?t=${Date.now()}`).catch(() => null);
-        if (response && response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            fetchedDb = { ...result.data };
-          }
-        }
-      } catch (e) {}
+      const [cmsRes, fvRes, termsRes] = await Promise.allSettled([
+        fetch(`${baseUrl}/cms?t=${Date.now()}`),
+        fetch(`${baseUrl}/featured-videos?t=${Date.now()}`),
+        fetch(`${baseUrl}/terms?t=${Date.now()}`, { cache: "no-store" })
+      ]);
 
-      try {
-        const fvRes = await fetch(`${baseUrl}/featured-videos?t=${Date.now()}`).catch(() => null);
-        if (fvRes && fvRes.ok) {
-          const fvJson = await fvRes.json();
+      if (cmsRes.status === "fulfilled" && cmsRes.value && cmsRes.value.ok) {
+        try {
+          const result = await cmsRes.value.json();
+          if (result.success && result.data) {
+            fetchedDb = { ...fetchedDb, ...result.data };
+          }
+        } catch (e) {}
+      }
+
+      if (fvRes.status === "fulfilled" && fvRes.value && fvRes.value.ok) {
+        try {
+          const fvJson = await fvRes.value.json();
           if (fvJson.success && Array.isArray(fvJson.data)) {
             fetchedDb.featuredVideos = fvJson.data;
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
-      try {
-        const termsRes = await fetch(`${baseUrl}/terms?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
-        if (termsRes && termsRes.ok) {
-          const termsJson = await termsRes.json();
+      if (termsRes.status === "fulfilled" && termsRes.value && termsRes.value.ok) {
+        try {
+          const termsJson = await termsRes.value.json();
           if (termsJson.success && termsJson.data) {
             fetchedDb.termsPolicy = termsJson.data;
             fetchedDb.terms = termsJson.data;
             fetchedDb.termsPolicyData = termsJson.data;
           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       if (Object.keys(fetchedDb).length > 0) {
         applyCmsDataToState(fetchedDb);
