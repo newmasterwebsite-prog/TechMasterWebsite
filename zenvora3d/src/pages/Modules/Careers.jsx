@@ -7,6 +7,8 @@ import {
   Monitor, Tablet, Smartphone, Clock, Palette, Play, Image as ImageIcon, X, RotateCcw, FileText, Download, Mail, Phone, ExternalLink, CheckCircle2, Heart, Award
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
+import { Toast } from '../../components/ui/Toast';
+
 const isMockResume = (r) => {
   if (!r) return true;
   const name = (r.candidateName || r.name || r.fullName || '').toLowerCase().trim();
@@ -23,6 +25,7 @@ export const Careers = () => {
   const [contentSubTab, setContentSubTab] = useState('culture'); // hero, jobs, form, applicants, culture, process
   const [previewMode, setPreviewMode] = useState('desktop');
   const [toast, setToast] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
   const [modalConfig, setModalConfig] = useState(null);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -484,7 +487,7 @@ export const Careers = () => {
       const res = await fetch(`${baseUrl}/cms?t=${Date.now()}`);
       if (res.ok) {
         const json = await res.json();
-        const serverCMS = json.data?.careersCMS || json.data;
+        const serverCMS = json.data?.careersCMS || json.data?.careersPage || {};
         const serverJobs = serverCMS?.jobs || json.data?.careers;
         const serverCulture = serverCMS?.culture || json.data?.careerCulture;
         const serverCultureHeader = serverCMS?.cultureHeader || json.data?.cultureHeader;

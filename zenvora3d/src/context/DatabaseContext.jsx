@@ -106,7 +106,22 @@ export const DatabaseProvider = ({ children }) => {
     return initialData;
   });
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zenvora_db');
+      return !saved;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    // Fast-boot fallback: dashboard loads immediately, never hangs more than 1s
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [auth, setAuth] = useState(() => {
     try {
@@ -159,11 +174,21 @@ export const DatabaseProvider = ({ children }) => {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${getApiBaseUrl()}${path}`, {
-      ...options,
-      headers,
-      credentials: "include"
-    });
+    const controller = new AbortController();
+    const timeoutTimer = setTimeout(() => controller.abort(), options.timeoutMs || 8000);
+    const signal = options.signal || controller.signal;
+
+    let response;
+    try {
+      response = await fetch(`${getApiBaseUrl()}${path}`, {
+        ...options,
+        headers,
+        signal,
+        credentials: "include"
+      });
+    } finally {
+      clearTimeout(timeoutTimer);
+    }
 
     if (response.status === 401) {
       persistAuth({ user: null, token: "", isLoggedIn: false });
