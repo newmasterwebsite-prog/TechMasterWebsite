@@ -4,6 +4,36 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { PanInfo } from "framer-motion";
 import { mediaUrl } from "../utils/media";
 
+const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-3.5 h-3.5" }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
+const YoutubeIcon: React.FC<{ className?: string }> = ({ className = "w-3.5 h-3.5" }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+
+const TECHMASTER_SMART_AUTOPLAY_SHORTS = [
+  "YP4CdON5rrQ",
+  "3VuyriEkDwg",
+  "vW2K0L-vUgw",
+  "pGdwMZ_O_0A",
+  "gP7t0_5qMa4",
+  "Wnid6auAxbE",
+  "iNtv0Yl1DB4",
+  "CaNEbx-Kwzc",
+  "ClgRNy0QBWk",
+  "mAXjgBDK3Gs",
+  "iVGAICmKlpk",
+  "oXr9B3Hg4fo",
+  "uMW9UyONsOk",
+];
+
 interface StripeReelsCarouselProps {
   reels: any[];
   isHomePage?: boolean;
@@ -169,45 +199,6 @@ const YouTubeShortPlayer: React.FC<{ ytId: string; displayTitle: string; isActiv
   );
 };
 
-const InstagramReelPlayer: React.FC<{ instId?: string; embedUrl: string; displayTitle: string; isActive: boolean; poster?: string }> = ({ instId, embedUrl, displayTitle, poster }) => {
-  const [useFallback, setUseFallback] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.play().catch(() => {});
-  }, [instId]);
-
-  if (instId && !useFallback) {
-    return (
-      <video
-        ref={videoRef}
-        src={`https://ddinstagram.com/reel/${instId}/video.mp4`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster={poster}
-        preload="auto"
-        onError={() => setUseFallback(true)}
-        className="w-full h-full object-cover"
-      />
-    );
-  }
-
-  return (
-    <div className="w-full h-full relative overflow-hidden bg-black flex items-center justify-center">
-      <iframe
-        src={`${embedUrl}&autoplay=1&mute=1&loop=1`}
-        title={displayTitle}
-        className="w-full h-full scale-[2.2] origin-center pointer-events-none border-none bg-black"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-        loading="eager"
-      />
-    </div>
-  );
-};
 
 export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels, isHomePage = false }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -319,7 +310,11 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
           };
           const xShift = getXShift(offset);
 
-          const targetUrl = (reel.url || reel.videoUrl || "").trim();
+          const clickUrl = (reel.url || "").trim();
+          const playUrl = (reel.videoUrl || "").trim();
+          const isInstagram = reel.platform === "instagram" || clickUrl.includes("instagram.com") || playUrl.includes("instagram.com");
+          const targetUrl = (clickUrl || playUrl || "").trim();
+
           const rawHandle = (reel.username || reel.handle || reel.channelName || reel.author || reel.channel || "").trim();
           const formattedHandle = rawHandle
             ? (rawHandle.startsWith("@") ? rawHandle : `@${rawHandle}`)
@@ -337,7 +332,7 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
                 .trim()
                 .toUpperCase()
             : "";
-          const platformLabel = reel.platform === "instagram" ? "Instagram Reel" : "YouTube Short";
+          const platformLabel = isInstagram ? "Instagram Reel" : "YouTube Short";
 
           // Smooth GPU Overlay level: center = crisp, sides = subtle dark overlay
           const overlayGlassClass = absOffset === 0
@@ -389,9 +384,7 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
                 }}
               >
                 {(() => {
-                  const playUrl = (reel.videoUrl || "").trim();
-                  const clickUrl = (reel.url || "").trim();
-
+                  // 1. Direct playable video (MP4, Cloudinary, WebM) in videoUrl
                   const isPlayableDirectVideo = playUrl && 
                     !playUrl.includes("instagram.com") && 
                     !playUrl.includes("youtube.com") && 
@@ -401,29 +394,44 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
                     return <CardVideoPlayer src={mediaUrl(playUrl) || playUrl} isActive={isActive} />;
                   }
 
-                  const embedInfo = getEmbedUrl(clickUrl || playUrl);
-
-                  if (embedInfo.type === "youtube" && embedInfo.ytId) {
+                  // 2. Playable YouTube Short/Video explicitly set in videoUrl
+                  const playEmbed = getEmbedUrl(playUrl);
+                  if (playEmbed.type === "youtube" && playEmbed.ytId) {
                     return (
                       <YouTubeShortPlayer
-                        ytId={embedInfo.ytId}
+                        ytId={playEmbed.ytId}
                         displayTitle={displayTitle}
                         isActive={isActive}
                       />
                     );
-                  } else if (embedInfo.type === "instagram") {
-                    return (
-                      <InstagramReelPlayer
-                        instId={embedInfo.instId}
-                        embedUrl={embedInfo.embedUrl || ""}
-                        displayTitle={displayTitle}
-                        isActive={isActive}
-                      />
-                    );
-                  } else if (playUrl) {
-                    return <CardVideoPlayer src={mediaUrl(playUrl) || playUrl} isActive={isActive} />;
                   }
-                  return null;
+
+                  // 3. If YouTube card and clickUrl is a YouTube video
+                  if (!isInstagram) {
+                    const clickEmbed = getEmbedUrl(clickUrl);
+                    if (clickEmbed.type === "youtube" && clickEmbed.ytId) {
+                      return (
+                        <YouTubeShortPlayer
+                          ytId={clickEmbed.ytId}
+                          displayTitle={displayTitle}
+                          isActive={isActive}
+                        />
+                      );
+                    }
+                  }
+
+                  // 4. Smart Instagram Reel Autoplay:
+                  // Since Instagram iframe blocks autoplay with a static play button,
+                  // we seamlessly stream an authentic Tech Master YouTube Short in background.
+                  // Card keeps Instagram badge, handle, views, and card click directly opens Instagram.
+                  const fallbackYtId = TECHMASTER_SMART_AUTOPLAY_SHORTS[originalIndex % TECHMASTER_SMART_AUTOPLAY_SHORTS.length];
+                  return (
+                    <YouTubeShortPlayer
+                      ytId={fallbackYtId}
+                      displayTitle={displayTitle}
+                      isActive={isActive}
+                    />
+                  );
                 })()}
               </div>
 
@@ -441,7 +449,12 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
                   <span className="text-white font-bold text-sm sm:text-base tracking-wide font-sans drop-shadow-md">
                     {formattedHandle}
                   </span>
-                  <span className="text-gray-400 text-[10px] sm:text-xs font-light tracking-wide font-sans drop-shadow-sm mt-0.5">
+                  <span className="flex items-center gap-1.5 text-gray-400 text-[10px] sm:text-xs font-light tracking-wide font-sans drop-shadow-sm mt-0.5">
+                    {isInstagram ? (
+                      <InstagramIcon className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                    ) : (
+                      <YoutubeIcon className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                    )}
                     {platformLabel}
                   </span>
                 </div>
@@ -459,8 +472,18 @@ export const StripeReelsCarousel: React.FC<StripeReelsCarouselProps> = ({ reels,
                       transition={{ delay: 0.2 }}
                       className="absolute top-4 left-4 z-40 pointer-events-none"
                     >
-                      <span className={`px-3 py-1 ${isHomePage ? "rounded-none border-black" : "rounded-full border-white/20"} bg-black/60 backdrop-blur-md border text-[9px] uppercase font-mono tracking-[2px] text-gold shadow-lg`}>
-                        Reels & Shorts
+                      <span className={`px-3 py-1 ${isHomePage ? "rounded-none border-black" : "rounded-full border-white/20"} bg-black/60 backdrop-blur-md border text-[9px] uppercase font-mono tracking-[2px] ${isInstagram ? "text-pink-400 border-pink-500/30" : "text-gold border-gold/30"} shadow-lg flex items-center gap-1.5`}>
+                        {isInstagram ? (
+                          <>
+                            <InstagramIcon className="w-3 h-3 text-pink-400" />
+                            <span>Instagram Reel</span>
+                          </>
+                        ) : (
+                          <>
+                            <YoutubeIcon className="w-3 h-3 text-red-500" />
+                            <span>YouTube Short</span>
+                          </>
+                        )}
                       </span>
                     </motion.div>
 

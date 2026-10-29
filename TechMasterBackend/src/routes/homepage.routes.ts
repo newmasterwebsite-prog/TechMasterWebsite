@@ -255,9 +255,9 @@ function fetchMetadataFromUrl(url: string): { title?: string; username?: string;
 
 function normalizeReelItem(v: any): any {
   if (!v) return null;
-  let platform: "instagram" | "youtube" = "youtube";
-  const targetUrl = (v.url || v.videoUrl || "").toLowerCase();
-  if (targetUrl.includes("instagram.com") || targetUrl.includes("/reel/") || targetUrl.includes("/p/")) {
+  let platform: "instagram" | "youtube" = (v.platform === "instagram") ? "instagram" : "youtube";
+  const clickTarget = (v.url || "").toLowerCase();
+  if (clickTarget.includes("instagram.com") || clickTarget.includes("/reel/") || clickTarget.includes("/p/")) {
     platform = "instagram";
   }
 

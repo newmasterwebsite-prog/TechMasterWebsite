@@ -10,6 +10,20 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
 
+const InstagramIcon = ({ className = "w-3.5 h-3.5" }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
+const YoutubeIcon = ({ className = "w-3.5 h-3.5" }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+
 const defaultCircleAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
 
 const lenskartLogoB64 = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" width="320" height="90"><g fill="none" stroke="black" stroke-width="7"><circle cx="35" cy="45" r="20"/><circle cx="75" cy="45" r="20"/></g><text x="110" y="56" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="42" fill="black">lenskart</text></svg>')}`;
@@ -715,6 +729,14 @@ export const Homepage = () => {
       }
     }
 
+    if (listKey === 'list' && parentKey === 'shortsReels') {
+      const clickUrl = (processedItem.url || '').trim();
+      const isInsta = processedItem.platform === 'instagram' || clickUrl.includes('instagram.com') || clickUrl.includes('/reel/');
+      processedItem.platform = isInsta ? 'instagram' : 'youtube';
+      processedItem.url = clickUrl;
+      processedItem.videoUrl = (processedItem.videoUrl || '').trim();
+    }
+
     let updated;
     if (processedItem.id) {
       updated = list.map(i => i.id === processedItem.id ? processedItem : i);
@@ -1198,7 +1220,7 @@ export const Homepage = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">Featured Shorts & Reels List</h3>
               <Button 
-                onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: { title: '', url: '', videoUrl: '', platform: 'youtube', username: '', channelName: '', views: '', thumbnail: '' } })} 
+                onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: { title: '', url: '', videoUrl: '', platform: 'youtube', username: '@techmasterhq', channelName: 'Tech Master', views: '1.5M views', thumbnail: '' } })} 
                 variant="gold" 
                 size="sm" 
                 className="text-xs uppercase"
@@ -1208,24 +1230,38 @@ export const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {formData.shortsReels.list.map((sr, idx) => (
-                <div key={sr.id || idx} className="p-4 bg-zinc-900/60 border border-zinc-800 hover:border-luxury-gold/50 rounded-xl space-y-2 text-xs transition-all">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-white truncate cursor-pointer hover:text-luxury-gold" onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: sr })}>
-                      {sr.title || 'Untitled Reel'}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: sr })} className="text-zinc-400 hover:text-luxury-gold"><Edit3 className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => handleItemDelete('list', 'shortsReels', sr.id)} className="text-rose-400 hover:text-rose-300"><Trash2 className="w-3.5 h-3.5" /></button>
+              {formData.shortsReels.list.map((sr, idx) => {
+                const isInsta = sr.platform === 'instagram' || String(sr.url || '').includes('instagram.com') || String(sr.videoUrl || '').includes('instagram.com');
+                return (
+                  <div key={sr.id || idx} className="p-4 bg-zinc-900/60 border border-zinc-800 hover:border-luxury-gold/50 rounded-xl space-y-2 text-xs transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 overflow-hidden">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-mono uppercase font-bold shrink-0 flex items-center gap-1 ${isInsta ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                          {isInsta ? <InstagramIcon className="w-2.5 h-2.5" /> : <YoutubeIcon className="w-2.5 h-2.5" />}
+                          {isInsta ? 'Instagram' : 'YouTube'}
+                        </span>
+                        <span className="font-semibold text-white truncate cursor-pointer hover:text-luxury-gold" onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: sr })}>
+                          {sr.title || 'Untitled Reel'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button onClick={() => setModalConfig({ listKey: 'list', parentKey: 'shortsReels', item: sr })} className="text-zinc-400 hover:text-luxury-gold"><Edit3 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handleItemDelete('list', 'shortsReels', sr.id)} className="text-rose-400 hover:text-rose-300"><Trash2 className="w-3.5 h-3.5" /></button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="text-zinc-400 truncate max-w-[150px]">{sr.channelName || sr.author || sr.handle || sr.username || ''}</span>
+                      <span className="text-luxury-gold shrink-0">{sr.views || ''}</span>
+                    </div>
+                    <div className="space-y-0.5 text-[10px] font-mono text-zinc-500">
+                      <p className="truncate"><span className="text-zinc-400 font-semibold">Click:</span> {sr.url || '(Opens video)'}</p>
+                      {sr.videoUrl && sr.videoUrl !== sr.url && (
+                        <p className="truncate"><span className="text-zinc-400 font-semibold">Stream:</span> {sr.videoUrl}</p>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-zinc-400">{sr.channelName || sr.author || sr.handle || sr.username || ''}</span>
-                    <span className="text-luxury-gold">{sr.views || ''}</span>
-                  </div>
-                  <p className="text-[10px] text-zinc-500 font-mono truncate">{sr.url || sr.videoUrl}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1725,11 +1761,13 @@ export const Homepage = () => {
       {/* CREATE / EDIT MODAL */}
       {modalConfig && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <form onSubmit={handleModalSave} className={`bg-zinc-950 border border-zinc-800 rounded-2xl ${modalConfig.parentKey === 'latestArticles' ? 'max-w-xl' : 'max-w-md'} w-full p-6 space-y-4 shadow-2xl`}>
+          <form onSubmit={handleModalSave} className={`bg-zinc-950 border border-zinc-800 rounded-2xl ${(modalConfig.parentKey === 'latestArticles' || modalConfig.parentKey === 'shortsReels') ? 'max-w-xl' : 'max-w-md'} w-full p-6 space-y-4 shadow-2xl`}>
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
                 {modalConfig.parentKey === 'latestArticles' 
                   ? (modalConfig.item.id ? 'Edit Article & Publication' : 'Add New Article')
+                  : modalConfig.parentKey === 'shortsReels'
+                  ? (modalConfig.item.id ? 'Edit Featured Short / Reel' : 'Add New Short / Reel')
                   : (modalConfig.item.id ? 'Edit Item' : 'Create New Item')}
               </h3>
               <button type="button" onClick={() => setModalConfig(null)} className="text-zinc-500 hover:text-white">
@@ -1997,6 +2035,184 @@ export const Homepage = () => {
                     />
                     <span className="text-[11px] text-zinc-200">🔥 Right Hot Top</span>
                   </label>
+                </div>
+              </div>
+            ) : modalConfig.parentKey === 'shortsReels' ? (
+              <div className="space-y-3.5 max-h-[72vh] overflow-y-auto pr-1 text-xs">
+                {/* Platform Switcher */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1.5">Platform Type *</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, platform: 'youtube' }
+                      })}
+                      className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all ${(modalConfig.item.platform || 'youtube') === 'youtube' ? 'bg-red-500/20 border-red-500/60 text-white shadow-lg shadow-red-950/40' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
+                    >
+                      <YoutubeIcon className="w-4 h-4 text-red-500" />
+                      <span>YouTube Short</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, platform: 'instagram' }
+                      })}
+                      className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all ${modalConfig.item.platform === 'instagram' ? 'bg-pink-500/20 border-pink-500/60 text-white shadow-lg shadow-pink-950/40' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
+                    >
+                      <InstagramIcon className="w-4 h-4 text-pink-400" />
+                      <span>Instagram Reel</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Title / Caption *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Tech Master Viral Showcase"
+                    value={modalConfig.item.title || ''}
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, title: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white font-medium text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                </div>
+
+                {/* Click Redirect Link (url) */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">
+                    Card Click Target URL (Where visitor goes on click) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="https://www.instagram.com/reel/... or https://youtube.com/shorts/..."
+                    value={modalConfig.item.url || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const isInsta = val.toLowerCase().includes('instagram.com') || val.toLowerCase().includes('/reel/');
+                      setModalConfig({
+                        ...modalConfig,
+                        item: {
+                          ...modalConfig.item,
+                          url: val,
+                          platform: isInsta ? 'instagram' : (modalConfig.item.platform || 'youtube')
+                        }
+                      });
+                    }}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-luxury-gold font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Jab visitor card par click karega toh ye link open hogi (Instagram Reel ya YouTube).
+                  </p>
+                </div>
+
+                {/* Autoplay Video URL (videoUrl) */}
+                <div className="space-y-1.5">
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">
+                    Autoplay Background Video URL (YouTube Short or Cloudinary MP4)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="YouTube Short URL or direct MP4 (Leave blank or add custom short)"
+                    value={modalConfig.item.videoUrl || ''}
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, videoUrl: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-zinc-500">
+                    Background video bina ruke smooth autoplay chalegi. Agar Instagram reel ke liye ye blank chhodenge toh system automatically high-speed TechMaster short stream karega aur click par Instagram par bhejega.
+                  </p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <label className="flex-1 bg-luxury-gold/15 hover:bg-luxury-gold/25 text-luxury-gold border border-luxury-gold/40 rounded-lg px-3 py-1.5 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm">
+                      <UploadCloud className="w-3.5 h-3.5 text-luxury-gold" />
+                      {isUploading ? 'Uploading Video...' : 'Upload MP4 Video'}
+                      <input 
+                        type="file" 
+                        accept="video/*"
+                        disabled={isUploading}
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleDirectFileUpload(e.target.files[0], (uploadedUrl) => {
+                              setModalConfig(prev => ({
+                                ...prev,
+                                item: { ...prev.item, videoUrl: uploadedUrl }
+                              }));
+                            });
+                          }
+                        }}
+                        className="hidden" 
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => openMediaManager({
+                        onSelect: (selectedUrl) => {
+                          setModalConfig(prev => ({
+                            ...prev,
+                            item: { ...prev.item, videoUrl: selectedUrl }
+                          }));
+                        }
+                      })}
+                      className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-lg px-3 py-1.5 text-[11px] flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-luxury-gold" />
+                      Media Library
+                    </button>
+                  </div>
+                </div>
+
+                {/* Handle & Channel */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Handle / Username</label>
+                    <input
+                      type="text"
+                      placeholder="@techmasterco"
+                      value={modalConfig.item.username || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, username: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Channel / Creator Name</label>
+                    <input
+                      type="text"
+                      placeholder="Tech Master"
+                      value={modalConfig.item.channelName || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, channelName: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Views */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Views Count</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 1.8M views"
+                    value={modalConfig.item.views || ''}
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, views: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-luxury-gold font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
                 </div>
               </div>
             ) : (
