@@ -70,7 +70,7 @@ export const Terms: React.FC = () => {
     {
       id: "sec-1",
       title: "Intellectual Property",
-      body: dbData?.websiteSettings?.termsIntellectualProperty || dbData?.settings?.termsIntellectualProperty || "All site designs, 3D shaders, systems blueprints, and video snippets are the trademark properties of Aman and Tech Master Labs unless stated otherwise."
+      body: dbData?.websiteSettings?.termsIntellectualProperty || dbData?.settings?.termsIntellectualProperty || "All site designs, 3D shaders, systems blueprints, and video snippets are the trademark properties of Tech Master Digital Pvt Ltd unless stated otherwise."
     },
     {
       id: "sec-2",

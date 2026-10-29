@@ -721,12 +721,14 @@ router.get("/", async (req: any, res: any, next: any) => {
     const cmsDocs = await CMSData.find({
       key: {
         $nin: ["resumes", "careerApplications", "contactEnquiries", "enquiries"],
-        $not: /^(resume_file_|file_)/
-      }
-    });
+        $regex: "^(?!(resume_file_|file_))",
+      },
+    }).lean();
+
     const cmsDataMap: Record<string, any> = {};
     for (const doc of cmsDocs) {
-      if (typeof doc.key === "string" && (doc.key.startsWith("resume_file_") || doc.key.startsWith("file_"))) {
+      if (!doc || typeof doc.key !== "string") continue;
+      if (doc.key.startsWith("resume_file_") || doc.key.startsWith("file_")) {
         continue;
       }
       cmsDataMap[doc.key] = doc.value;
@@ -753,7 +755,7 @@ router.get("/", async (req: any, res: any, next: any) => {
       privacyPolicy,
       cookiePolicy,
       legalSettings,
-      aboutDocs
+      aboutDocs,
     ] = await Promise.all([
       serviceRepository.find(),
       blogRepository.find(),
@@ -774,7 +776,7 @@ router.get("/", async (req: any, res: any, next: any) => {
       privacyPolicyRepository.find(),
       cookiePolicyRepository.find(),
       legalSettingsRepository.find(),
-      aboutRepository.find()
+      aboutRepository.find(),
     ]);
 
     // 3. Construct aggregated CMS state
@@ -792,41 +794,43 @@ router.get("/", async (req: any, res: any, next: any) => {
       contact: contact[0] || null,
       websiteSettings: websiteSettings[0] || null,
       servicesPage: servicesPage[0] || null,
-      missionVision: cmsDataMap['missionVision'] || missionVision[0] || null,
+      missionVision: cmsDataMap["missionVision"] || missionVision[0] || null,
       testimonialsPage: testimonialsPage[0] || null,
-      termsPolicy: cmsDataMap['termsPolicy'] || cmsDataMap['termsPolicyData'] || termsPolicy[0] || null,
-      privacyPolicy: cmsDataMap['privacyPolicy'] || cmsDataMap['privacyPolicyData'] || privacyPolicy[0] || null,
+      termsPolicy: cmsDataMap["termsPolicy"] || cmsDataMap["termsPolicyData"] || termsPolicy[0] || null,
+      privacyPolicy: cmsDataMap["privacyPolicy"] || cmsDataMap["privacyPolicyData"] || privacyPolicy[0] || null,
       cookiePolicy: cookiePolicy[0] || null,
       legalSettings: legalSettings[0] || null,
-      about: cmsDataMap['about'] || aboutDocs[0] || null,
-      whatWeDo: cmsDataMap['whatWeDo'] || cmsDataMap['what_we_do'] || cmsDataMap['whatWeDoData'] || null,
-      collaborationsPage: cmsDataMap['collaborationsPage'] || cmsDataMap['collaborationsCMS'] || cmsDataMap['collaborations'] || null,
-      campaignsPage: cmsDataMap['campaignsPage'] || cmsDataMap['campaignsCMS'] || cmsDataMap['campaignsData'] || cmsDataMap['campaigns'] || null,
-      launchesData: cmsDataMap['launchesData'] || cmsDataMap['productLaunchesCMS'] || cmsDataMap['productLaunches'] || null,
-      eventsData_CMS: cmsDataMap['eventsData_CMS'] || cmsDataMap['eventsCMS'] || cmsDataMap['eventsPage'] || null,
-      portfolioCMS: cmsDataMap['portfolioCMS'] || cmsDataMap['portfolioPage'] || cmsDataMap['ourWork'] || null,
-      homepageCMS: cmsDataMap['homepageCMS'] || cmsDataMap['homepage'] || cmsDataMap['homeData'] || null,
-      founderJourney: cmsDataMap['founderJourney'] || cmsDataMap['founder_journey'] || null,
-      servicesCMS: cmsDataMap['servicesCMS'] || cmsDataMap['servicesPageData'] || cmsDataMap['coreServices'] || null,
-      testimonialsCMS: cmsDataMap['testimonialsCMS'] || cmsDataMap['testimonialsPageData'] || cmsDataMap['testimonials'] || null,
-      faqPageData: cmsDataMap['faqPageData'] || cmsDataMap['faqs'] || null,
-      contactPageData: cmsDataMap['contactPageData'] || cmsDataMap['contactInfo'] || cmsDataMap['contact'] || null,
-      footer: cmsDataMap['footer'] || null,
+      about: cmsDataMap["about"] || aboutDocs[0] || null,
+      whatWeDo: cmsDataMap["whatWeDo"] || cmsDataMap["what_we_do"] || cmsDataMap["whatWeDoData"] || null,
+      collaborationsPage: cmsDataMap["collaborationsPage"] || cmsDataMap["collaborationsCMS"] || cmsDataMap["collaborations"] || null,
+      campaignsPage: cmsDataMap["campaignsPage"] || cmsDataMap["campaignsCMS"] || cmsDataMap["campaignsData"] || cmsDataMap["campaigns"] || null,
+      launchesData: cmsDataMap["launchesData"] || cmsDataMap["productLaunchesCMS"] || cmsDataMap["productLaunches"] || null,
+      eventsData_CMS: cmsDataMap["eventsData_CMS"] || cmsDataMap["eventsCMS"] || cmsDataMap["eventsPage"] || null,
+      portfolioCMS: cmsDataMap["portfolioCMS"] || cmsDataMap["portfolioPage"] || cmsDataMap["ourWork"] || null,
+      homepageCMS: cmsDataMap["homepageCMS"] || cmsDataMap["homepage"] || cmsDataMap["homeData"] || null,
+      founderJourney: cmsDataMap["founderJourney"] || cmsDataMap["founder_journey"] || null,
+      servicesCMS: cmsDataMap["servicesCMS"] || cmsDataMap["servicesPageData"] || cmsDataMap["coreServices"] || null,
+      testimonialsCMS: cmsDataMap["testimonialsCMS"] || cmsDataMap["testimonialsPageData"] || cmsDataMap["testimonials"] || null,
+      faqPageData: cmsDataMap["faqPageData"] || cmsDataMap["faqs"] || null,
+      contactPageData: cmsDataMap["contactPageData"] || cmsDataMap["contactInfo"] || cmsDataMap["contact"] || null,
+      footer: cmsDataMap["footer"] || null,
       ...cmsDataMap, // Dynamically override and inject any updated flat keys
     };
 
-    // 4. Attach sanitized resumes/applications and enquiries (without Base64 bloat)
-    const resumesDoc = await CMSData.findOne({ key: "resumes" });
+    // 4. Attach sanitized resumes/applications and enquiries (100% stripped of binary base64 bloat)
+    const resumesDoc: any = await CMSData.findOne({ key: "resumes" }).lean();
     const rawResumes = resumesDoc && Array.isArray(resumesDoc.value) ? resumesDoc.value : [];
     const sanitizedResumes = rawResumes.map((r: any) => {
-      const { resumeBase64Data, ...rest } = r;
+      const copy = { ...r };
+      delete copy.resumeBase64Data;
+      delete copy.base64Data;
       return {
-        ...rest,
-        resumeUrl: r.resumeUrl || `/api/v1/resumes/download?id=${r.id || r._id}&file=${encodeURIComponent(r.resumeFileName || 'resume.pdf')}`
+        ...copy,
+        resumeUrl: copy.resumeUrl || `/api/v1/resumes/download?id=${copy.id || copy._id}&file=${encodeURIComponent(copy.resumeFileName || "resume.pdf")}`,
       };
     });
 
-    const enquiriesDoc = await CMSData.findOne({ key: "contactEnquiries" });
+    const enquiriesDoc: any = await CMSData.findOne({ key: "contactEnquiries" }).lean();
     const rawEnquiries = enquiriesDoc && Array.isArray(enquiriesDoc.value) ? enquiriesDoc.value : [];
     const sanitizedEnquiries = rawEnquiries.map((e: any) => ({ ...e }));
 

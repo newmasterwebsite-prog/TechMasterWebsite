@@ -80,8 +80,8 @@ export const Events: React.FC = () => {
   const defaultHero = {
     smallBadge: "PUBLIC ENGAGEMENTS",
     headline: "Keynote Speaking &",
-    highlightWord: "Live Coding Seminars",
-    description: "Aman shares developer insights, soft-skills blueprints, and live systems architecture demonstrations on global stages."
+    highlightWord: "Live Creator Seminars",
+    description: "Tech Master shares creator insights, storytelling blueprints, and live digital production demonstrations on global stages."
   };
 
   const hero = { ...defaultHero, ...(localDb?.eventsData_CMS?.hero || {}), ...(liveEventsData?.hero || {}) };
@@ -96,9 +96,9 @@ export const Events: React.FC = () => {
 
   const bookingSection = {
     smallBadge: "SPEAKER BOOKINGS",
-    headlineLine1: "Bring Aman to",
+    headlineLine1: "Bring Tech Master to",
     highlightWord: "Your Event",
-    description: "Aman keynote schedules fill up rapidly. Bookings are open for university developer panels, virtual technical summits, DevFests, or corporate software consulting cycles.",
+    description: "Keynote schedules fill up rapidly. Bookings are open for industry panels, brand summits, tech conventions, or media production workshops.",
     pressKitNote: "Full Press Kit and AV Rider available upon approval.",
     ...(localDb?.eventsData_CMS?.bookingSection || {}),
     ...(liveEventsData?.bookingSection || {})
@@ -297,7 +297,7 @@ export const Events: React.FC = () => {
           <div className="md:w-1/2">
             <span className="text-[10px] uppercase font-bold tracking-[3px] text-gold block mb-2">{bookingSection.smallBadge || "SPEAKER BOOKINGS"}</span>
             <h2 className="font-serif text-3xl font-light text-white mb-6 leading-tight">
-              {bookingSection.headlineLine1 || "Bring Aman to"} <br />
+              {bookingSection.headlineLine1 || "Bring Tech Master to"} <br />
               <span className="text-gold italic font-bold">{bookingSection.highlightWord || "Your Event"}</span>
             </h2>
             <p className="text-gray-400 text-xs md:text-sm leading-relaxed font-light mb-6">

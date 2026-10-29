@@ -39,7 +39,7 @@ export const Mission: React.FC = () => {
       headingLine1: "Democratizing",
       highlightText: "Tech Literacy",
       headingLine2: "Globally",
-      description: "We believe high-quality engineering curricula shouldn't be locked behind expensive student debts. Aman is building the tools to make code accessible to every curious mind on earth."
+      description: "We believe high-quality media content and technology literacy shouldn't be complicated. Tech Master is building the tools to make knowledge entertaining and accessible to every curious mind."
     },
     mission: {
       label: "THE MISSION STATEMENT",
@@ -159,7 +159,7 @@ export const Mission: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-gray-400 text-sm sm:text-base font-light max-w-xl mx-auto leading-relaxed"
         >
-          {heroData.description || "We believe high-quality engineering curricula shouldn't be locked behind expensive student debts. Aman is building the tools to make code accessible to every curious mind on earth."}
+          {heroData.description || "We believe high-quality media content and technology literacy shouldn't be complicated. Tech Master is building the tools to make knowledge entertaining and accessible to every curious mind."}
         </motion.p>
       </div>
 

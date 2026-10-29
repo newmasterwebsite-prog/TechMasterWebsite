@@ -69,7 +69,7 @@ export const WhatWeDo: React.FC = () => {
         icon: "Presentation",
         title: "Motivational Keynotes",
         subtitle: "TEDx & Global Tech Talks",
-        description: "Aman travels worldwide delivering opening remarks on 'Democratizing Code' and soft skill strategies to help students bypass generic hiring cycles.",
+        description: "Tech Master leadership delivers keynote talks and system design blueprints to help developers accelerate technical mastery.",
         accent: "#aa3bff",
       },
       {
@@ -93,7 +93,7 @@ export const WhatWeDo: React.FC = () => {
     ],
     quoteBanner: {
       quoteText: "Education is not the learning of facts, but the training of the mind to think.",
-      authorName: "Aman (Tech Master)"
+      authorName: "Arvind Kharra (Tech Master)"
     }
   };
 

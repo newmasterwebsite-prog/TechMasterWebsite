@@ -233,7 +233,7 @@ export const Career: React.FC = () => {
     { step: "01", title: "Application Review", description: "We review your portfolio, GitHub, and application answers." },
     { step: "02", title: "Intro Call", description: "A 30-minute culture and vibe check with our ops team." },
     { step: "03", title: "Technical Task", description: "A paid, asynchronous take-home project relevant to your role." },
-    { step: "04", title: "Final Interview", description: "A conversation with Aman and the leads. No live whiteboarding." }
+    { step: "04", title: "Final Interview", description: "A conversation with Arvind Kharra and the leads. No live whiteboarding." }
   ];
 
   const rawProcessList = (

@@ -37,7 +37,7 @@ export const Contact: React.FC = () => {
   const rawData = liveContactData || dbData?.contactPageData || localDb?.contactPageData || {};
 
   const contactHero = rawData.hero || { badge: "DIRECT PORTAL", heading: "Connect &", highlightHeading: "Launch Collaborations" };
-  const contactInfo = rawData.info || { email: "aman@techmaster.com", phone: "+91 98765 43210", whatsapp: "919876543210", address: "TechMaster HQ, Silicon Valley" };
+  const contactInfo = rawData.info || { email: "partners@techmasterco.com", phone: "+91 98765 43210", whatsapp: "919876543210", address: "Tech Master HQ, Jaipur, Rajasthan" };
   
   const emailVal = contactInfo.email;
   const addressVal = contactInfo.address;

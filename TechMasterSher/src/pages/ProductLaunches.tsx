@@ -75,8 +75,8 @@ export const ProductLaunches: React.FC = () => {
     ],
     featureVideo: {
       smallBadge: "LATEST LAUNCH VIDEO",
-      headline: "MasterClass v2 Platform Launch Walkthrough",
-      description: "Watch Aman demonstrate the sandboxed docker containers, web terminals, and the multiplayer live coding rooms that make learning code feel like a cooperative MMO game.",
+      headline: "Tech Master Production Showcase Walkthrough",
+      description: "Watch our production team demonstrate cutting-edge 3D animations, cinematic filming setups, and high-retention video strategies that captivate millions.",
       trailerBtnText: "Play Trailer",
       notesBtnText: "View Launch Notes",
       thumbnailUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=400&q=80"

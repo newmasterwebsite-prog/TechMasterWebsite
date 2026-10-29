@@ -50,7 +50,7 @@ export const Testimonials: React.FC = () => {
     smallBadge: "COMMUNITY ACCLAIM",
     title: "Student Placements & Academics Success",
     highlightText: "Academics Success",
-    description: "Discover reviews from Aman's mentored students, university professors, and tech partners who have integrated our curricula."
+    description: "Discover reviews from Tech Master mentored students, university professors, and tech partners who have integrated our curricula."
   };
   const successStats = page.successStats || [
     { id: '1', label: 'Placement Rate', value: '98', suffix: '%', icon: 'Award', color: '#D4AF37' },
@@ -64,7 +64,7 @@ export const Testimonials: React.FC = () => {
   ];
   const writtenTestimonials = page.writtenTestimonials || [
     { id: '1', name: 'Arjun Desai', designation: 'Backend Developer', company: 'Uber', rating: 5, review: 'The curriculum completely changed my perspective on distributed systems and system design architectures.', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
-    { id: '2', name: 'Neha Gupta', designation: 'Data Engineer', company: 'Meta', rating: 5, review: 'Aman’s teaching methodology is phenomenal. The practical approach helped me crack the toughest interviews.', photo: 'https://images.unsplash.com/photo-1531123897727-8f129e1bf98a?auto=format&fit=crop&w=150&q=80' },
+    { id: '2', name: 'Neha Gupta', designation: 'Data Engineer', company: 'Meta', rating: 5, review: 'Tech Master’s teaching methodology is phenomenal. The practical approach helped me crack the toughest interviews.', photo: 'https://images.unsplash.com/photo-1531123897727-8f129e1bf98a?auto=format&fit=crop&w=150&q=80' },
     { id: '3', name: 'Vikram Singh', designation: 'Full Stack Engineer', company: 'Google', rating: 5, review: 'The live coding sessions were eye-opening. I gained the confidence to build and deploy scalable applications.', photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80' }
   ];
   const categories = page.categories || [
@@ -171,7 +171,7 @@ export const Testimonials: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-gray-400 text-sm sm:text-base font-light max-w-xl mx-auto leading-relaxed"
         >
-          {hero.description || "Discover reviews from Aman's mentored students, university professors, and tech partners who have integrated our curricula."}
+          {hero.description || "Discover reviews from Tech Master mentored students, university professors, and tech partners who have integrated our curricula."}
         </motion.p>
       </div>
     );

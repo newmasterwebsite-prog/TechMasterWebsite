@@ -38,7 +38,7 @@ export const Privacy: React.FC = () => {
   const popupTitle = rawData.popupTitle || "Privacy Policy";
   const effectiveDate = rawData.effectiveDate || "July 7, 2026";
   const versionNumber = rawData.versionNumber || "v2.4";
-  const introParagraph = rawData.introParagraph || "Aman & Tech Master Media Labs operates this portfolio and education portal. We respect your privacy and only collect direct email addresses when you subscribe to our newsletter.";
+  const introParagraph = rawData.introParagraph || "Tech Master Digital Pvt Ltd operates this platform and digital media channels. We respect your privacy and only collect direct communication details when you connect or apply with us.";
 
   const defaultSections = [
     {

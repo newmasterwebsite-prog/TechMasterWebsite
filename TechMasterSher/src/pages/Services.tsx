@@ -66,7 +66,7 @@ export const Services: React.FC = () => {
       icon: "Layers",
       title: "Keynote & Public Speaking",
       tagline: "",
-      description: "Aman delivers mainstage keynotes, live coding demonstrations, and developer autonomy seminars globally.",
+      description: "Tech Master delivers mainstage keynotes, live digital demonstrations, and media influence masterclasses globally.",
       overview: "Engaging, inspirational keynotes translating complex software architecture into 3D visual stories.",
       benefits: ["High-impact mainstage delivery", "Authentic audience engagement", "Full press kit & AV rider support"],
       process: ["Event Scope & Keynote Alignment", "Custom Slide & Live Sandbox Setup", "Mainstage Delivery & Q&A"],
@@ -107,10 +107,10 @@ export const Services: React.FC = () => {
 
   const defaultPageData = {
     hero: {
-      badge: "CORE PORTALS",
-      title: "Services, Courses &",
-      highlightText: "Keynote Bookings.",
-      description: "Explore Aman's developer training tracks, speaking keynote requests, collaborative student hackathons, and brand sponsorships."
+      badge: "CORE SERVICES",
+      title: "Production, Creator &",
+      highlightText: "Keynote Solutions.",
+      description: "Explore Tech Master's media productions, brand alliances, keynote speaking requests, and digital strategy offerings."
     },
     expertise: {
       badge: "OUR EXPERTISE",

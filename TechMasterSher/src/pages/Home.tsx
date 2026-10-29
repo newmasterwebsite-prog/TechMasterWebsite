@@ -74,7 +74,7 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
             : `${rawUrl.replace(/\/+$|\/api\/v1\/*$/i, "")}/api/v1`;
 
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 1800);
+          const timeoutId = setTimeout(() => controller.abort(), 7500);
           const res = await fetch(`${base}/homepage?t=${Date.now()}`, { signal: controller.signal });
           clearTimeout(timeoutId);
 
@@ -100,7 +100,7 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
 
     fetchHomepage();
 
-    const interval = setInterval(fetchHomepage, 2500);
+    const interval = setInterval(fetchHomepage, 15000);
 
     const handleFocus = () => {
       fetchHomepage();
