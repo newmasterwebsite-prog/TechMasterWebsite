@@ -1527,46 +1527,54 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
           {(() => {
 
             const rawShortsReels =
+              (liveHomeData?.shortsReels?.list &&
+                liveHomeData.shortsReels.list.length > 0 &&
+                liveHomeData.shortsReels.list) ||
+              (activeHome?.shortsReels?.list &&
+                activeHome.shortsReels.list.length > 0 &&
+                activeHome.shortsReels.list) ||
               (homeData?.shortsReels?.list &&
-                homeData.shortsReels.list.length >
-                0 &&
+                homeData.shortsReels.list.length > 0 &&
                 homeData.shortsReels.list) ||
               (homeData?.reelsList &&
                 homeData.reelsList.length > 0 &&
                 homeData.reelsList) ||
-              (dbData?.homepageCMS?.shortsReels
-                ?.list &&
-                dbData.homepageCMS.shortsReels
-                  .list.length > 0 &&
-                dbData.homepageCMS.shortsReels
-                  .list) ||
+              (dbData?.homepageCMS?.shortsReels?.list &&
+                dbData.homepageCMS.shortsReels.list.length > 0 &&
+                dbData.homepageCMS.shortsReels.list) ||
               (dbData?.homepageCMS?.reelsList &&
-                dbData.homepageCMS.reelsList.length >
-                0 &&
+                dbData.homepageCMS.reelsList.length > 0 &&
                 dbData.homepageCMS.reelsList) ||
               (dbData?.homepage?.shortsReels?.list &&
-                dbData.homepage.shortsReels.list
-                  .length > 0 &&
+                dbData.homepage.shortsReels.list.length > 0 &&
                 dbData.homepage.shortsReels.list) ||
               null;
 
             const cmsReels =
-              rawShortsReels &&
-                rawShortsReels.length > 0
-                ? rawShortsReels.filter(
-                  (v: any) =>
-                    v.status === "Active" ||
-                    v.status === true ||
-                    v.status === undefined ||
-                    v.visible !== false
-                )
+              rawShortsReels && rawShortsReels.length > 0
+                ? rawShortsReels
+                    .filter((v: any) => v && !String(v.url || v.videoUrl || "").includes("test_reel_dog") && !String(v.url || v.videoUrl || "").includes("dog.mp4"))
+                    .filter(
+                      (v: any) =>
+                        v.status === "Active" ||
+                        v.status === true ||
+                        v.status === undefined ||
+                        v.visible !== false
+                    )
                 : filteredVideos.filter(
-                  (v: any) =>
-                    v.type === "reel" ||
-                    v.type === "short"
-                );
+                    (v: any) =>
+                      (v.type === "reel" || v.type === "short") &&
+                      !String(v.url || v.videoUrl || "").includes("test_reel_dog") &&
+                      !String(v.url || v.videoUrl || "").includes("dog.mp4")
+                  );
 
             const cmsLongVideos =
+              (liveHomeData?.longVideos?.list &&
+                liveHomeData.longVideos.list.length > 0 &&
+                liveHomeData.longVideos.list) ||
+              (activeHome?.longVideos?.list &&
+                activeHome.longVideos.list.length > 0 &&
+                activeHome.longVideos.list) ||
               (homeData?.longVideos?.list &&
                 homeData.longVideos.list.length > 0 &&
                 homeData.longVideos.list) ||
@@ -1578,10 +1586,8 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
                     v.status === true ||
                     v.status === undefined
                 )) ||
-              (dbData?.homepageCMS?.longVideos
-                ?.list &&
-                dbData.homepageCMS.longVideos.list
-                  .length > 0 &&
+              (dbData?.homepageCMS?.longVideos?.list &&
+                dbData.homepageCMS.longVideos.list.length > 0 &&
                 dbData.homepageCMS.longVideos.list) ||
               (dbData?.featuredVideos &&
                 dbData.featuredVideos.length > 0 &&
