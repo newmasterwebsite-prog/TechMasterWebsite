@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useData } from "../context/DataContext";
 import { StripeReelsCarousel } from "../components/StripeReelsCarousel";
-import { LongVideosCarousel } from "../components/LongVideosCarousel";
+import { LongVideosCarousel, KNOWN_VIDEO_TITLES, isLegacyDummyTitle } from "../components/LongVideosCarousel";
 import { AnimatedCounter } from "../components/AnimatedCounter";
 import { LatestArticlesSection } from "../components/LatestArticlesSection";
 import { mediaUrl } from "../utils/media";
@@ -1568,7 +1568,7 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
                       !String(v.url || v.videoUrl || "").includes("dog.mp4")
                   );
 
-            const cmsLongVideos =
+            const rawLongVideos =
               (liveHomeData?.longVideos?.list &&
                 liveHomeData.longVideos.list.length > 0 &&
                 liveHomeData.longVideos.list) ||
@@ -1593,6 +1593,20 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
                 dbData.featuredVideos.length > 0 &&
                 dbData.featuredVideos) ||
               undefined;
+
+            const cmsLongVideos = Array.isArray(rawLongVideos)
+              ? rawLongVideos
+                  .filter((v: any) => v && v.deleted !== true && v.visible !== false && v.status !== "Inactive")
+                  .map((v: any) => {
+                    const rawTitle = (v.title || "").trim();
+                    if (isLegacyDummyTitle(rawTitle)) {
+                      const vId = v.videoId || (v.youtubeUrl ? v.youtubeUrl.match(/v=([^&]+)/)?.[1] : "");
+                      const realTitle = (vId && KNOWN_VIDEO_TITLES[vId]) || "";
+                      return { ...v, title: realTitle };
+                    }
+                    return v;
+                  })
+              : rawLongVideos;
 
             return (
               <>

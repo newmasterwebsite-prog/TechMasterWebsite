@@ -1,6 +1,49 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { normalizeCmsMedia } from "../utils/media";
 import initialCmsData from "../utils/initialCmsData.json";
+import { KNOWN_VIDEO_TITLES } from "../components/LongVideosCarousel";
+
+const DUMMY_TITLE_REGEX = /(next\.js|system design|cloud native|microservices)/i;
+
+const sanitizeVideosList = (list: any[]) => {
+  if (!Array.isArray(list)) return list;
+  return list.map((item: any) => {
+    if (!item) return item;
+    const title = String(item.title || "").trim();
+    if (DUMMY_TITLE_REGEX.test(title)) {
+      const vId = item.videoId || (item.youtubeUrl ? item.youtubeUrl.match(/v=([^&]+)/)?.[1] : "");
+      const cleanTitle = (vId && KNOWN_VIDEO_TITLES[vId]) || "";
+      return { ...item, title: cleanTitle };
+    }
+    return item;
+  });
+};
+
+const sanitizeCmsPayload = (data: any) => {
+  if (!data || typeof data !== "object") return data;
+  const copy = { ...data };
+  ["homepageCMS", "homepage", "homeData"].forEach((k) => {
+    if (copy[k]?.longVideos?.list) {
+      copy[k] = {
+        ...copy[k],
+        longVideos: {
+          ...copy[k].longVideos,
+          list: sanitizeVideosList(copy[k].longVideos.list),
+        },
+      };
+    }
+  });
+  if (copy.longVideos?.list) {
+    copy.longVideos = {
+      ...copy.longVideos,
+      list: sanitizeVideosList(copy.longVideos.list),
+    };
+  }
+  if (Array.isArray(copy.featuredVideos)) {
+    copy.featuredVideos = sanitizeVideosList(copy.featuredVideos);
+  }
+  return copy;
+};
 
 interface DataContextType {
   homeData: any;
@@ -108,10 +151,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let localDb = {};
     try {
       const saved = localStorage.getItem('zenvora_db');
-      if (saved) localDb = JSON.parse(saved);
+      if (saved) localDb = sanitizeCmsPayload(JSON.parse(saved));
     } catch (e) {}
 
-    const mergedDb = { ...(initialCmsData as any), ...localDb, ...db };
+    const sanitizedIncoming = sanitizeCmsPayload(db);
+    const mergedDb = { ...(initialCmsData as any), ...localDb, ...sanitizedIncoming };
     db = normalizeCmsMedia(mergedDb);
     setDbData(db);
     setIsBackendConnected(true);
@@ -279,7 +323,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const saved = localStorage.getItem('zenvora_db');
       if (saved) {
-        applyCmsDataToState(JSON.parse(saved));
+        applyCmsDataToState(sanitizeCmsPayload(JSON.parse(saved)));
       } else {
         applyCmsDataToState(initialCmsData);
       }

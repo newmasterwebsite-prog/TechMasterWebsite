@@ -848,6 +848,11 @@ router.get("/", async (req: any, res: any, next: any) => {
 // GET Featured Videos compatibility route for client website
 router.get("/featured-videos", async (req: any, res: any, next: any) => {
   try {
+    const hpDoc = await CMSData.findOne({ key: "homepageCMS" });
+    if (hpDoc?.value?.longVideos?.list && Array.isArray(hpDoc.value.longVideos.list) && hpDoc.value.longVideos.list.length > 0) {
+      ApiResponse.success(res, "Featured videos retrieved successfully", hpDoc.value.longVideos.list);
+      return;
+    }
     const cmsDoc = await CMSData.findOne({ key: "featuredVideos" });
     ApiResponse.success(res, "Featured videos retrieved successfully", cmsDoc ? cmsDoc.value : []);
   } catch (err) {
@@ -855,7 +860,6 @@ router.get("/featured-videos", async (req: any, res: any, next: any) => {
   }
 });
 
-// Section state update synchronizer endpoint for Admin Dashboard
 router.post("/update", authenticate as any, async (req: any, res: any, next: any) => {
   try {
     const { key, value } = req.body;

@@ -67,6 +67,22 @@ const defaultHomepageData = {
       { id: 'st-6', value: '50+', label: 'Global Brand Collaborations' }
     ]
   },
+  longVideos: {
+    badge: 'FEATURED SHOWCASE',
+    heading: 'Long Videos',
+    visible: true,
+    list: [
+      { id: 'lv-1', title: 'I Collected Every iPhone From 1 to 18!', youtubeUrl: 'https://www.youtube.com/watch?v=8H272rF60dc', videoId: '8H272rF60dc', startTime: '0:20', endTime: '', views: '1.4M views', channelName: 'Tech Master', order: 1, visible: true, deleted: false },
+      { id: 'lv-2', title: 'I Tried 7 Amazing IPL Gadgets', youtubeUrl: 'https://www.youtube.com/watch?v=onV7l4H5EyM', videoId: 'onV7l4H5EyM', startTime: '5:41', endTime: '6:33', views: '890K views', channelName: 'Tech Master', order: 2, visible: true, deleted: false },
+      { id: 'lv-3', title: 'Crazy Tech Experiments & Gadget Teardown', youtubeUrl: 'https://www.youtube.com/watch?v=jbEzCIqhTV8', videoId: 'jbEzCIqhTV8', startTime: '0:19', endTime: '0:39', views: '1.1M views', channelName: 'Tech Master', order: 3, visible: true, deleted: false },
+      { id: 'lv-4', title: 'I Met Biggest Tech YouTubers for Smartphone Awards 2025', youtubeUrl: 'https://www.youtube.com/watch?v=4_n-ZnjIBVc', videoId: '4_n-ZnjIBVc', startTime: '0:00', endTime: '', views: '2.3M views', channelName: 'Tech Master', order: 4, visible: true, deleted: false },
+      { id: 'lv-5', title: 'How I Became World\'s Biggest Tech Youtuber', youtubeUrl: 'https://www.youtube.com/watch?v=CvqxRkjvsxY', videoId: 'CvqxRkjvsxY', startTime: '0:20', endTime: '', views: '950K views', channelName: 'Tech Master', order: 5, visible: true, deleted: false },
+      { id: 'lv-6', title: 'Whatever You DRAW, I Will Buy it Challenge !! Gold iPhone', youtubeUrl: 'https://www.youtube.com/watch?v=udwDWFERyRw', videoId: 'udwDWFERyRw', startTime: '0:20', endTime: '', views: '1.7M views', channelName: 'Tech Master', order: 6, visible: true, deleted: false },
+      { id: 'lv-7', title: 'Superbike Showroom Walkthrough & Exhaust Sound', youtubeUrl: 'https://www.youtube.com/watch?v=_Db6aKavN1U', videoId: '_Db6aKavN1U', startTime: '0:04', endTime: '', views: '3.1M views', channelName: 'Master Wheels', order: 7, visible: true, deleted: false },
+      { id: 'lv-8', title: 'Tata Harrier EV vs Mahindra XEV 9E - Real World Range Test', youtubeUrl: 'https://www.youtube.com/watch?v=FSzP30YegeM', videoId: 'FSzP30YegeM', startTime: '0:00', endTime: '', views: '2.8M views', channelName: 'Master Wheels', order: 8, visible: true, deleted: false },
+      { id: 'lv-9', title: 'India\'s Best Selling EV Scooters ⚡️ Real World Range Test', youtubeUrl: 'https://www.youtube.com/watch?v=q-l_F3yQK88', videoId: 'q-l_F3yQK88', startTime: '0:10', endTime: '', views: '1.9M views', channelName: 'Master Wheels', order: 9, visible: true, deleted: false }
+    ]
+  },
   latestArticles: {
     badge: 'LATEST ARTICLES',
     heading: 'Featured Stories & Press Highlights',
@@ -277,6 +293,67 @@ function normalizeReelItem(v: any): any {
   };
 }
 
+
+function extractYouTubeIdFromUrl(url: string): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.length === 11 && !trimmed.includes("/") && !trimmed.includes(".")) return trimmed;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = trimmed.match(regExp);
+  return match && match[2].length === 11 ? match[2] : "";
+}
+
+const KNOWN_BACKEND_TITLES: Record<string, string> = {
+  "8H272rF60dc": "I Collected Every iPhone From 1 to 18!",
+  "onV7l4H5EyM": "I Tried 7 Amazing IPL Gadgets",
+  "jbEzCIqhTV8": "Crazy Tech Experiments & Gadget Teardown",
+  "4_n-ZnjIBVc": "I Met Biggest Tech YouTubers for Smartphone Awards 2025",
+  "CvqxRkjvsxY": "How I Became World's Biggest Tech Youtuber",
+  "udwDWFERyRw": "Whatever You DRAW, I Will Buy it Challenge !! Gold iPhone",
+  "_Db6aKavN1U": "Superbike Showroom Walkthrough & Exhaust Sound",
+  "FSzP30YegeM": "Tata Harrier EV vs Mahindra XEV 9E - Real World Range Test",
+  "q-l_F3yQK88": "India's Best Selling EV Scooters ⚡️ Real World Range Test"
+};
+
+function isDummyBackendTitle(t?: string): boolean {
+  if (!t) return true;
+  const lower = t.toLowerCase().trim();
+  return (
+    lower.includes("next.js") ||
+    lower.includes("system design") ||
+    lower.includes("cloud native") ||
+    lower.includes("microservices") ||
+    lower.includes("untitled video") ||
+    lower.includes("subscribe") ||
+    lower === "featured video" ||
+    lower === "video title"
+  );
+}
+
+function normalizeLongVideoItem(v: any, index: number = 0): any {
+  if (!v) return null;
+  const rawUrl = (v.youtubeUrl || v.url || v.videoUrl || "").trim();
+  const videoId = v.videoId || extractYouTubeIdFromUrl(rawUrl);
+  const finalYoutubeUrl = rawUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : "");
+  const rawTitle = (v.title || "").trim();
+  const hasCustomTitle = Boolean(rawTitle && !isDummyBackendTitle(rawTitle));
+  const fallbackTitle = (videoId && KNOWN_BACKEND_TITLES[videoId]) || rawTitle || "Tech Master Video";
+
+  return {
+    id: v.id || v._id || `lv-${Date.now()}-${index}`,
+    title: hasCustomTitle ? rawTitle : fallbackTitle,
+    youtubeUrl: finalYoutubeUrl,
+    videoId: videoId || "",
+    startTime: v.startTime || "0:00",
+    endTime: v.endTime || "",
+    views: v.views || "1.4M views",
+    channelName: v.channelName || v.channel || "Tech Master",
+    order: typeof v.order === "number" ? v.order : index + 1,
+    visible: v.visible !== false,
+    deleted: v.deleted === true
+  };
+}
+
 // GET Homepage Data
 router.get("/", async (req, res, next) => {
   try {
@@ -292,6 +369,11 @@ router.get("/", async (req, res, next) => {
       val.latestArticles = defaultHomepageData.latestArticles;
     } else {
       val.latestArticles.list = val.latestArticles.list.map(normalizeArticleItem).filter(Boolean);
+    }
+    if (!val.longVideos || !Array.isArray(val.longVideos.list) || val.longVideos.list.length === 0) {
+      val.longVideos = defaultHomepageData.longVideos;
+    } else {
+      val.longVideos.list = val.longVideos.list.map(normalizeLongVideoItem).filter(Boolean);
     }
     ApiResponse.success(res, "Homepage data retrieved successfully", val);
   } catch (err) {
@@ -321,6 +403,10 @@ router.put("/", authenticate as any, async (req, res, next) => {
 
     if (payload.latestArticles && Array.isArray(payload.latestArticles.list)) {
       payload.latestArticles.list = payload.latestArticles.list.map(normalizeArticleItem).filter(Boolean);
+    }
+
+    if (payload.longVideos && Array.isArray(payload.longVideos.list)) {
+      payload.longVideos.list = payload.longVideos.list.map(normalizeLongVideoItem).filter(Boolean);
     }
 
     await CMSData.findOneAndUpdate({ key: "homepageCMS" }, { value: payload }, { upsert: true, new: true });

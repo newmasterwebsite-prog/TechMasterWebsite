@@ -235,15 +235,15 @@ export const Homepage = () => {
       heading: 'Long Videos',
       visible: true,
       list: [
-        { id: 'lv-1', title: 'Building Enterprise Infrastructure', youtubeUrl: 'https://www.youtube.com/watch?v=8H272rF60dc&t=86s', videoId: '8H272rF60dc', startTime: '0:20', endTime: '', views: '1.4M views', channelName: 'Tech Master', order: 1, visible: true, deleted: false },
-        { id: 'lv-2', title: 'Advanced Next.js Architecture', youtubeUrl: 'https://www.youtube.com/watch?v=onV7l4H5EyM', videoId: 'onV7l4H5EyM', startTime: '5:41', endTime: '6:33', views: '890K views', channelName: 'Tech Master', order: 2, visible: true, deleted: false },
-        { id: 'lv-3', title: 'Full-Stack System Design', youtubeUrl: 'https://www.youtube.com/watch?v=jbEzCIqhTV8&t=29s', videoId: 'jbEzCIqhTV8', startTime: '0:19', endTime: '0:39', views: '1.1M views', channelName: 'Tech Master', order: 3, visible: true, deleted: false },
-        { id: 'lv-4', title: 'Mastering Cloud Native Systems', youtubeUrl: 'https://www.youtube.com/watch?v=4_n-ZnjIBVc&t=45s', videoId: '4_n-ZnjIBVc', startTime: '0:00', endTime: '', views: '2.3M views', channelName: 'Tech Master', order: 4, visible: true, deleted: false },
-        { id: 'lv-5', title: 'Scalable Microservices Tutorial', youtubeUrl: 'https://www.youtube.com/watch?v=CvqxRkjvsxY&t=130s', videoId: 'CvqxRkjvsxY', startTime: '0:20', endTime: '', views: '950K views', channelName: 'Tech Master', order: 5, visible: true, deleted: false },
-        { id: 'lv-6', title: 'High-Performance Web Applications', youtubeUrl: 'https://www.youtube.com/watch?v=udwDWFERyRw&t=185s', videoId: 'udwDWFERyRw', startTime: '0:20', endTime: '', views: '1.7M views', channelName: 'Tech Master', order: 6, visible: true, deleted: false },
-        { id: 'lv-7', title: 'Master Wheels Technology Showcase', youtubeUrl: 'https://www.youtube.com/watch?v=_Db6aKavN1U&t=107s', videoId: '_Db6aKavN1U', startTime: '0:04', endTime: '', views: '3.1M views', channelName: 'Master Wheels', order: 7, visible: true, deleted: false },
-        { id: 'lv-8', title: 'Automotive Engineering & Tech', youtubeUrl: 'https://www.youtube.com/watch?v=FSzP30YegeM&t=134s', videoId: 'FSzP30YegeM', startTime: '0:00', endTime: '', views: '2.8M views', channelName: 'Master Wheels', order: 8, visible: true, deleted: false },
-        { id: 'lv-9', title: 'EV Hardware & Control Systems', youtubeUrl: 'https://www.youtube.com/watch?v=q-l_F3yQK88&t=69s', videoId: 'q-l_F3yQK88', startTime: '0:10', endTime: '', views: '1.9M views', channelName: 'Master Wheels', order: 9, visible: true, deleted: false }
+        { id: 'lv-1', title: 'I Collected Every iPhone From 1 to 18!', youtubeUrl: 'https://www.youtube.com/watch?v=8H272rF60dc&t=86s', videoId: '8H272rF60dc', startTime: '0:20', endTime: '', views: '1.4M views', channelName: 'Tech Master', order: 1, visible: true, deleted: false },
+        { id: 'lv-2', title: 'I Tried 7 Amazing IPL Gadgets', youtubeUrl: 'https://www.youtube.com/watch?v=onV7l4H5EyM', videoId: 'onV7l4H5EyM', startTime: '5:41', endTime: '6:33', views: '890K views', channelName: 'Tech Master', order: 2, visible: true, deleted: false },
+        { id: 'lv-3', title: 'Crazy Tech Experiments & Gadget Teardown', youtubeUrl: 'https://www.youtube.com/watch?v=jbEzCIqhTV8&t=29s', videoId: 'jbEzCIqhTV8', startTime: '0:19', endTime: '0:39', views: '1.1M views', channelName: 'Tech Master', order: 3, visible: true, deleted: false },
+        { id: 'lv-4', title: 'I Met Biggest Tech YouTubers for Smartphone Awards 2025', youtubeUrl: 'https://www.youtube.com/watch?v=4_n-ZnjIBVc&t=45s', videoId: '4_n-ZnjIBVc', startTime: '0:00', endTime: '', views: '2.3M views', channelName: 'Tech Master', order: 4, visible: true, deleted: false },
+        { id: 'lv-5', title: 'How I Became World\'s Biggest Tech Youtuber', youtubeUrl: 'https://www.youtube.com/watch?v=CvqxRkjvsxY&t=130s', videoId: 'CvqxRkjvsxY', startTime: '0:20', endTime: '', views: '950K views', channelName: 'Tech Master', order: 5, visible: true, deleted: false },
+        { id: 'lv-6', title: 'Whatever You DRAW, I Will Buy it Challenge !! Gold iPhone', youtubeUrl: 'https://www.youtube.com/watch?v=udwDWFERyRw&t=185s', videoId: 'udwDWFERyRw', startTime: '0:20', endTime: '', views: '1.7M views', channelName: 'Tech Master', order: 6, visible: true, deleted: false },
+        { id: 'lv-7', title: 'Superbike Showroom Walkthrough & Exhaust Sound', youtubeUrl: 'https://www.youtube.com/watch?v=_Db6aKavN1U&t=107s', videoId: '_Db6aKavN1U', startTime: '0:04', endTime: '', views: '3.1M views', channelName: 'Master Wheels', order: 7, visible: true, deleted: false },
+        { id: 'lv-8', title: 'Tata Harrier EV vs Mahindra XEV 9E - Real World Range Test', youtubeUrl: 'https://www.youtube.com/watch?v=FSzP30YegeM&t=134s', videoId: 'FSzP30YegeM', startTime: '0:00', endTime: '', views: '2.8M views', channelName: 'Master Wheels', order: 8, visible: true, deleted: false },
+        { id: 'lv-9', title: 'India\'s Best Selling EV Scooters ⚡️ Real World Range Test', youtubeUrl: 'https://www.youtube.com/watch?v=q-l_F3yQK88&t=69s', videoId: 'q-l_F3yQK88', startTime: '0:10', endTime: '', views: '1.9M views', channelName: 'Master Wheels', order: 9, visible: true, deleted: false }
       ]
     },
 
@@ -735,6 +735,19 @@ export const Homepage = () => {
       processedItem.platform = isInsta ? 'instagram' : 'youtube';
       processedItem.url = clickUrl;
       processedItem.videoUrl = (processedItem.videoUrl || '').trim();
+    }
+
+    if (listKey === 'list' && parentKey === 'longVideos') {
+      const clickUrl = (processedItem.youtubeUrl || processedItem.url || processedItem.videoUrl || '').trim();
+      const match = clickUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+      const vId = (match && match[2].length === 11) ? match[2] : (processedItem.videoId || (clickUrl.length === 11 ? clickUrl : ''));
+      processedItem.youtubeUrl = clickUrl;
+      processedItem.videoId = vId;
+      processedItem.title = (processedItem.title || '').trim();
+      processedItem.channelName = (processedItem.channelName || processedItem.channel || 'Tech Master').trim();
+      processedItem.views = (processedItem.views || '1.4M views').trim();
+      processedItem.startTime = (processedItem.startTime || '0:00').trim();
+      processedItem.endTime = (processedItem.endTime || '').trim();
     }
 
     let updated;
@@ -1761,7 +1774,7 @@ export const Homepage = () => {
       {/* CREATE / EDIT MODAL */}
       {modalConfig && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <form onSubmit={handleModalSave} className={`bg-zinc-950 border border-zinc-800 rounded-2xl ${(modalConfig.parentKey === 'latestArticles' || modalConfig.parentKey === 'shortsReels') ? 'max-w-xl' : 'max-w-md'} w-full p-6 space-y-4 shadow-2xl`}>
+          <form onSubmit={handleModalSave} className={`bg-zinc-950 border border-zinc-800 rounded-2xl ${(modalConfig.parentKey === 'latestArticles' || modalConfig.parentKey === 'shortsReels' || modalConfig.parentKey === 'longVideos') ? 'max-w-xl' : 'max-w-md'} w-full p-6 space-y-4 shadow-2xl`}>
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
                 {modalConfig.parentKey === 'latestArticles' 
@@ -2215,9 +2228,115 @@ export const Homepage = () => {
                   />
                 </div>
               </div>
-            ) : (
+            ) : modalConfig.parentKey === 'longVideos' ? (
               <div className="space-y-3 text-xs">
-                {Object.keys(modalConfig.item).filter(k => !['id', 'order', 'visible', 'deleted'].includes(k)).map(key => {
+                {/* Title */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Video Title / Custom Headline</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. I Tried 7 Amazing IPL Gadgets"
+                    value={modalConfig.item.title || ''}
+                    onChange={(e) => setModalConfig({
+                      ...modalConfig,
+                      item: { ...modalConfig.item, title: e.target.value }
+                    })}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white font-semibold text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1 font-mono">Custom title shown in 3D carousel. Leave blank to auto-fetch from YouTube.</p>
+                </div>
+
+                {/* YouTube URL */}
+                <div>
+                  <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">YouTube Video URL</label>
+                  <input
+                    type="text"
+                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                    value={modalConfig.item.youtubeUrl || modalConfig.item.url || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const match = val.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                      const vId = (match && match[2].length === 11) ? match[2] : (val.length === 11 ? val : '');
+                      setModalConfig({
+                        ...modalConfig,
+                        item: {
+                          ...modalConfig.item,
+                          youtubeUrl: val,
+                          url: val,
+                          videoId: vId || modalConfig.item.videoId
+                        }
+                      });
+                    }}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-luxury-gold font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                  />
+                  <p className="text-[10px] text-zinc-500 mt-1 font-mono">Paste any full YouTube video link or youtu.be shortlink.</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Channel Name */}
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Channel Name</label>
+                    <input
+                      type="text"
+                      placeholder="Tech Master"
+                      value={modalConfig.item.channelName || modalConfig.item.channel || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, channelName: e.target.value, channel: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Views */}
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Views Count</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 1.4M views"
+                      value={modalConfig.item.views || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, views: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-luxury-gold font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Start Time */}
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">Start Time (e.g. 0:20)</label>
+                    <input
+                      type="text"
+                      placeholder="0:20"
+                      value={modalConfig.item.startTime || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, startTime: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-emerald-400 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* End Time */}
+                  <div>
+                    <label className="text-zinc-400 font-mono uppercase text-[10px] block mb-1">End Time (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="1:00"
+                      value={modalConfig.item.endTime || ''}
+                      onChange={(e) => setModalConfig({
+                        ...modalConfig,
+                        item: { ...modalConfig.item, endTime: e.target.value }
+                      })}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-emerald-400 font-mono text-xs focus:border-luxury-gold/50 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (<div className="space-y-3 text-xs">{Object.keys(modalConfig.item).filter(k => !['id', 'order', 'visible', 'deleted'].includes(k)).map(key => {
                   const isImageKey = ['circleImage', 'image', 'imageUrl', 'logo', 'logoUrl', 'avatar', 'thumbnail'].includes(key);
                   const isVideoKey = ['url', 'videoUrl', 'video', 'bgMediaUrl'].includes(key);
                   const isMediaKey = isImageKey || isVideoKey;

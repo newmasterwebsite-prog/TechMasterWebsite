@@ -96,16 +96,43 @@ const YouTubeLongVideoPlayer: React.FC<{ videoId: string; displayTitle: string; 
 
 
 
+export const KNOWN_VIDEO_TITLES: Record<string, string> = {
+  "8H272rF60dc": "I Collected Every iPhone From 1 to 18!",
+  "onV7l4H5EyM": "I Tried 7 Amazing IPL Gadgets",
+  "jbEzCIqhTV8": "Crazy Tech Experiments & Gadget Teardown",
+  "4_n-ZnjIBVc": "I Met Biggest Tech YouTubers for Smartphone Awards 2025",
+  "CvqxRkjvsxY": "How I Became World's Biggest Tech Youtuber",
+  "udwDWFERyRw": "Whatever You DRAW, I Will Buy it Challenge !! Gold iPhone",
+  "_Db6aKavN1U": "Superbike Showroom Walkthrough & Exhaust Sound",
+  "FSzP30YegeM": "Tata Harrier EV vs Mahindra XEV 9E - Real World Range Test",
+  "q-l_F3yQK88": "India's Best Selling EV Scooters ⚡️ Real World Range Test"
+};
+
+export const isLegacyDummyTitle = (t?: string): boolean => {
+  if (!t) return true;
+  const lower = t.toLowerCase().trim();
+  return (
+    lower.includes("next.js") ||
+    lower.includes("system design") ||
+    lower.includes("cloud native") ||
+    lower.includes("microservices") ||
+    lower.includes("untitled video") ||
+    lower.includes("subscribe") ||
+    lower === "featured video" ||
+    lower === "video title"
+  );
+};
+
 const DEFAULT_YOUTUBE_VIDEOS = [
-  { youtubeUrl: "https://www.youtube.com/watch?v=8H272rF60dc", videoId: "8H272rF60dc", startTime: "0:20", views: "1.4M", fallbackTitle: "Building Enterprise Infrastructure" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=onV7l4H5EyM", videoId: "onV7l4H5EyM", startTime: "5:41", endTime: "6:33", views: "890K", fallbackTitle: "Advanced Next.js Architecture" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=jbEzCIqhTV8", videoId: "jbEzCIqhTV8", startTime: "0:19", endTime: "0:39", views: "1.1M", fallbackTitle: "Full-Stack System Design" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=4_n-ZnjIBVc", videoId: "4_n-ZnjIBVc", startTime: "0:00", views: "2.3M", fallbackTitle: "Mastering Cloud Native Systems" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=CvqxRkjvsxY", videoId: "CvqxRkjvsxY", startTime: "0:20", views: "950K", fallbackTitle: "Scalable Microservices Tutorial" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=udwDWFERyRw", videoId: "udwDWFERyRw", startTime: "0:20", views: "1.7M", fallbackTitle: "High-Performance Web Applications" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=_Db6aKavN1U", videoId: "_Db6aKavN1U", startTime: "0:04", views: "3.1M", fallbackTitle: "Master Wheels Technology Showcase" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=FSzP30YegeM", videoId: "FSzP30YegeM", startTime: "0:00", views: "2.8M", fallbackTitle: "Automotive Engineering & Tech" },
-  { youtubeUrl: "https://www.youtube.com/watch?v=q-l_F3yQK88", videoId: "q-l_F3yQK88", startTime: "0:10", views: "1.9M", fallbackTitle: "EV Hardware & Control Systems" }
+  { youtubeUrl: "https://www.youtube.com/watch?v=8H272rF60dc", videoId: "8H272rF60dc", startTime: "0:20", views: "1.4M", fallbackTitle: "I Collected Every iPhone From 1 to 18!" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=onV7l4H5EyM", videoId: "onV7l4H5EyM", startTime: "5:41", endTime: "6:33", views: "890K", fallbackTitle: "I Tried 7 Amazing IPL Gadgets" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=jbEzCIqhTV8", videoId: "jbEzCIqhTV8", startTime: "0:19", endTime: "0:39", views: "1.1M", fallbackTitle: "Crazy Tech Experiments & Gadget Teardown" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=4_n-ZnjIBVc", videoId: "4_n-ZnjIBVc", startTime: "0:00", views: "2.3M", fallbackTitle: "I Met Biggest Tech YouTubers for Smartphone Awards 2025" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=CvqxRkjvsxY", videoId: "CvqxRkjvsxY", startTime: "0:20", views: "950K", fallbackTitle: "How I Became World's Biggest Tech Youtuber" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=udwDWFERyRw", videoId: "udwDWFERyRw", startTime: "0:20", views: "1.7M", fallbackTitle: "Whatever You DRAW, I Will Buy it Challenge !! Gold iPhone" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=_Db6aKavN1U", videoId: "_Db6aKavN1U", startTime: "0:04", views: "3.1M", fallbackTitle: "Superbike Showroom Walkthrough & Exhaust Sound" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=FSzP30YegeM", videoId: "FSzP30YegeM", startTime: "0:00", views: "2.8M", fallbackTitle: "Tata Harrier EV vs Mahindra XEV 9E - Real World Range Test" },
+  { youtubeUrl: "https://www.youtube.com/watch?v=q-l_F3yQK88", videoId: "q-l_F3yQK88", startTime: "0:10", views: "1.9M", fallbackTitle: "India's Best Selling EV Scooters ⚡️ Real World Range Test" }
 ];
 
 export const LongVideosCarousel: React.FC<LongVideosCarouselProps> = ({ videos, isHomePage = false }) => {
@@ -211,7 +238,14 @@ export const LongVideosCarousel: React.FC<LongVideosCarouselProps> = ({ videos, 
               const ytDirectUrl = video.youtubeUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}&t=${startSec}s` : (video.url || video.videoUrl || "https://www.youtube.com"));
               const thumbnailUrl = (videoId ? getYouTubeThumbnail(videoId) : "") || video.thumbnail || video.url;
               const meta = videoMetaMap[videoId] || { title: "", authorName: "" };
-              const displayTitle = video.title && !video.title.toLowerCase().includes("subscribe") ? video.title : (meta.title || video.fallbackTitle || "Featured Tech Mastery");
+              const rawTitle = (video.title || "").trim();
+              const hasCustomAdminTitle = Boolean(rawTitle && !isLegacyDummyTitle(rawTitle));
+              const knownRealTitle = videoId ? KNOWN_VIDEO_TITLES[videoId] : "";
+              const displayTitle = hasCustomAdminTitle
+                ? rawTitle
+                : (meta.title && meta.title !== "Featured Video"
+                    ? meta.title
+                    : (video.fallbackTitle || knownRealTitle || "Tech Master Special"));
               const channelName = video.channelName || video.channel || meta.authorName || "TechMaster";
               const displayViews = (video.views || "1.2M").toString().replace(/views/gi, "").trim();
 
