@@ -40,6 +40,23 @@ export const safeSetLocalStorage = (key, value) => {
 export const sanitizeDbState = (raw) => {
   if (!raw || typeof raw !== 'object') return raw;
   const copy = { ...raw };
+  const isDummyTitle = (t) => {
+    if (!t) return false;
+    const l = String(t).toLowerCase();
+    return l.includes('enterprise') || l.includes('infrastructure') || l.includes('high-performance') || l.includes('automotive engineering') || l.includes('control systems') || l.includes('next.js') || l.includes('system design') || l.includes('microservices') || l.includes('cloud native');
+  };
+  if (copy.homepageCMS?.longVideos?.list) {
+    copy.homepageCMS.longVideos.list = copy.homepageCMS.longVideos.list.map(v => {
+      if (v && isDummyTitle(v.title)) return { ...v, title: '' };
+      return v;
+    });
+  }
+  if (copy.homepage?.longVideos?.list) {
+    copy.homepage.longVideos.list = copy.homepage.longVideos.list.map(v => {
+      if (v && isDummyTitle(v.title)) return { ...v, title: '' };
+      return v;
+    });
+  }
   if (Array.isArray(copy.enquiries)) {
     copy.enquiries = copy.enquiries.filter(e => 
       e && e.email !== 'vikram@timesgroup.com' && 

@@ -112,10 +112,15 @@ export const isLegacyDummyTitle = (t?: string): boolean => {
   if (!t) return true;
   const lower = t.toLowerCase().trim();
   return (
+    lower.includes("enterprise") ||
+    lower.includes("infrastructure") ||
     lower.includes("next.js") ||
     lower.includes("system design") ||
     lower.includes("cloud native") ||
     lower.includes("microservices") ||
+    lower.includes("high-performance web") ||
+    lower.includes("automotive engineering") ||
+    lower.includes("control systems") ||
     lower.includes("untitled video") ||
     lower.includes("subscribe") ||
     lower === "featured video" ||

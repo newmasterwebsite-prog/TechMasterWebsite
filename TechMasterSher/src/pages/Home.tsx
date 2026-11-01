@@ -1578,20 +1578,12 @@ export const Home: React.FC<HomeProps> = ({ onChangePage }) => {
               (homeData?.longVideos?.list &&
                 homeData.longVideos.list.length > 0 &&
                 homeData.longVideos.list) ||
-              (homeData?.featuredVideos &&
-                homeData.featuredVideos.length > 0 &&
-                homeData.featuredVideos.filter(
-                  (v: any) =>
-                    v.status === "Active" ||
-                    v.status === true ||
-                    v.status === undefined
-                )) ||
               (dbData?.homepageCMS?.longVideos?.list &&
                 dbData.homepageCMS.longVideos.list.length > 0 &&
                 dbData.homepageCMS.longVideos.list) ||
-              (dbData?.featuredVideos &&
-                dbData.featuredVideos.length > 0 &&
-                dbData.featuredVideos) ||
+              (dbData?.homepage?.longVideos?.list &&
+                dbData.homepage.longVideos.list.length > 0 &&
+                dbData.homepage.longVideos.list) ||
               undefined;
 
             const cmsLongVideos = Array.isArray(rawLongVideos)

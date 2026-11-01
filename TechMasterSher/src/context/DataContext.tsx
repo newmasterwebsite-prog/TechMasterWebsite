@@ -3,7 +3,7 @@ import { normalizeCmsMedia } from "../utils/media";
 import initialCmsData from "../utils/initialCmsData.json";
 import { KNOWN_VIDEO_TITLES } from "../components/LongVideosCarousel";
 
-const DUMMY_TITLE_REGEX = /(next\.js|system design|cloud native|microservices)/i;
+const DUMMY_TITLE_REGEX = /(enterprise|infrastructure|next\.js|system design|cloud native|microservices|high-performance web|automotive engineering|control systems)/i;
 
 const sanitizeVideosList = (list: any[]) => {
   if (!Array.isArray(list)) return list;
